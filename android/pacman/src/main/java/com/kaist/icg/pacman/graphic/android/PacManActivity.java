@@ -1,0 +1,81 @@
+/*
+ * Copyright (C) 2011 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.kaist.icg.pacman.graphic.android;
+
+import android.app.Activity;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
+
+import com.kaist.icg.pacman.Game;
+
+/**
+ * Game activity.
+ */
+public class PacManActivity extends Activity {
+
+    public static Context context;
+    private PacManGLSurfaceView glView;
+    private TextView logTextView;
+    private Game game;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        //Remove status and title bar (fullscreen)
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        //Create view from res/layout/main.xml layout
+        setContentView(R.layout.main);
+
+        PacManActivity.context = getApplicationContext();
+        glView = (PacManGLSurfaceView) findViewById(R.id.main_glSurfaceView);
+        logTextView = (TextView) findViewById(R.id.main_log);
+
+        game = new Game(glView);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        glView.onPause();
+        game.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        glView.onResume();
+        game.onResume();
+    }
+
+    public void setLogText(final String log) {
+        //Call logTextView.setText on the UI thread
+        //UI update can not be called on another thread
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                logTextView.setText(log);
+            }
+        });
+    }
+}
