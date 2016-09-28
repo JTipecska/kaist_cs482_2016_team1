@@ -28,9 +28,18 @@ public class Object3D extends Drawable {
     private int lightHandle;
     private int light2Handle;
     private int colorHandle;
+    private int ambientHandle;
+    private int diffuseHandle;
+    private int specularHandle;
+    private int materialHandle;
 
     private float[] light = new float[3];
     private float[] light2 = new float[3];
+
+    private float[] ambient = {0.1f, 0.1f, 0.1f};
+    private float[] diffuse = {0.5f, 0.5f, 0.5f};
+    private float[] specular = {1.0f, 1.0f, 1.0f};
+    private float material = 2.0f; // shininess
 
 
     public Object3D(String file) {
@@ -44,9 +53,9 @@ public class Object3D extends Drawable {
 
         // prepare shaders and OpenGL program
         int vertexShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_VERTEX_SHADER, "basic-gl2.vshader");
+                GLES20.GL_VERTEX_SHADER, "basic-gl2.vshader"); //default: basic-gl2.vshader
         int fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "diffuse-gl2.fshader");
+                GLES20.GL_FRAGMENT_SHADER, "phong-gl2.fshader"); //default: diffuse-gl2.fshader
 
         program = GLES20.glCreateProgram();             // create empty OpenGL Program
         GLES20.glAttachShader(program, vertexShader);   // add the vertex shader to program
@@ -54,8 +63,8 @@ public class Object3D extends Drawable {
         GLES20.glLinkProgram(program);                  // create OpenGL program executables
 
         //Set light position
-        light = new float[] {2.0f, 3.0f, 14.0f};
-        light2 = new float[] {-2.0f, -3.0f, -5.0f};
+        light = new float[] {2.0f, 3.0f, 14.0f}; //default: 2, 3, 14
+        light2 = new float[] {-2.0f, -3.0f, -5.0f}; //default: -2, -3, -5
     }
 
     /**
@@ -142,10 +151,19 @@ public class Object3D extends Drawable {
         colorHandle = GLES20.glGetUniformLocation(program, "uColor");
         lightHandle = GLES20.glGetUniformLocation(program, "uLight");
         light2Handle = GLES20.glGetUniformLocation(program, "uLight2");
+        ambientHandle = GLES20.glGetUniformLocation(program, "uAmbient");
+        diffuseHandle = GLES20.glGetUniformLocation(program, "uDiffuse");
+        specularHandle = GLES20.glGetUniformLocation(program, "uSpecular");
+        materialHandle = GLES20.glGetUniformLocation(program, "uMaterial");
+
 
         GLES20.glUniform3fv(colorHandle, 1, color, 0);
         GLES20.glUniform3fv(lightHandle, 1, light, 0);
         GLES20.glUniform3fv(light2Handle, 1, light2, 0);
+        GLES20.glUniform3fv(ambientHandle, 1, ambient, 0);
+        GLES20.glUniform3fv(diffuseHandle, 1, diffuse, 0);
+        GLES20.glUniform3fv(specularHandle, 1, specular, 0);
+        GLES20.glUniform1f(materialHandle, material);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, facesDictionary.size() * 3);
 
