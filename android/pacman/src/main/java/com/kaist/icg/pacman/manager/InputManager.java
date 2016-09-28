@@ -92,12 +92,7 @@ public class InputManager implements SensorEventListener{
             roll = mOrientation[2];
 
             //TODO: smooth movement speed
-            if(roll < -0.25)
-                horizontalMovement = -MAX_HORIZONTAL_MOVEMENT_SPEED;
-            else if(roll < 0.25)
-                horizontalMovement = 0;
-            else
-                horizontalMovement = MAX_HORIZONTAL_MOVEMENT_SPEED;
+            horizontalMovement = (float) (roll * 5);
         }
     }
 
@@ -130,5 +125,9 @@ public class InputManager implements SensorEventListener{
     public void onSurfaceSizeChanged(int width, int height) {
         surface_width = width;
         surface_height = height;
+    }
+
+    public float getHorizontalMovement() {
+        return horizontalMovement;
     }
 }
