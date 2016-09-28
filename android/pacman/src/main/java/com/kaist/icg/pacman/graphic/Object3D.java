@@ -33,6 +33,10 @@ public class Object3D extends Drawable {
     private int specularHandle;
     private int materialHandle;
 
+    private int attenuationConstHandle;
+    private int attenuationLinearHandle;
+    private int attenuationExponentialHandle;
+
     private float[] light = new float[3];
     private float[] light2 = new float[3];
 
@@ -40,6 +44,10 @@ public class Object3D extends Drawable {
     private float[] diffuse = {0.5f, 0.5f, 0.5f};
     private float[] specular = {1.0f, 1.0f, 1.0f};
     private float material = 2.0f; // shininess
+
+    private float attenuationConst = 1.0f; //should be set to 1
+    private float attenuationLinear = 0.1f; //smaller than 1
+    private float attenuationExponential = 0.2f; //smaller than 1
 
 
     public Object3D(String file) {
@@ -63,7 +71,7 @@ public class Object3D extends Drawable {
         GLES20.glLinkProgram(program);                  // create OpenGL program executables
 
         //Set light position
-        light = new float[] {2.0f, 3.0f, 14.0f}; //default: 2, 3, 14
+        light = new float[] {0.0f, 0.0f, -2.0f}; //default: 2, 3, 14
         light2 = new float[] {-2.0f, -3.0f, -5.0f}; //default: -2, -3, -5
     }
 
@@ -155,6 +163,9 @@ public class Object3D extends Drawable {
         diffuseHandle = GLES20.glGetUniformLocation(program, "uDiffuse");
         specularHandle = GLES20.glGetUniformLocation(program, "uSpecular");
         materialHandle = GLES20.glGetUniformLocation(program, "uMaterial");
+        attenuationConstHandle = GLES20.glGetUniformLocation(program, "uAttConst");
+        attenuationLinearHandle = GLES20.glGetUniformLocation(program, "uAttLin");
+        attenuationExponentialHandle = GLES20.glGetUniformLocation(program, "uAttExp");
 
 
         GLES20.glUniform3fv(colorHandle, 1, color, 0);
@@ -164,6 +175,9 @@ public class Object3D extends Drawable {
         GLES20.glUniform3fv(diffuseHandle, 1, diffuse, 0);
         GLES20.glUniform3fv(specularHandle, 1, specular, 0);
         GLES20.glUniform1f(materialHandle, material);
+        GLES20.glUniform1f(attenuationConstHandle, attenuationConst);
+        GLES20.glUniform1f(attenuationLinearHandle, attenuationLinear);
+        GLES20.glUniform1f(attenuationExponentialHandle, attenuationExponential);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, facesDictionary.size() * 3);
 
