@@ -1,7 +1,7 @@
 package com.kaist.icg.pacman.graphic;
 
 import android.opengl.GLES20;
-import android.opengl.Matrix;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.kaist.icg.pacman.graphic.android.PacManActivity;
@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * OBJ file parser
@@ -136,14 +135,8 @@ public class Object3D extends Drawable {
      */
     @Override
     public void draw(float[] projectionMatrix, float[] viewMatrix) {
-        prepareProgramAndModelMatrix();
+        GLES20.glUseProgram(program);
         prepareDraw(projectionMatrix, viewMatrix);
-
-        //Matrix.setIdentityM(modelMatrix, 0);
-        //long time = SystemClock.uptimeMillis() % 4000L;
-        //float angle = 0.090f * ((int) time);
-        //this.rotate(0, 1, 0, angle);
-        //Matrix.setRotateM(mModelMatrix, 0, InputManager.getInstance().getHorizontalMovement() * 10, 0, 1f, 0);
 
         // uniforms
         colorHandle = GLES20.glGetUniformLocation(program, "uColor");

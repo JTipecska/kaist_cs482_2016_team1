@@ -8,6 +8,7 @@ import com.kaist.icg.pacman.graphic.android.PacManActivity;
 import com.kaist.icg.pacman.graphic.android.PacManGLSurfaceView;
 import com.kaist.icg.pacman.manager.InputManager;
 import com.kaist.icg.pacman.manager.LevelManager;
+import com.kaist.icg.pacman.tool.FloatAnimation;
 
 /**
  * Main game class
@@ -27,12 +28,18 @@ public class Game {
 
     //Test 3D mesh
     private Object3D mesh;
+
+    //Animations
     private long lastColorUpdate;
     private float toColor[] = { 1, 1, 1 };
     private float fromColor[] = { 1, 1, 1 };
     private float currentColor[] = { 1, 1, 1 };
     private float colorAnimPercent;
     private float colorAnimSpeed = 5000;
+
+    private FloatAnimation translationXAnimation;
+    private FloatAnimation scaleAnimation;
+    private FloatAnimation rotationAnimation;
 
     /**
      * Load assets etc...
@@ -46,6 +53,10 @@ public class Game {
         levelManager = LevelManager.getInstance();
 
         lastColorUpdate = SystemClock.uptimeMillis();
+
+        translationXAnimation = new FloatAnimation(-1, 1, 1000, true, true);
+        scaleAnimation = new FloatAnimation(0.5f, 1.5f, 1200, true, true);
+        rotationAnimation = new FloatAnimation(0, 360, 4000, true, false);
     }
 
     public void init() {
@@ -70,6 +81,7 @@ public class Game {
         levelManager.update(elapsedTime);
         inputManager.update(elapsedTime);
 
+        //Color animation
         nbFrameSinceLastFPSupdate++;
         if(SystemClock.uptimeMillis() - lastColorUpdate > colorAnimSpeed) {
             fromColor[0] = toColor[0];
@@ -87,9 +99,19 @@ public class Game {
             currentColor[1] = fromColor[1] + (toColor[1] - fromColor[1]) * colorAnimPercent;
             currentColor[2] = fromColor[2] + (toColor[2] - fromColor[2]) * colorAnimPercent;
         }
-
         mesh.setColor(currentColor);
 
+        //Transformation animation
+        translationXAnimation.update();
+        scaleAnimation.update();
+        rotationAnimation.update();
+
+        mesh.translate(translationXAnimation.getValue(), 0, 0);
+        mesh.scale(scaleAnimation.getValue(), scaleAnimation.getValue(), scaleAnimation.getValue());
+        mesh.rotate(0, 1f, 0, rotationAnimation.getValue());
+
+
+        //FPS counter update
         if(SystemClock.uptimeMillis() - lastFPSupdate > 1000) {
             //Compute FPS: number_frame_drew / (elapsed_time / 1000)
             ((PacManActivity) glView.getContext()).setLogText(
@@ -98,7 +120,6 @@ public class Game {
             nbFrameSinceLastFPSupdate = 0;
             lastFPSupdate = SystemClock.uptimeMillis();
         }
-
         lastUpdate = SystemClock.uptimeMillis();
     }
 

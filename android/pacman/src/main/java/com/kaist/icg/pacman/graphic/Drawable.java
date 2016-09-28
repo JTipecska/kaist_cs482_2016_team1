@@ -52,11 +52,22 @@ public class Drawable {
         scaleMatrix = new float[16];
         rotationMatrix = new float[16];
 
+        Matrix.setIdentityM(translationMatrix, 0);
+        Matrix.translateM(translationMatrix, 0, translation[0], translation[1], translation[2]);
+        Matrix.setIdentityM(scaleMatrix, 0);
+        Matrix.scaleM(scaleMatrix, 0, scale[0], scale[1], scale[2]);
+        Matrix.setIdentityM(rotationMatrix, 0);
+        Matrix.rotateM(rotationMatrix, 0, rotationAngle, rotationAxis[0], rotationAxis[1], rotationAxis[2]);
+        computeModelMatrix();
+
         //TODO: set default OpenGL program
     }
 
     public void draw(float[] projectionMatrix, float[] viewMatrix) {
-        prepareProgramAndModelMatrix();
+        GLES20.glUseProgram(program);
+
+        //Apply specific transformation here by modifying the model matrix (in a new class)
+
         prepareDraw(projectionMatrix, viewMatrix);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexBufferSize);
@@ -64,12 +75,14 @@ public class Drawable {
         endDraw();
     }
 
-    protected void prepareProgramAndModelMatrix() {
-        GLES20.glUseProgram(program);
-        computeModelMatrix();
-    }
-
+    /**
+     * Compute view model matrix and send it with position and normal to the shader
+     * @param projectionMatrix
+     * @param viewMatrix
+     */
     protected void prepareDraw(float[] projectionMatrix, float[] viewMatrix) {
+        computeModelMatrix();
+
         Matrix.multiplyMM(modelViewMatrix, 0, viewMatrix, 0, modelMatrix, 0);
         normalMatrix(normalMatrix, 0, modelViewMatrix, 0);
 
@@ -105,39 +118,66 @@ public class Drawable {
         GLES20.glDisableVertexAttribArray(normalHandle);
     }
 
-    public void translate(float x, float y, float z) {
+    public void translateFromLocal(float x, float y, float z) {
         translation[0] += x;
         translation[1] += y;
         translation[2] += z;
+
+        //Now recalculate the transition matrix
+        Matrix.setIdentityM(translationMatrix, 0);
+        Matrix.translateM(translationMatrix, 0, translation[0], translation[1], translation[2]);
+    }
+
+    public void translate(float x, float y, float z) {
+        translation[0] = x;
+        translation[1] = y;
+        translation[2] = z;
+
+        //Now recalculate the transition matrix
+        Matrix.setIdentityM(translationMatrix, 0);
+        Matrix.translateM(translationMatrix, 0, translation[0], translation[1], translation[2]);
     }
 
     public void scale(float x, float y, float z) {
         scale[0] = x;
         scale[1] = y;
         scale[2] = z;
+
+        //Now recalculate the scale matrix
+        Matrix.setIdentityM(scaleMatrix, 0);
+        Matrix.scaleM(scaleMatrix, 0, scale[0], scale[1], scale[2]);
+    }
+
+    public void scaleFromLocal(float x, float y, float z) {
+        scale[0] *= x;
+        scale[1] *= y;
+        scale[2] *= z;
+
+        //Now recalculate the scale matrix
+        Matrix.setIdentityM(scaleMatrix, 0);
+        Matrix.scaleM(scaleMatrix, 0, scale[0], scale[1], scale[2]);
     }
 
     public void rotate(float x, float y, float z, float angle) {
         rotationAxis[0] = x;
         rotationAxis[1] = y;
         rotationAxis[2] = z;
-
         rotationAngle = angle;
+
+        //Now recalculate the rotation matrix
+        Matrix.setIdentityM(rotationMatrix, 0);
+        Matrix.rotateM(rotationMatrix, 0, rotationAngle, rotationAxis[0], rotationAxis[1], rotationAxis[2]);
     }
 
+    /**
+     * Compute the model matrix from scale matrix, rotation matrix and translation matrix
+     */
     protected void computeModelMatrix() {
-        Matrix.setIdentityM(translationMatrix, 0);
-        Matrix.setIdentityM(scaleMatrix, 0);
-        Matrix.setIdentityM(rotationMatrix, 0);
         Matrix.setIdentityM(modelMatrix, 0);
 
-        Matrix.scaleM(scaleMatrix, 0, scale[0], scale[1], scale[2]);
-        Matrix.translateM(translationMatrix, 0, translation[0], translation[1], translation[2]);
-        Matrix.rotateM(rotationMatrix, 0, rotationAngle, rotationAxis[0], rotationAxis[1], rotationAxis[2]);
-
-        Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, scaleMatrix, 0);
-        Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, rotationMatrix, 0);
         Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, translationMatrix, 0);
+        Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, rotationMatrix, 0);
+        Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, scaleMatrix, 0);
     }
 
     protected void normalMatrix(float[] dst, int dstOffset, float[] src, int srcOffset) {

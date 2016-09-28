@@ -1,12 +1,10 @@
 package com.kaist.icg.pacman.graphic;
 
 import android.opengl.GLES20;
-import android.opengl.Matrix;
 import android.util.Log;
 
 import com.kaist.icg.pacman.graphic.android.PacManActivity;
 import com.kaist.icg.pacman.graphic.android.PacManGLRenderer;
-import com.kaist.icg.pacman.manager.InputManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -151,7 +149,7 @@ public class Object3D_VBO extends Drawable {
      * @param viewMatrix
      */
     public void draw(float[] projectionMatrix, float[] viewMatrix) {
-        prepareProgramAndModelMatrix();
+        GLES20.glUseProgram(program);
         prepareDraw(projectionMatrix, viewMatrix);
 
         mColorHandle = GLES20.glGetUniformLocation(program, "uColor");
