@@ -27,9 +27,12 @@ public class Drawable {
 
     //OpenGL
     protected int program;
+    protected int programOutline;
     protected int vertexBufferSize;
     protected FloatBuffer vertexBuffer;
     protected FloatBuffer normalBuffer;
+
+
 
     // Handler
     protected int positionHandle;
@@ -64,9 +67,19 @@ public class Drawable {
     }
 
     public void draw(float[] projectionMatrix, float[] viewMatrix) {
-        GLES20.glUseProgram(program);
+        GLES20.glUseProgram(programOutline);
 
         //Apply specific transformation here by modifying the model matrix (in a new class)
+
+        prepareDraw(projectionMatrix, viewMatrix);
+
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexBufferSize);
+
+        endDraw();
+    }
+
+    public void drawOutline(float[] projectionMatrix, float[] viewMatrix) {
+        GLES20.glUseProgram(program);
 
         prepareDraw(projectionMatrix, viewMatrix);
 
@@ -81,6 +94,9 @@ public class Drawable {
      * @param viewMatrix
      */
     protected void prepareDraw(float[] projectionMatrix, float[] viewMatrix) {
+        //it seems to work just binding the variables to program and not also to programOutline
+        //but maybe this need to be fixed?
+
         computeModelMatrix();
 
         Matrix.multiplyMM(modelViewMatrix, 0, viewMatrix, 0, modelMatrix, 0);
