@@ -144,11 +144,11 @@ public class Game {
         GLES20.glClearColor( clearVec[0], clearVec[1], clearVec[2], 0.0f );
 
         //setup stencil buffer
-        GLES20.glClearStencil(0);
+        //GLES20.glClearStencil(0);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT |
                 GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_STENCIL_BUFFER_BIT);
 
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        /*GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glEnable(GLES20.GL_STENCIL_TEST);
         GLES20.glStencilFunc(GLES20.GL_ALWAYS, 1, -1);
         GLES20.glStencilOp(GLES20.GL_KEEP, GLES20.GL_KEEP, GLES20.GL_REPLACE);
@@ -164,7 +164,7 @@ public class Game {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
         // scale mesh for producing an outline
         mesh.scale(scaleAnimation.getValue()*0.98f, scaleAnimation.getValue()*0.98f,
-                scaleAnimation.getValue()*0.98f);
+                scaleAnimation.getValue()*0.98f);*/
 
         // draw mesh wit actual colors
         mesh.draw(glView.getRenderer().getProjMatrix(),
