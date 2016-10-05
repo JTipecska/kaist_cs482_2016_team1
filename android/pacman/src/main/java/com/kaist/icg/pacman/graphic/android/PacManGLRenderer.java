@@ -51,21 +51,15 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
 
     //Camera
     private float[] mViewMatrix = new float[16];
-    private float[] mTempMatrix = new float[16];
-    private float [] mViewTranslationMatrix = new float[16];
 
     public PacManGLRenderer() {}
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         // Set the background frame color
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GLES20.glClearColor(0, 0, 0, 1.0f);
         GLES20.glEnable(GLES20.GL_CULL_FACE);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-
-        // Initialize matrix
-        Matrix.setIdentityM(mViewTranslationMatrix, 0);
-        Matrix.translateM(mViewTranslationMatrix, 0, 0, 0, -4f);
 
         resetViewMatrix();
 
@@ -76,11 +70,6 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 unused) {
         // Draw background color (clear screen)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-
-        // Calculate view matrix
-        Matrix.setIdentityM(mViewMatrix, 0);
-        Matrix.multiplyMM(mTempMatrix, 0, mViewTranslationMatrix, 0, mViewMatrix, 0);
-        System.arraycopy(mTempMatrix, 0, mViewMatrix, 0, 16);
 
         //call Game main loop
         if(game != null)
@@ -101,7 +90,7 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
         final float bottom = -1.0f;
         final float top = 1.0f;
         final float near = 1f;
-        final float far = 10.0f;
+        final float far = 20.0f;
 
         Matrix.frustumM(mProjMatrix, 0, left, right, bottom, top, near, far);
 

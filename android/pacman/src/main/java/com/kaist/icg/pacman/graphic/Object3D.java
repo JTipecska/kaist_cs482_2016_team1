@@ -1,7 +1,6 @@
 package com.kaist.icg.pacman.graphic;
 
 import android.opengl.GLES20;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.kaist.icg.pacman.graphic.android.PacManActivity;
@@ -19,34 +18,20 @@ import java.util.ArrayList;
  */
 public class Object3D extends Drawable {
     private int nbVertices;
-    private float color[] = { 0.5f, 0.5f, 1f };
+    protected float[] color = {(float) Math.random(), (float) Math.random(), (float) Math.random()};
 
     private ArrayList<float[]> verticesDictionary;
     private ArrayList<float[]> normalsDictionary;
     private ArrayList<Face> facesDictionary;
 
     private int lightHandle;
+    private int light2Handle;
     private int colorHandle;
-    private int ambientHandle;
-    private int diffuseHandle;
-    private int specularHandle;
-    private int materialHandle;
-
-    private int attenuationConstHandle;
-    private int attenuationLinearHandle;
-    private int attenuationExponentialHandle;
 
     private float[] light = new float[3];
+    private float[] light2 = new float[3];
 
-    private float[] ambient = {0.1f, 0.1f, 0.1f};
-    private float[] diffuse = {0.5f, 0.5f, 0.5f};
-    private float[] specular = {1.0f, 1.0f, 1.0f};
-    private float material = 2.0f; // shininess
-
-    private float attenuationConst = 1.0f; //should be set to 1
-    private float attenuationLinear = 0.1f; //smaller than 1
-    private float attenuationExponential = 0.2f; //smaller than 1
-
+    private int i;
 
     public Object3D(String file) {
         verticesDictionary = new ArrayList<>();
@@ -59,26 +44,18 @@ public class Object3D extends Drawable {
 
         // prepare shaders and OpenGL program
         int vertexShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_VERTEX_SHADER, "basic-gl2.vshader"); //default: basic-gl2.vshader
-        int outlinefShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "outline-gl2.fshader"); //default: diffuse-gl2.fshader
+                GLES20.GL_VERTEX_SHADER, "basic-gl2.vshader");
+        int fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                GLES20.GL_FRAGMENT_SHADER, "diffuse-gl2.fshader");
 
-        programOutline = GLES20.glCreateProgram();             // create empty OpenGL Program
-        GLES20.glAttachShader(programOutline, vertexShader);   // add the vertex shader to program
-        GLES20.glAttachShader(programOutline, outlinefShader); // add the fragment shader to program
-        GLES20.glLinkProgram(programOutline);                  // create OpenGL program executables
+        program = GLES20.glCreateProgram();             // create empty OpenGL Program
+        GLES20.glAttachShader(program, vertexShader);   // add the vertex shader to program
+        GLES20.glAttachShader(program, fragmentShader); // add the fragment shader to program
+        GLES20.glLinkProgram(program);                  // create OpenGL program executables
 
         //Set light position
-        light = new float[] {0.0f, 0.0f, -2.0f}; //default: 2, 3, 14
-
-
-        int fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "toon-gl2.fshader");
-
-        program = GLES20.glCreateProgram();
-        GLES20.glAttachShader(program, vertexShader);
-        GLES20.glAttachShader(program, fragmentShader);
-        GLES20.glLinkProgram(program);
+        light = new float[] {0.0f, 0.0f, 0.0f};
+        light2 = new float[] {0.0f, 0.0f, 0.0f};
     }
 
     /**
@@ -157,44 +134,25 @@ public class Object3D extends Drawable {
      * @param viewMatrix
      */
     @Override
-    public void drawOutline(float[] projectionMatrix, float[] viewMatrix) {
-        GLES20.glUseProgram(programOutline);
-        prepareDraw(projectionMatrix, viewMatrix);
-
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, facesDictionary.size() * 3);
-
-        endDraw();
-    }
-
-    @Override
     public void draw(float[] projectionMatrix, float[] viewMatrix) {
         GLES20.glUseProgram(program);
-
         prepareDraw(projectionMatrix, viewMatrix);
 
+        // uniforms
         colorHandle = GLES20.glGetUniformLocation(program, "uColor");
         lightHandle = GLES20.glGetUniformLocation(program, "uLight");
-        ambientHandle = GLES20.glGetUniformLocation(program, "uAmbient");
-        diffuseHandle = GLES20.glGetUniformLocation(program, "uDiffuse");
-        specularHandle = GLES20.glGetUniformLocation(program, "uSpecular");
-        materialHandle = GLES20.glGetUniformLocation(program, "uMaterial");
-        attenuationConstHandle = GLES20.glGetUniformLocation(program, "uAttConst");
-        attenuationLinearHandle = GLES20.glGetUniformLocation(program, "uAttLin");
-        attenuationExponentialHandle = GLES20.glGetUniformLocation(program, "uAttExp");
+        light2Handle = GLES20.glGetUniformLocation(program, "uLight2");
 
         GLES20.glUniform3fv(colorHandle, 1, color, 0);
         GLES20.glUniform3fv(lightHandle, 1, light, 0);
-        GLES20.glUniform3fv(ambientHandle, 1, ambient, 0);
-        GLES20.glUniform3fv(diffuseHandle, 1, diffuse, 0);
-        GLES20.glUniform3fv(specularHandle, 1, specular, 0);
-        GLES20.glUniform1f(materialHandle, material);
-        GLES20.glUniform1f(attenuationConstHandle, attenuationConst);
-        GLES20.glUniform1f(attenuationLinearHandle, attenuationLinear);
-        GLES20.glUniform1f(attenuationExponentialHandle, attenuationExponential);
+        GLES20.glUniform3fv(light2Handle, 1, light2, 0);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, facesDictionary.size() * 3);
 
         endDraw();
+
+        for(i = 0; i<children.size(); i++)
+            children.get(i).draw(projectionMatrix, viewMatrix);
     }
 
     public void setColor(float[] color) {

@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 import android.opengl.Matrix;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Arrays;
  */
 public class Drawable {
     // Raw transformation data
-    private float[] translation;
+    private float[] position;
     private float[] scale;
     private float[] rotationAxis;
     private float rotationAngle;
@@ -24,6 +25,7 @@ public class Drawable {
     protected float[] rotationMatrix;
     protected float[] modelViewMatrix = new float[16];
     protected float[] normalMatrix = new float[16];
+    protected float[] temp = new float[16];
 
     //OpenGL
     protected int program;
@@ -45,8 +47,12 @@ public class Drawable {
     protected static final int COORDS_PER_VERTEX = 3;
     protected static final int VERTEX_STRIDE = COORDS_PER_VERTEX * 4;
 
+    //Test
+    protected Drawable parent;
+    protected ArrayList<Drawable> children;
+
     public Drawable() {
-        translation = new float[3];
+        position = new float[3];
         scale = new float[] {1f, 1f, 1f};
         rotationAxis = new float[] {0, 1f, 0};
 
@@ -56,12 +62,14 @@ public class Drawable {
         rotationMatrix = new float[16];
 
         Matrix.setIdentityM(translationMatrix, 0);
-        Matrix.translateM(translationMatrix, 0, translation[0], translation[1], translation[2]);
+        Matrix.translateM(translationMatrix, 0, position[0], position[1], position[2]);
         Matrix.setIdentityM(scaleMatrix, 0);
         Matrix.scaleM(scaleMatrix, 0, scale[0], scale[1], scale[2]);
         Matrix.setIdentityM(rotationMatrix, 0);
         Matrix.rotateM(rotationMatrix, 0, rotationAngle, rotationAxis[0], rotationAxis[1], rotationAxis[2]);
         computeModelMatrix();
+
+        children = new ArrayList<>();
 
         //TODO: set default OpenGL program
     }
@@ -69,23 +77,14 @@ public class Drawable {
     public void draw(float[] projectionMatrix, float[] viewMatrix) {
         GLES20.glUseProgram(programOutline);
 
-        //Apply specific transformation here by modifying the model matrix (in a new class)
-
         prepareDraw(projectionMatrix, viewMatrix);
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexBufferSize);
 
         endDraw();
-    }
 
-    public void drawOutline(float[] projectionMatrix, float[] viewMatrix) {
-        GLES20.glUseProgram(program);
-
-        prepareDraw(projectionMatrix, viewMatrix);
-
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexBufferSize);
-
-        endDraw();
+        for(Drawable child : children)
+            child.draw(projectionMatrix, viewMatrix);
     }
 
     /**
@@ -134,47 +133,47 @@ public class Drawable {
         GLES20.glDisableVertexAttribArray(normalHandle);
     }
 
-    public void translateFromLocal(float x, float y, float z) {
-        translation[0] += x;
-        translation[1] += y;
-        translation[2] += z;
-
-        //Now recalculate the transition matrix
-        Matrix.setIdentityM(translationMatrix, 0);
-        Matrix.translateM(translationMatrix, 0, translation[0], translation[1], translation[2]);
-    }
-
     public void translate(float x, float y, float z) {
-        translation[0] = x;
-        translation[1] = y;
-        translation[2] = z;
+        position[0] += x;
+        position[1] += y;
+        position[2] += z;
 
         //Now recalculate the transition matrix
         Matrix.setIdentityM(translationMatrix, 0);
-        Matrix.translateM(translationMatrix, 0, translation[0], translation[1], translation[2]);
+        Matrix.translateM(translationMatrix, 0, position[0], position[1], position[2]);
     }
 
-    public void scale(float x, float y, float z) {
+    public void setPosition(float x, float y, float z) {
+        position[0] = x;
+        position[1] = y;
+        position[2] = z;
+
+        //Now recalculate the transition matrix
+        Matrix.setIdentityM(translationMatrix, 0);
+        Matrix.translateM(translationMatrix, 0, position[0], position[1], position[2]);
+    }
+
+    public void setScale(float x, float y, float z) {
         scale[0] = x;
         scale[1] = y;
         scale[2] = z;
 
-        //Now recalculate the scale matrix
+        //Now recalculate the setScale matrix
         Matrix.setIdentityM(scaleMatrix, 0);
         Matrix.scaleM(scaleMatrix, 0, scale[0], scale[1], scale[2]);
     }
 
-    public void scaleFromLocal(float x, float y, float z) {
+    public void scale(float x, float y, float z) {
         scale[0] *= x;
         scale[1] *= y;
         scale[2] *= z;
 
-        //Now recalculate the scale matrix
+        //Now recalculate the setScale matrix
         Matrix.setIdentityM(scaleMatrix, 0);
         Matrix.scaleM(scaleMatrix, 0, scale[0], scale[1], scale[2]);
     }
 
-    public void rotate(float x, float y, float z, float angle) {
+    public void setRotation(float x, float y, float z, float angle) {
         rotationAxis[0] = x;
         rotationAxis[1] = y;
         rotationAxis[2] = z;
@@ -185,11 +184,18 @@ public class Drawable {
         Matrix.rotateM(rotationMatrix, 0, rotationAngle, rotationAxis[0], rotationAxis[1], rotationAxis[2]);
     }
 
+    //TODO: compute new rotation but combining the old one and the new one
+    /*public void rotate(float x, float y, float z, float angle) {
+    }*/
+
     /**
-     * Compute the model matrix from scale matrix, rotation matrix and translation matrix
+     * Compute the model matrix from setScale matrix, rotation matrix and position matrix
      */
     protected void computeModelMatrix() {
-        Matrix.setIdentityM(modelMatrix, 0);
+        if(parent == null)
+            Matrix.setIdentityM(modelMatrix, 0);
+        else
+            System.arraycopy(parent.modelMatrix, 0, modelMatrix, 0, 16);
 
         Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, translationMatrix, 0);
         Matrix.multiplyMM(modelMatrix, 0, modelMatrix, 0, rotationMatrix, 0);
@@ -202,8 +208,24 @@ public class Drawable {
         dst[13] = 0;
         dst[14] = 0;
 
-        float[] temp = Arrays.copyOf(dst, 16);
+        System.arraycopy(dst, 0, temp, 0, 16);
 
         Matrix.transposeM(dst, dstOffset, temp, 0);
+    }
+
+    public float[] getPosition() {
+        return position;
+    }
+
+    /**
+     * Add a new child to this node in the scene graph
+     * @param child
+     */
+    public void addChild(Drawable child) {
+        if(child.parent != null)
+            child.parent.children.remove(child);
+
+        children.add(child);
+        child.parent = this;
     }
 }
