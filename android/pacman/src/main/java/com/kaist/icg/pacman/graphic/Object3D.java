@@ -87,7 +87,7 @@ public class Object3D extends Drawable {
                         normal[2] = Float.parseFloat(split[3]);
 
                         normalsDictionary.add(normal);
-                    } else if (line.charAt(0) == 'f') { //face
+                    } else if (line.startsWith("f ")) { //face
                         facesDictionary.add(new Face(line));
                     }
                 }
