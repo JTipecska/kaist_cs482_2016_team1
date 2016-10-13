@@ -12,7 +12,7 @@ public class PipePart extends Object3D {
 
         angle = Math.random() * (Math.PI * 2);
 
-        mesh = new Object3D("suzanne.obj");
+        mesh = new Object3D("Ghost.obj");
         mesh.setColor(this.color);
         mesh.setScale(0.15f, 0.15f, 0.15f);
         mesh.setRotation(0, 0, 1, (float) angle * radToDeg + 90);
