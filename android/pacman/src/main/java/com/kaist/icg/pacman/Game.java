@@ -8,6 +8,7 @@ import com.kaist.icg.pacman.graphic.android.PacManGLSurfaceView;
 import com.kaist.icg.pacman.graphic.pipe.Pipe;
 import com.kaist.icg.pacman.manager.InputManager;
 import com.kaist.icg.pacman.manager.LevelManager;
+import com.kaist.icg.pacman.manager.ShaderManager;
 
 /**
  * Main game class
@@ -16,6 +17,7 @@ public class Game {
 
     private InputManager inputManager;
     private LevelManager levelManager;
+    private ShaderManager shaderManager;
 
     private long lastUpdate;
     private long elapsedTime;
@@ -28,6 +30,9 @@ public class Game {
     //Pipe
     private Pipe pipe;
 
+    //Light
+    private float[] lightPosition;
+
     /**
      * Load assets etc...
      * @param mGLView
@@ -38,12 +43,16 @@ public class Game {
 
         inputManager = InputManager.getInstance();
         levelManager = LevelManager.getInstance();
+        shaderManager = ShaderManager.getInstance();
     }
 
     public void init() {
+        lightPosition = new float[] {0.0f, 0.0f, 0.0f};
         pipe = new Pipe();
 
         lastUpdate = SystemClock.uptimeMillis();
+        shaderManager.initialize(glView.getRenderer().getProjMatrix(),
+                glView.getRenderer().getViewMatrix(), lightPosition);
     }
 
     /**
@@ -85,7 +94,7 @@ public class Game {
      * Draw all the scene
      */
     private void onRender() {
-        pipe.draw(glView.getRenderer().getProjMatrix(), glView.getRenderer().getViewMatrix());
+        pipe.draw();
     }
 
     public void onPause() {

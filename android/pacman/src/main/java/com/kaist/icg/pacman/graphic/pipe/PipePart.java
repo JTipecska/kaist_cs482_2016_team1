@@ -1,6 +1,7 @@
 package com.kaist.icg.pacman.graphic.pipe;
 
 import com.kaist.icg.pacman.graphic.Object3D;
+import com.kaist.icg.pacman.manager.ShaderManager;
 
 public class PipePart extends Object3D {
     private static final float radToDeg = (float) (360 / (Math.PI * 2));
@@ -9,7 +10,7 @@ public class PipePart extends Object3D {
 
     public PipePart() {
         super("pipe0.obj");
-
+        setShader(ShaderManager.Shader.DIFFUSE);
         angle = Math.random() * (Math.PI * 2);
 
         mesh = new Object3D("Ghost.obj");
@@ -22,8 +23,8 @@ public class PipePart extends Object3D {
     }
 
     @Override
-    public void draw(float[] projectionMatrix, float[] viewMatrix) {
-        super.draw(projectionMatrix, viewMatrix);
+    public void draw() {
+        super.draw();
     }
 
     @Override

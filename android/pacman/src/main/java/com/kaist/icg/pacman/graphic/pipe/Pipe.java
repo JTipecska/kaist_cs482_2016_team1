@@ -50,8 +50,9 @@ public class Pipe extends Drawable {
     }
 
     @Override
-    public void draw(float[] projectionMatrix, float[] viewMatrix) {
+    public void draw() {
+
         for(PipePart part : parts)
-            part.draw(projectionMatrix, viewMatrix);
+            part.draw();
     }
 }

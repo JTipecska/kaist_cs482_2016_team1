@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.kaist.icg.pacman.graphic.android.PacManActivity;
 import com.kaist.icg.pacman.graphic.android.PacManGLRenderer;
+import com.kaist.icg.pacman.manager.ShaderManager;
+import com.kaist.icg.pacman.tool.Material;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,13 +26,6 @@ public class Object3D extends Drawable {
     private ArrayList<float[]> normalsDictionary;
     private ArrayList<Face> facesDictionary;
 
-    private int lightHandle;
-    private int light2Handle;
-    private int colorHandle;
-
-    private float[] light = new float[3];
-    private float[] light2 = new float[3];
-
     private int i;
 
     public Object3D(String file) {
@@ -42,20 +37,10 @@ public class Object3D extends Drawable {
         buildBuffers();
         Log.d("Object3D", "[" + file + "] " + nbVertices + " vertices");
 
-        // prepare shaders and OpenGL program
-        int vertexShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_VERTEX_SHADER, "basic-gl2.vshader");
-        int fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "diffuse-gl2.fshader");
-
-        program = GLES20.glCreateProgram();             // create empty OpenGL Program
-        GLES20.glAttachShader(program, vertexShader);   // add the vertex shader to program
-        GLES20.glAttachShader(program, fragmentShader); // add the fragment shader to program
-        GLES20.glLinkProgram(program);                  // create OpenGL program executables
-
-        //Set light position
-        light = new float[] {0.0f, 0.0f, 0.0f};
-        light2 = new float[] {0.0f, 0.0f, 0.0f};
+        vertexBufferSize = facesDictionary.size() * 3;
+        material = new Material(color);
+        //need to fix PHONG and TOON, but you can apply them - just looks bad and is laggy
+        setShader(ShaderManager.Shader.DIFFUSE);
     }
 
     /**
@@ -130,29 +115,17 @@ public class Object3D extends Drawable {
 
     /**
      * Draw the mesh on the current OpenGL context
-     * @param projectionMatrix
-     * @param viewMatrix
      */
     @Override
-    public void draw(float[] projectionMatrix, float[] viewMatrix) {
-        GLES20.glUseProgram(program);
-        prepareDraw(projectionMatrix, viewMatrix);
+    public void draw() {
+        computeModelMatrix();
 
-        // uniforms
-        colorHandle = GLES20.glGetUniformLocation(program, "uColor");
-        lightHandle = GLES20.glGetUniformLocation(program, "uLight");
-        light2Handle = GLES20.glGetUniformLocation(program, "uLight2");
-
-        GLES20.glUniform3fv(colorHandle, 1, color, 0);
-        GLES20.glUniform3fv(lightHandle, 1, light, 0);
-        GLES20.glUniform3fv(light2Handle, 1, light2, 0);
-
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, facesDictionary.size() * 3);
-
-        endDraw();
+        shaderManager.draw(modelMatrix, vertexBuffer,
+                normalBuffer, vertexBufferSize,
+                material, shader);
 
         for(i = 0; i<children.size(); i++)
-            children.get(i).draw(projectionMatrix, viewMatrix);
+            children.get(i).draw();
     }
 
     public void setColor(float[] color) {

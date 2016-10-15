@@ -19,6 +19,7 @@ import java.util.ArrayList;
  *
  */
 public class Object3D_VBO extends Drawable {
+    protected float[] color = {(float) Math.random(), (float) Math.random(), (float) Math.random()};
     private ArrayList<float[]> verticesDictionary;
     private ArrayList<float[]> normalsDictionary;
     private ArrayList<VertexInfo> verticesInfoList;
@@ -26,14 +27,7 @@ public class Object3D_VBO extends Drawable {
 
     private ShortBuffer drawOrderBuffer;
 
-    private int mLightHandle;
-    private int mLight2Handle;
-    private int mColorHandle;
-
-    private float[] mLight = new float[3];
-    private float[] mLight2 = new float[3];
-
-    private float color[] = { 1f, 1f, 1f };
+    private int i;
 
     public Object3D_VBO(String file) {
         verticesDictionary = new ArrayList<>();
@@ -44,20 +38,6 @@ public class Object3D_VBO extends Drawable {
         loadFile(file);
         buildBuffers();
         Log.d("Object3D_VBO", "[" + file + "] " + verticesInfoList.size() + " vertices / " + verticesOrderList.size() + " vertices draw order");
-
-        // prepare shaders and OpenGL program
-        int vertexShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_VERTEX_SHADER, "basic-gl2.vshader");
-        int fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "diffuse-gl2.fshader");
-
-        program = GLES20.glCreateProgram();             // create empty OpenGL Program
-        GLES20.glAttachShader(program, vertexShader);   // add the vertex shader to program
-        GLES20.glAttachShader(program, fragmentShader); // add the fragment shader to program
-        GLES20.glLinkProgram(program);                  // create OpenGL program executables
-
-        mLight = new float[] {2.0f, 3.0f, 14.0f};
-        mLight2 = new float[] {-2.0f, -3.0f, -5.0f};
     }
 
     /**
@@ -149,20 +129,14 @@ public class Object3D_VBO extends Drawable {
      * @param viewMatrix
      */
     public void draw(float[] projectionMatrix, float[] viewMatrix) {
-        GLES20.glUseProgram(program);
-        prepareDraw(projectionMatrix, viewMatrix);
+        computeModelMatrix();
 
-        mColorHandle = GLES20.glGetUniformLocation(program, "uColor");
-        mLightHandle = GLES20.glGetUniformLocation(program, "uLight");
-        mLight2Handle = GLES20.glGetUniformLocation(program, "uLight2");
+        shaderManager.draw(modelMatrix, vertexBuffer,
+                normalBuffer, vertexBufferSize,
+                material, shader);
 
-        GLES20.glUniform3fv(mColorHandle, 1, color, 0);
-        GLES20.glUniform3fv(mLightHandle, 1, mLight, 0);
-        GLES20.glUniform3fv(mLight2Handle, 1, mLight2, 0);
-
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, verticesOrderList.size(), GLES20.GL_UNSIGNED_SHORT, drawOrderBuffer);
-
-        endDraw();
+        for(i = 0; i<children.size(); i++)
+        children.get(i).draw();
     }
 
     public void setColor(float[] color) {

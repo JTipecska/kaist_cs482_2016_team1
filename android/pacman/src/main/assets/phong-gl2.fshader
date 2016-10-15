@@ -2,11 +2,12 @@ precision mediump float;
 
 uniform vec3 uLight, uColor;
 uniform vec3 uAmbient, uDiffuse, uSpecular;
-uniform float uMaterial;
-uniform float uAttConst, uAttLin, uAttExp;
+uniform float uShininess;
 
 varying vec3 vNormal;
 varying vec3 vPosition;
+
+const float uAttConst = 1.0, uAttLin = 0.2, uAttExp = 0.4;
 
 void main() {
     vec3 lightDir = normalize(uLight - vPosition);
@@ -24,7 +25,7 @@ void main() {
     diffuse = clamp(diffuse, 0.0, 1.0);
 
     //specular
-    specular = vec4(uSpecular*pow(max(dot(reflectance,eye),0.0),uMaterial),0.0);
+    specular = vec4(uSpecular*pow(max(dot(reflectance,eye),0.0),uShininess),0.0);
     specular = clamp(specular, 0.0, 1.0);
 
     //output color

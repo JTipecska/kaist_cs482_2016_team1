@@ -2,8 +2,8 @@ precision mediump float;
 
 uniform vec3 uLight, uColor;
 uniform vec3 uAmbient, uDiffuse, uSpecular;
-uniform float uMaterial;
-uniform float uAttConst, uAttLin, uAttExp;
+uniform float uShininess;
+
 
 varying vec3 vNormal;
 varying vec3 vPosition;
@@ -15,6 +15,7 @@ varying vec3 vPosition;
 //for diffuse color
 const int levels = 5;
 const float scaleFactor = 1.0 / float(levels);
+const float uAttConst = 1.0, uAttLin = 0.2, uAttExp = 0.4;
 
 void main()
 {
@@ -32,11 +33,11 @@ void main()
  if( dot(L,vNormal) > 0.0)
  {
  // can be multiplied by material constant
-   specular = pow( max(0.0, dot( H, vNormal)), uMaterial);
+   specular = pow( max(0.0, dot( H, vNormal)), uShininess);
  }
 
  //limit specular
- float specMask = (pow(dot(H, vNormal), uMaterial) > 0.4) ? 1.0 : 0.0;
+ float specMask = (pow(dot(H, vNormal), uShininess) > 0.4) ? 1.0 : 0.0;
 
  //not sure about the look of the specular component
  vec3 color = (uColor + diffuseColor);// + specular * specMask);
