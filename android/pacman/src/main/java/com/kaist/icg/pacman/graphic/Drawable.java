@@ -45,7 +45,7 @@ public class Drawable {
 
 
     protected Material material;
-    protected ShaderManager.Shader shader;
+    protected ShaderManager.Shader shader = ShaderManager.Shader.TOON;
 
     public void setMaterial(Material material) {this.material = material;}
 
@@ -72,7 +72,6 @@ public class Drawable {
 
         children = new ArrayList<>();
         material = new Material(new float[]{0.5f, 0.5f, 0.0f});
-        shader = ShaderManager.Shader.DIFFUSE;
 
         shaderManager = ShaderManager.getInstance();
         //TODO: set default OpenGL program

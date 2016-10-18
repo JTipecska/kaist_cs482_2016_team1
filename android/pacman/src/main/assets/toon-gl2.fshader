@@ -15,7 +15,7 @@ varying vec3 vPosition;
 //for diffuse color
 const int levels = 5;
 const float scaleFactor = 1.0 / float(levels);
-const float uAttConst = 1.0, uAttLin = 0.2, uAttExp = 0.4;
+const float uAttConst = 1.0, uAttLin = 0.05, uAttExp = 0.1;
 
 void main()
 {
@@ -39,11 +39,12 @@ void main()
  //limit specular
  float specMask = (pow(dot(H, vNormal), uShininess) > 0.4) ? 1.0 : 0.0;
 
- //not sure about the look of the specular component
- vec3 color = (uColor + diffuseColor);// + specular * specMask);
-
 float dist = distance(uLight, vPosition);
-    float attenuation = uAttConst + uAttLin * dist + uAttExp * pow(dist, 2.0);
+float attenuation = uAttConst + uAttLin * dist + uAttExp * pow(dist, 2.0);
 
- gl_FragColor = vec4(color,1)/attenuation;
+ //not sure about the look of the specular component
+ vec3 color = uColor + (uAmbient + diffuseColor)/attenuation;// + specular * specMask)/attenuation;
+
+
+ gl_FragColor = vec4(color,1);
 }

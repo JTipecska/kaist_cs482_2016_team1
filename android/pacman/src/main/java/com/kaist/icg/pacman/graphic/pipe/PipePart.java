@@ -10,7 +10,6 @@ public class PipePart extends Object3D {
 
     public PipePart() {
         super("pipe0.obj");
-        setShader(ShaderManager.Shader.DIFFUSE);
         angle = Math.random() * (Math.PI * 2);
 
         mesh = new Object3D("Ghost.obj");
