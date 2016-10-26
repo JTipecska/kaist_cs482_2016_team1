@@ -1,39 +1,33 @@
 package com.kaist.icg.pacman.graphic.pipe;
 
+import com.kaist.icg.pacman.graphic.Drawable;
 import com.kaist.icg.pacman.graphic.Object3D;
 import com.kaist.icg.pacman.manager.ShaderManager;
 
-public class PipePart extends Object3D {
-    private static final float radToDeg = (float) (360 / (Math.PI * 2));
+public class PipePart extends Drawable{
+
+    private final static int NB_PIPE_PART = 20;
+    private final static float PIPE_SIZE = 1f;
     private Object3D mesh;
-    private double angle;
 
     public PipePart() {
-        super("pipe0.obj");
-        setShader(ShaderManager.Shader.DIFFUSE);
-        angle = Math.random() * (Math.PI * 2);
-
-        mesh = new Object3D("Ghost.obj");
-        mesh.setColor(this.color);
-        mesh.setScale(0.15f, 0.15f, 0.15f);
-        mesh.setRotation(0, 0, 1, (float) angle * radToDeg + 90);
-        mesh.setPosition((float) (Math.cos(angle) * 1.8), (float)(Math.sin(angle) * 1.8), 0.5f);
-
-        addChild(mesh);
+        for(int i = 0; i < NB_PIPE_PART; i++) {
+            mesh = new Object3D("pipe0.obj");
+            mesh.setShader(ShaderManager.Shader.DIFFUSE);
+            mesh.setPosition(0, 0, 2 + -i * PIPE_SIZE);
+            addChild(mesh);
+        }
     }
 
-    @Override
-    public void draw() {
-        super.draw();
-    }
+    public void onUpdate(float translationZ) {
 
-    @Override
-    public void setPosition(float x, float y, float z) {
-        super.setPosition(x, y, z);
-    }
+        for(int i = 0; i<NB_PIPE_PART; i++) {
+            children.get(i).translate(0, 0, translationZ);
+        }
 
-    @Override
-    public void setRotation(float x, float y, float z, float angle) {
-        super.setRotation(x, y, z, angle);
+        if(children.get(0).getPosition()[2] > 2 + PIPE_SIZE) {
+            children.get(0).setPosition(0, 0, children.get(19).getPosition()[2] - PIPE_SIZE);
+            addChild(children.get(0));
+        }
     }
 }

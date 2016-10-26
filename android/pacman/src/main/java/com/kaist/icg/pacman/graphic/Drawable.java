@@ -41,7 +41,7 @@ public class Drawable {
 
     //Test
     protected Drawable parent;
-    protected ArrayList<Drawable> children;
+    public ArrayList<Drawable> children;
 
 
     protected Material material;
@@ -81,9 +81,9 @@ public class Drawable {
     public void draw() {
         computeModelMatrix();
 
-        shaderManager.draw(modelMatrix, vertexBuffer,
-                normalBuffer, vertexBufferSize,
-                material, shader);
+        //shaderManager.draw(modelMatrix, vertexBuffer,
+        //        normalBuffer, vertexBufferSize,
+        //        material, shader);
 
         for (Drawable child : children)
             child.draw();

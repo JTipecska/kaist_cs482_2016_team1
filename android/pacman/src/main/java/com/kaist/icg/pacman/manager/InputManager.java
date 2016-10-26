@@ -24,7 +24,7 @@ public class InputManager implements SensorEventListener{
     }
 
     //TODO: tune this parameter
-    private static final float MAX_HORIZONTAL_MOVEMENT_SPEED = 5;
+    private static final float MAX_HORIZONTAL_MOVEMENT_SPEED = 1;
 
     private float horizontalMovement;
     private boolean isJumping;
