@@ -6,24 +6,28 @@ import com.kaist.icg.pacman.manager.ShaderManager;
 
 
 public class Pipe extends Drawable {
-
     private final static int NB_PIPE_PART = 20;
-    private final static float TRANSLATE_Y = 0.9f;
-    private PipePart pipe;
-    private Population population;
+    private final static float PIPE_SIZE = 1f;
+    private Object3D mesh;
 
     public Pipe() {
-        pipe = new PipePart();
-        addChild(pipe);
-        population = new Population();
-        addChild(population);
+        for(int i = 0; i < NB_PIPE_PART; i++) {
+            mesh = new Object3D("pipe0.obj");
+            mesh.setShader(ShaderManager.Shader.DIFFUSE);
+            mesh.setPosition(0, 0, 2 + -i * PIPE_SIZE);
+            addChild(mesh);
+        }
     }
 
-    public void onUpdate(float translationZ, float rotationZ) {
-        setRotation(0, 0, 1f, rotationZ);
-        setPosition(0, TRANSLATE_Y, 0);
+    public void onUpdate(float translationZ) {
 
-        population.onUpdate(translationZ);
-        pipe.onUpdate(translationZ);
+        for(int i = 0; i<NB_PIPE_PART; i++) {
+            children.get(i).translate(0, 0, translationZ);
+        }
+
+        if(children.get(0).getPosition()[2] > 2 + PIPE_SIZE) {
+            children.get(0).setPosition(0, 0, children.get(19).getPosition()[2] - PIPE_SIZE);
+            addChild(children.get(0));
+        }
     }
 }

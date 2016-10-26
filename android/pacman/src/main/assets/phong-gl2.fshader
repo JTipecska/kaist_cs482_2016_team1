@@ -7,29 +7,31 @@ uniform float uShininess;
 varying vec3 vNormal;
 varying vec3 vPosition;
 
-const float uAttConst = 1.0, uAttLin = 0.2, uAttExp = 0.4;
+const float uAttConst = 1.0, uAttLin = 0.1, uAttExp = 0.2;
 
 void main() {
-    vec3 lightDir = normalize(uLight - vPosition);
-    vec3 eye = normalize(-vPosition); //check if eye and view coordinates match
-    vec3 reflectance = normalize(reflect(lightDir, vNormal));
+    vec3 L = normalize( uLight - vPosition);
+     vec3 V = normalize(-vPosition);
 
-    vec4 diffuse = vec4(0.0, 0.0, 0.0, 0.0);
-    vec4 specular = vec4(0.0, 0.0, 0.0, 0.0);
+     float diffuse = max(0.0, dot(L,vNormal));
+     // can be multiplied by material constant
+     vec3 diffuseColor = uDiffuse * diffuse;
 
-    //ambient
-    vec4 ambient = vec4(uAmbient, 0.0);
+     vec3 H = normalize(L + V);
 
-    //diffuse
-    diffuse = vec4(uDiffuse * max(dot(vNormal,lightDir), 0.0), 0.0);
-    diffuse = clamp(diffuse, 0.0, 1.0);
+     float specular = 0.0;
 
-    //specular
-    specular = vec4(uSpecular*pow(max(dot(reflectance,eye),0.0),uShininess),0.0);
-    specular = clamp(specular, 0.0, 1.0);
+     if( dot(L,vNormal) > 0.0)
+     {
+     // can be multiplied by material constant
+       specular = pow( max(0.0, dot( H, vNormal)), uShininess);
+     }
 
-    //output color
     float dist = distance(uLight, vPosition);
-    float attenuation = uAttConst + uAttLin * dist + uAttExp * pow(dist, 2);
-    gl_FragColor = vec4(uColor, 0.0).rgba * (ambient + diffuse + specular)/attenuation;
+    float attenuation = uAttConst + uAttLin * dist + uAttExp * pow(dist, 2.0);
+
+     //not sure about the look of the specular component
+     vec3 color = uColor + (uAmbient + diffuseColor + specular)/attenuation;
+
+     gl_FragColor = vec4(color,1);
 }

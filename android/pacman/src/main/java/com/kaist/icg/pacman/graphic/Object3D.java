@@ -39,8 +39,6 @@ public class Object3D extends Drawable {
 
         vertexBufferSize = facesDictionary.size() * 3;
         material = new Material(color);
-        //need to fix PHONG and TOON, but you can apply them - just looks bad and is laggy
-        setShader(ShaderManager.Shader.DIFFUSE);
     }
 
     /**

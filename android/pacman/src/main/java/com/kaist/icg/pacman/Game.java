@@ -6,6 +6,7 @@ import com.kaist.icg.pacman.graphic.Object3D;
 import com.kaist.icg.pacman.graphic.android.PacManActivity;
 import com.kaist.icg.pacman.graphic.android.PacManGLSurfaceView;
 import com.kaist.icg.pacman.graphic.pipe.Pipe;
+import com.kaist.icg.pacman.graphic.pipe.Scene;
 import com.kaist.icg.pacman.graphic.pipe.SceneRoot;
 import com.kaist.icg.pacman.manager.InputManager;
 import com.kaist.icg.pacman.manager.LevelManager;
@@ -29,7 +30,7 @@ public class Game {
     private int nbFrameSinceLastFPSupdate;
 
     //Pipe
-    private SceneRoot root;
+    private Scene scene;
 
     //Light
     private float[] lightPosition;
@@ -49,7 +50,7 @@ public class Game {
 
     public void init() {
         lightPosition = new float[] {0.0f, 0.0f, 0.0f};
-        root = new SceneRoot();
+        scene = new Scene();
 
         lastUpdate = SystemClock.uptimeMillis();
         shaderManager.initialize(glView.getRenderer().getProjMatrix(),
@@ -76,7 +77,7 @@ public class Game {
         levelManager.update(elapsedTime);
         inputManager.update(elapsedTime);
 
-        root.onUpdate(elapsedTime);
+        scene.onUpdate(elapsedTime);
 
         //FPS counter update
         if(SystemClock.uptimeMillis() - lastFPSupdate > 1000) {
@@ -95,7 +96,7 @@ public class Game {
      * Draw all the scene
      */
     private void onRender() {
-        root.render();
+        scene.render();
     }
 
     public void onPause() {

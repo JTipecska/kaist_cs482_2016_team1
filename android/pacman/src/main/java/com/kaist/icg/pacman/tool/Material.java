@@ -9,9 +9,9 @@ public class Material {
     private float[] color = {0, 0, 0};
     //TODO: we might just set a costant ambientLight for the whole scene
     private float[] ambientLight = {0.1f, 0.1f, 0.1f};
-    private float[] diffuseLight = {0.5f, 0, 0};
-    private float[] specularLight = {0, 0, 0.5f};
-    private float shininess = 2.0f;
+    private float[] diffuseLight = {0.1f, 0.1f, 0.1f};
+    private float[] specularLight = {0.1f, 0.1f, 0.1f};
+    private float shininess = 0.1f;
 
     public Material(float[] color){
         this.color = color;

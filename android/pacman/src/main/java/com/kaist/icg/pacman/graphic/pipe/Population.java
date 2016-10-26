@@ -13,13 +13,11 @@ public class Population extends Drawable {
 
     private final static int NB_PIPE_PART = 20;
     private final static float PIPE_SIZE = 1f;
-    private float distance;
     private ArrayList<Ghost> ghosts;
     private static final float radToDeg = (float) (360 / (Math.PI * 2));
     private double angle;
 
     public Population() {
-        distance = 0f;
         for(int i = 0; i < NB_PIPE_PART; i++) {
             Ghost ghost = new Ghost();
 
@@ -34,7 +32,6 @@ public class Population extends Drawable {
     public void onUpdate(float translationZ) {
         for(int i = 0; i < NB_PIPE_PART;i++)
             children.get(i).translate(0,0, translationZ );
-
 
         if(children.get(0).getPosition()[2] > 2 + 1f) {
             angle = Math.random() * (Math.PI * 2);
