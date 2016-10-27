@@ -1,10 +1,8 @@
 package com.kaist.icg.pacman.graphic.pipe;
 
-import android.graphics.drawable.DrawableWrapper;
-
-import com.kaist.icg.pacman.graphic.Drawable;
 import com.kaist.icg.pacman.graphic.Object3D;
-import com.kaist.icg.pacman.manager.ShaderManager;
+
+import java.nio.FloatBuffer;
 
 /**
  * Created by root on 16. 10. 17.
@@ -18,8 +16,9 @@ public class Ghost extends Object3D {
     private Object3D mesh;
     private double angle;
     private float distance, spawn;
-    public Ghost() {
-        super("Ghost.obj");
+
+    public Ghost(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer) {
+        super(vertexBufferSize, vertexBuffer, normalBuffer);
     }
 
     @Override

@@ -1,13 +1,10 @@
 package com.kaist.icg.pacman.graphic.pipe;
 
 import com.kaist.icg.pacman.graphic.Drawable;
+import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.manager.ShaderManager;
 
 import java.util.ArrayList;
-
-/**
- * Created by root on 16. 10. 17.
- */
 
 public class Population extends Drawable {
 
@@ -19,7 +16,7 @@ public class Population extends Drawable {
 
     public Population() {
         for(int i = 0; i < NB_PIPE_PART; i++) {
-            Ghost ghost = new Ghost();
+            Ghost ghost = Object3DFactory.getInstance().instanciate("Ghost.obj", Ghost.class);
 
             angle = Math.random() * (Math.PI * 2);
             ghost.setShader(ShaderManager.Shader.DIFFUSE);

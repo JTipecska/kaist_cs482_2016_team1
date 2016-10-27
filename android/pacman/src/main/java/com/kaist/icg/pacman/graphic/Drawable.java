@@ -1,14 +1,12 @@
 package com.kaist.icg.pacman.graphic;
 
-import android.opengl.GLES20;
 import android.opengl.Matrix;
-
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import com.kaist.icg.pacman.manager.ShaderManager;
 import com.kaist.icg.pacman.tool.Material;
+
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
 
 /**
  * Drawable object class.
@@ -37,7 +35,6 @@ public class Drawable {
 
     // Const
     protected static final int COORDS_PER_VERTEX = 3;
-    protected static final int VERTEX_STRIDE = COORDS_PER_VERTEX * 4;
 
     //Test
     protected Drawable parent;

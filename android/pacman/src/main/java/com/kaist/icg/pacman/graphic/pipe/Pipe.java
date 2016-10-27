@@ -2,6 +2,7 @@ package com.kaist.icg.pacman.graphic.pipe;
 
 import com.kaist.icg.pacman.graphic.Drawable;
 import com.kaist.icg.pacman.graphic.Object3D;
+import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.manager.ShaderManager;
 
 
@@ -12,7 +13,7 @@ public class Pipe extends Drawable {
 
     public Pipe() {
         for(int i = 0; i < NB_PIPE_PART; i++) {
-            mesh = new Object3D("pipe0.obj");
+            mesh = Object3DFactory.getInstance().instanciate("pipe0.obj", Object3D.class);
             mesh.setShader(ShaderManager.Shader.DIFFUSE);
             mesh.setPosition(0, 0, 2 + -i * PIPE_SIZE);
             addChild(mesh);
