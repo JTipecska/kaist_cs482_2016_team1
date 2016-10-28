@@ -21,7 +21,7 @@ public class Object3DFactory {
     private static Object3DFactory INSTANCE;
 
     public static Object3DFactory getInstance() {
-        if(INSTANCE == null)
+        if (INSTANCE == null)
             INSTANCE = new Object3DFactory();
 
         return INSTANCE;
@@ -35,27 +35,37 @@ public class Object3DFactory {
 
     /**
      * Create a new Object3D instance (or a child class) from an .OBJ file
+     *
      * @param file The .OBJ file name from assets folder
      * @param type Object class wanted. Must be Object3D or a children class.
      * @return
      */
-    public <T extends Object3D>T instanciate(String file, Class<T> type) {
+    public <T extends Object3D> T instanciate(String file, Class<T> type) {
         Object3DData data = objectsData.get(file);
 
-        if(data == null) {
+        if (data == null) {
             data = new Object3DData(file);
             objectsData.put(file, data);
-        }
-        else
+        } else
             Log.d("Object3DFactory", "Cloning [" + file + "] ");
 
         try {
-            return type.getDeclaredConstructor(int.class,
-                    FloatBuffer.class, FloatBuffer.class).newInstance(
-                    data.getVertexBufferSize(),
-                    data.getVertexBuffer(),
-                    data.getNormalBuffer()
-            );
+            if (data.hasTexture)
+                return type.getDeclaredConstructor(int.class,
+                        FloatBuffer.class, FloatBuffer.class, FloatBuffer.class, String.class).newInstance(
+                        data.getVertexBufferSize(),
+                        data.getVertexBuffer(),
+                        data.getNormalBuffer(),
+                        data.getTextureCoordinatesBuffer(),
+                        file + ".png"
+                );
+            else
+                return type.getDeclaredConstructor(int.class,
+                        FloatBuffer.class, FloatBuffer.class).newInstance(
+                        data.getVertexBufferSize(),
+                        data.getVertexBuffer(),
+                        data.getNormalBuffer()
+                );
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,28 +76,36 @@ public class Object3DFactory {
     public class Object3DData {
         private ArrayList<float[]> verticesDictionary;
         private ArrayList<float[]> normalsDictionary;
-        private ArrayList<Face> facesDictionary;
+        private ArrayList<float[]> textureCoordinatesDictionary;
+        private ArrayList<Integer> verticesOrderList;
+        private ArrayList<Face> faceList;
 
         private int nbVertices;
 
         protected int vertexBufferSize;
         protected FloatBuffer vertexBuffer;
         protected FloatBuffer normalBuffer;
+        protected FloatBuffer textureCoordinatesBuffer;
+        protected boolean hasTexture;
 
         public Object3DData(String file) {
             verticesDictionary = new ArrayList<>();
             normalsDictionary = new ArrayList<>();
-            facesDictionary = new ArrayList<>();
+            textureCoordinatesDictionary = new ArrayList<>();
+            verticesOrderList = new ArrayList<>();
+            faceList = new ArrayList<>();
+            hasTexture = false;
 
             loadFile(file);
             buildBuffers();
-            Log.d("Object3DFactory", "[" + file + "] " + nbVertices + " vertices");
+            Log.d("Object3DFactory", "[" + file + "] " + nbVertices + " vertices" + (this.hasTexture ? " with texture" : ""));
 
-            vertexBufferSize = facesDictionary.size() * 3;
+            vertexBufferSize = faceList.size() * 3;
         }
 
         /**
          * Load OBJ file and build the model
+         *
          * @param file File path
          */
         private void loadFile(String file) {
@@ -98,7 +116,7 @@ public class Object3DFactory {
                 String line;
                 do {
                     line = reader.readLine();
-                    if(line != null) {
+                    if (line != null) {
                         if (line.startsWith("v ")) { //vertex
                             String[] split = line.split(" ");
                             float[] vertex = new float[3];
@@ -107,6 +125,14 @@ public class Object3DFactory {
                             vertex[2] = Float.parseFloat(split[3]);
 
                             verticesDictionary.add(vertex);
+                        } else if (line.startsWith("vt ")) { //texture coordinates
+                            String[] split = line.split(" ");
+                            float[] textureCoordinates = new float[2];
+                            textureCoordinates[0] = Float.parseFloat(split[1]);
+                            textureCoordinates[1] = Float.parseFloat(split[2]);
+
+                            textureCoordinatesDictionary.add(textureCoordinates);
+                            hasTexture = true;
                         } else if (line.startsWith("vn ")) { //normal
                             String[] split = line.split(" ");
                             float[] normal = new float[3];
@@ -116,7 +142,7 @@ public class Object3DFactory {
 
                             normalsDictionary.add(normal);
                         } else if (line.startsWith("f ")) { //face
-                            facesDictionary.add(new Face(line));
+                            faceList.add(new Face(line, hasTexture));
                         }
                     }
                 } while (line != null);
@@ -126,30 +152,45 @@ public class Object3DFactory {
             }
         }
 
+
         /**
          * Build vertices and normals buffer (FloatBuffer) from the model
          */
         private void buildBuffers() {
             nbVertices = 0;
 
-            ByteBuffer byteBuf = ByteBuffer.allocateDirect(facesDictionary.size() * 3 * 3 * 4);
+            ByteBuffer byteBuf = ByteBuffer.allocateDirect(faceList.size() * 3 * 3 * 4);
             byteBuf.order(ByteOrder.nativeOrder());
             vertexBuffer = byteBuf.asFloatBuffer();
 
-            for(Face face : facesDictionary) {
-                for(int i = 0; i<face.getVerticesIndex().length; i++) {
+            for (Face face : faceList) {
+                for (int i = 0; i < face.getVerticesIndex().length; i++) {
                     vertexBuffer.put(verticesDictionary.get(face.getVerticesIndex()[i]));
                     nbVertices++;
                 }
             }
             vertexBuffer.position(0);
 
-            byteBuf = ByteBuffer.allocateDirect(facesDictionary.size() * 3 * 3 * 4);
+            if (hasTexture) {
+                byteBuf = ByteBuffer.allocateDirect(faceList.size() * 3 * 2 * 4);
+                byteBuf.order(ByteOrder.nativeOrder());
+                textureCoordinatesBuffer = byteBuf.asFloatBuffer();
+
+                for (Face face : faceList) {
+                    for (int i = 0; i < face.getTextureCoordinatesIndex().length; i++) {
+                        textureCoordinatesBuffer.put(
+                                textureCoordinatesDictionary.get(face.getTextureCoordinatesIndex()[i]));
+                    }
+                }
+                textureCoordinatesBuffer.position(0);
+            }
+
+            byteBuf = ByteBuffer.allocateDirect(faceList.size() * 3 * 3 * 4);
             byteBuf.order(ByteOrder.nativeOrder());
             normalBuffer = byteBuf.asFloatBuffer();
 
-            for(Face face : facesDictionary) {
-                for(int i = 0; i<face.getNormalsIndex().length; i++) {
+            for (Face face : faceList) {
+                for (int i = 0; i < face.getNormalsIndex().length; i++) {
                     normalBuffer.put(normalsDictionary.get(face.getNormalsIndex()[i]));
                 }
             }
@@ -167,6 +208,10 @@ public class Object3DFactory {
         public FloatBuffer getNormalBuffer() {
             return normalBuffer;
         }
+
+        public FloatBuffer getTextureCoordinatesBuffer() {
+            return textureCoordinatesBuffer;
+        }
     }
 
     /**
@@ -175,18 +220,21 @@ public class Object3DFactory {
     public class Face {
         private int[] verticesIndex;
         private int[] normalsIndex;
+        private int[] textureCoordinatesIndex;
 
-        public Face(String objLine)
-        {
+        public Face(String objLine, boolean hasTexture) {
             verticesIndex = new int[3];
             normalsIndex = new int[3];
+            textureCoordinatesIndex = new int[3];
 
             String[] vertices = objLine.split(" ");
             String[] vertexInfo;
 
-            for(int i = 1; i<4; i++) {
+            for (int i = 1; i < 4; i++) {
                 vertexInfo = vertices[i].split("/");
                 verticesIndex[i - 1] = Integer.parseInt(vertexInfo[0]) - 1;
+                if(hasTexture)
+                    textureCoordinatesIndex[i - 1] = Integer.parseInt(vertexInfo[1]) - 1;
                 normalsIndex[i - 1] = Integer.parseInt(vertexInfo[2]) - 1;
             }
         }
@@ -197,6 +245,10 @@ public class Object3DFactory {
 
         public int[] getNormalsIndex() {
             return normalsIndex;
+        }
+
+        public int[] getTextureCoordinatesIndex() {
+            return textureCoordinatesIndex;
         }
     }
 }
