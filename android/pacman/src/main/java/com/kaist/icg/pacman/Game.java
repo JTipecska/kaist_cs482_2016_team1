@@ -54,7 +54,7 @@ public class Game {
         lightPosition = new float[] {0.0f, 0.0f, 0.0f};
 
         scene = new Scene();
-        fpsCounter = Object3DFactory.getInstance().instanciate("plane.obj", TextElement.class);
+        fpsCounter = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
         fpsCounter.setText("00 FPS");
         fpsCounter.setTextSize(30f);
         fpsCounter.setScreenPosition(Camera.getInstance().getScreenWidth() - fpsCounter.getBounds().width(),
