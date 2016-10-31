@@ -53,6 +53,34 @@ public class Material {
         this.textureBitmap.recycle();
     }
 
+    public Material(Bitmap texture) {
+        this.textureBitmap = texture;
+        this.textured = true;
+
+        int[] textureHandle = new int[1];
+        GLES20.glGenTextures(1, textureHandle, 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
+
+        // Set filtering
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
+                GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
+                GLES20.GL_LINEAR);
+
+        // Set wrapping mode
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
+                GLES20.GL_REPEAT);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
+                GLES20.GL_REPEAT);
+
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, textureBitmap, 0);
+
+        if (textureHandle[0] == 0)
+            throw new RuntimeException("Error loading textureBitmap.");
+
+        this.textureDataHandler = textureHandle[0];
+    }
+
     public Material(float[] color, float[] aLight, float[] dLight,
         float[] sLight, float shininess){
         this.color = color;

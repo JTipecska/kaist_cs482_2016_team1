@@ -3,12 +3,10 @@ package com.kaist.icg.pacman;
 import android.os.SystemClock;
 
 import com.kaist.icg.pacman.graphic.Camera;
-import com.kaist.icg.pacman.graphic.Object3D;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
-import com.kaist.icg.pacman.graphic.android.PacManActivity;
 import com.kaist.icg.pacman.graphic.android.PacManGLSurfaceView;
 import com.kaist.icg.pacman.graphic.pipe.Scene;
-import com.kaist.icg.pacman.graphic.ui.UIElement;
+import com.kaist.icg.pacman.graphic.ui.TextElement;
 import com.kaist.icg.pacman.manager.InputManager;
 import com.kaist.icg.pacman.manager.LevelManager;
 import com.kaist.icg.pacman.manager.ShaderManager;
@@ -37,7 +35,7 @@ public class Game {
     private float[] lightPosition;
 
     //Test
-    private Object3D uiElement;
+    private TextElement fpsCounter;
 
     /**
      * Load assets etc...
@@ -56,7 +54,11 @@ public class Game {
         lightPosition = new float[] {0.0f, 0.0f, 0.0f};
 
         scene = new Scene();
-        uiElement = Object3DFactory.getInstance().instanciate("plane.obj", UIElement.class);
+        fpsCounter = Object3DFactory.getInstance().instanciate("plane.obj", TextElement.class);
+        fpsCounter.setText("00 FPS");
+        fpsCounter.setTextSize(30f);
+        fpsCounter.setScreenPosition(Camera.getInstance().getScreenWidth() - fpsCounter.getBounds().width(),
+                0);
 
         lastUpdate = SystemClock.uptimeMillis();
         shaderManager.initialize(Camera.getInstance().getProjMatrix(),
@@ -88,9 +90,8 @@ public class Game {
         //FPS counter update
         if(SystemClock.uptimeMillis() - lastFPSupdate > 1000) {
             //Compute FPS: number_frame_drew / (elapsed_time / 1000)
-            ((PacManActivity) glView.getContext()).setLogText(
-                    nbFrameSinceLastFPSupdate / ((SystemClock.uptimeMillis() -
-                            lastFPSupdate) / 1000) + " fps");
+            fpsCounter.setText(nbFrameSinceLastFPSupdate / ((SystemClock.uptimeMillis() -
+                    lastFPSupdate) / 1000) + " FPS");
 
             nbFrameSinceLastFPSupdate = 0;
             lastFPSupdate = SystemClock.uptimeMillis();
@@ -103,7 +104,7 @@ public class Game {
      */
     private void onRender() {
         scene.render();
-        uiElement.draw();
+        fpsCounter.draw();
     }
 
     public void onPause() {

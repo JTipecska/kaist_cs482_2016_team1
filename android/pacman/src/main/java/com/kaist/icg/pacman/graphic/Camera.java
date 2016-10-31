@@ -2,6 +2,8 @@ package com.kaist.icg.pacman.graphic;
 
 import android.opengl.Matrix;
 
+import com.kaist.icg.pacman.graphic.ui.UIElement;
+
 public class Camera {
     private static Camera INSTANCE;
 
@@ -12,6 +14,8 @@ public class Camera {
         return INSTANCE;
     }
 
+    private float screenWidth;
+    private float screenHeight;
     private float[] mProjMatrix = new float[16];
     private float[] mViewMatrix = new float[16];
 
@@ -44,6 +48,9 @@ public class Camera {
     }
 
     public void onSurfaceChanged(int width, int height) {
+        this.screenWidth = width;
+        this.screenHeight = height;
+
         // Create a new perspective projection matrix. The height will stay the same
         // while the width will vary as per aspect frustumRatio.
         frustumRatio = (float) width / height;
@@ -51,6 +58,7 @@ public class Camera {
         frustumRight = frustumRatio;
 
         Matrix.frustumM(mProjMatrix, 0, frustumLeft, frustumRight, frustumBottom, frustumTop, frustumNear, frustumFar);
+        UIElement.updateUIElements();
     }
 
     public void resetViewMatrix() {
@@ -70,5 +78,29 @@ public class Camera {
 
     public float getNearestZPosition() {
         return eyeZ - frustumNear - 0.0001f;
+    }
+
+    public float screenToCameraX(float x) {
+        return ((x/screenWidth) * (frustumRatio*2)) - frustumRatio;
+    }
+
+    public float screenToCameraY(float y) {
+        return 0 - (((y/screenHeight) * 2) - 1);
+    }
+
+    public float screenWidthToScaleX(float width) {
+        return (width / screenWidth) * (frustumRatio * 2);
+    }
+
+    public float screenHeightToScaleY(float height) {
+        return (height / screenHeight) * 2;
+    }
+
+    public float getScreenWidth() {
+        return screenWidth;
+    }
+
+    public float getScreenHeight() {
+        return screenHeight;
     }
 }

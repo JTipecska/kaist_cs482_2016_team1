@@ -1,5 +1,7 @@
 package com.kaist.icg.pacman.graphic;
 
+import android.graphics.Bitmap;
+
 import com.kaist.icg.pacman.tool.Material;
 
 import java.nio.FloatBuffer;
@@ -24,14 +26,40 @@ public class Object3D extends Drawable {
     }
 
     public Object3D(int vertexBufferSize, FloatBuffer vertexBuffer,
-                    FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer, String textureFile) {
+                    FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer) {
+        this.vertexBufferSize = vertexBufferSize;
+        this.vertexBuffer = vertexBuffer;
+        this.normalBuffer = normalBuffer;
+        this.textureCoordinatesBuffer = textureCoordinatesBuffer;
+        this.hasTexture = true;
+        this.color = new float[] {(float) Math.random(), (float) Math.random(), (float) Math.random()};
+
+        material = new Material(color);
+    }
+
+    public void setTextureFile(String fileName) {
+        if(this.textureCoordinatesBuffer == null)
+            throw new RuntimeException("Assigned texture file to a mesh without UV mapping information");
+
+        material = new Material(fileName);
+    }
+
+    public void setTexture(Bitmap bitmap) {
+        if(this.textureCoordinatesBuffer == null)
+            throw new RuntimeException("Assigned texture file to a mesh without UV mapping information");
+
+        material = new Material(bitmap);
+    }
+
+    public Object3D(int vertexBufferSize, FloatBuffer vertexBuffer,
+                    FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer, Bitmap texture) {
         this.vertexBufferSize = vertexBufferSize;
         this.vertexBuffer = vertexBuffer;
         this.normalBuffer = normalBuffer;
         this.textureCoordinatesBuffer = textureCoordinatesBuffer;
         this.hasTexture = true;
 
-        material = new Material(textureFile);
+        material = new Material(texture);
     }
 
     /**

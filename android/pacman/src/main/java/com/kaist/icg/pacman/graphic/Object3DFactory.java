@@ -52,12 +52,11 @@ public class Object3DFactory {
         try {
             if (data.hasTexture)
                 return type.getDeclaredConstructor(int.class,
-                        FloatBuffer.class, FloatBuffer.class, FloatBuffer.class, String.class).newInstance(
+                        FloatBuffer.class, FloatBuffer.class, FloatBuffer.class).newInstance(
                         data.getVertexBufferSize(),
                         data.getVertexBuffer(),
                         data.getNormalBuffer(),
-                        data.getTextureCoordinatesBuffer(),
-                        file + ".png"
+                        data.getTextureCoordinatesBuffer()
                 );
             else
                 return type.getDeclaredConstructor(int.class,

@@ -59,7 +59,7 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
 
         Camera.getInstance().resetViewMatrix();
 
-        game.init();
+        //game.init();
     }
 
     @Override
@@ -80,6 +80,8 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
 
         Camera.getInstance().onSurfaceChanged(width, height);
         InputManager.getInstance().onSurfaceSizeChanged(width, height);
+
+        game.init();
     }
 
     public void setGame(Game game) {
