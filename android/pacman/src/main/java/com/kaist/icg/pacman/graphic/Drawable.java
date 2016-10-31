@@ -6,6 +6,7 @@ import com.kaist.icg.pacman.manager.ShaderManager;
 import com.kaist.icg.pacman.tool.Material;
 
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 
 /**
@@ -32,9 +33,9 @@ public class Drawable {
     protected int vertexBufferSize;
     protected FloatBuffer vertexBuffer;
     protected FloatBuffer normalBuffer;
+    protected FloatBuffer textureCoordinatesBuffer;
+    protected ShortBuffer drawOrderBuffer;
 
-    // Const
-    protected static final int COORDS_PER_VERTEX = 3;
 
     //Test
     protected Drawable parent;
@@ -44,10 +45,7 @@ public class Drawable {
     protected Material material;
     protected ShaderManager.Shader shader = ShaderManager.Shader.TOON;
 
-    public void setMaterial(Material material) {this.material = material;}
-
     public void setShader(ShaderManager.Shader shader) {this.shader = shader;}
-
 
     public Drawable() {
         position = new float[3];

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.kaist.icg.pacman.Game;
 
@@ -31,7 +30,6 @@ public class PacManActivity extends Activity {
 
     public static Context context;
     private PacManGLSurfaceView glView;
-    private TextView logTextView;
     private Game game;
 
     @Override
@@ -47,7 +45,6 @@ public class PacManActivity extends Activity {
 
         PacManActivity.context = getApplicationContext();
         glView = (PacManGLSurfaceView) findViewById(R.id.main_glSurfaceView);
-        logTextView = (TextView) findViewById(R.id.main_log);
 
         game = new Game(glView);
     }
@@ -66,16 +63,5 @@ public class PacManActivity extends Activity {
 
         glView.onResume();
         game.onResume();
-    }
-
-    public void setLogText(final String log) {
-        //Call logTextView.setText on the UI thread
-        //UI update can not be called on another thread
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                logTextView.setText(log);
-            }
-        });
     }
 }
