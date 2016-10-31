@@ -14,8 +14,8 @@ public class Camera {
         return INSTANCE;
     }
 
-    private float screenWidth;
-    private float screenHeight;
+    private int screenWidth;
+    private int screenHeight;
     private float[] mProjMatrix = new float[16];
     private float[] mViewMatrix = new float[16];
 
@@ -77,7 +77,7 @@ public class Camera {
     }
 
     public float getNearestZPosition() {
-        return eyeZ - frustumNear - 0.0001f;
+        return eyeZ - frustumNear - 0.001f;
     }
 
     public float screenToCameraX(float x) {
@@ -96,11 +96,11 @@ public class Camera {
         return (height / screenHeight) * 2;
     }
 
-    public float getScreenWidth() {
+    public int getScreenWidth() {
         return screenWidth;
     }
 
-    public float getScreenHeight() {
+    public int getScreenHeight() {
         return screenHeight;
     }
 }

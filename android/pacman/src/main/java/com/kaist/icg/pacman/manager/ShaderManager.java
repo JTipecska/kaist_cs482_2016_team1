@@ -101,7 +101,12 @@ public class ShaderManager {
         GLES20.glUniform3fv(specularHandle, 1, material.getSpecularLight(), 0);
         GLES20.glUniform1f(shininessHandle, material.getShininess());
         GLES20.glUniform3fv(colorHandle, 1, material.getColor(), 0);
-        GLES20.glUniform1i(textureHandle, 0);
+
+        if(material.isTextured()) {
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.getTextureDataHandler());
+            GLES20.glUniform1i(textureHandle, 0);
+        }
     }
 
     // load shaders, link matrices, variables and buffers, draw
@@ -163,6 +168,8 @@ public class ShaderManager {
                     textureCoordinatesHandle, 2,
                     GLES20.GL_FLOAT, false,
                     2*4, textureCoordinatesBuffer);
+
+
         }
 
         linkMaterialVariables(material);

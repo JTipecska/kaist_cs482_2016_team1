@@ -5,6 +5,7 @@ import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
 import com.kaist.icg.pacman.graphic.android.PacManGLRenderer;
+import com.kaist.icg.pacman.manager.TextureManager;
 
 // TODO: define materials like 'Ghost material' and pass it to the drawables.
 public class Material {
@@ -18,6 +19,7 @@ public class Material {
     private boolean textured;
     private Bitmap textureBitmap;
     private int textureDataHandler;
+    private int textureSlot;
 
     public Material(float[] color){
         this.color = color;
@@ -25,41 +27,22 @@ public class Material {
     }
 
     public Material(String textureFile){
-        this.textureBitmap = PacManGLRenderer.loadImage(textureFile);
-        this.textured = true;
-
-        int[] textureHandle = new int[1];
-        GLES20.glGenTextures(1, textureHandle, 0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
-
-        // Set filtering
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
-                GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
-                GLES20.GL_LINEAR);
-
-        // Set wrapping mode
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
-                GLES20.GL_REPEAT);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
-                GLES20.GL_REPEAT);
-
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, textureBitmap, 0);
-
-        if (textureHandle[0] == 0)
-            throw new RuntimeException("Error loading textureBitmap.");
-
-        this.textureDataHandler = textureHandle[0];
-        this.textureBitmap.recycle();
+        loadTexture(PacManGLRenderer.loadImage(textureFile));
     }
 
     public Material(Bitmap texture) {
+        loadTexture(texture);
+    }
+
+    private void loadTexture(Bitmap texture) {
         this.textureBitmap = texture;
         this.textured = true;
 
-        int[] textureHandle = new int[1];
-        GLES20.glGenTextures(1, textureHandle, 0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
+        if(textureSlot == 0)
+            textureSlot = TextureManager.getInstance().getFreeTextureSlot(GLES20.GL_TEXTURE0);
+        GLES20.glGenTextures(1, TextureManager.getInstance().getTexturePack(GLES20.GL_TEXTURE0), textureSlot);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
+                TextureManager.getInstance().getTexturePack(GLES20.GL_TEXTURE0)[textureSlot]);
 
         // Set filtering
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
@@ -75,10 +58,10 @@ public class Material {
 
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, textureBitmap, 0);
 
-        if (textureHandle[0] == 0)
+        if (TextureManager.getInstance().getTexturePack(GLES20.GL_TEXTURE0)[textureSlot] == 0)
             throw new RuntimeException("Error loading textureBitmap.");
 
-        this.textureDataHandler = textureHandle[0];
+        this.textureDataHandler = TextureManager.getInstance().getTexturePack(GLES20.GL_TEXTURE0)[textureSlot];
     }
 
     public Material(float[] color, float[] aLight, float[] dLight,
@@ -107,4 +90,20 @@ public class Material {
     public int getTextureDataHandler() {return textureDataHandler;}
 
     public void setColor(float[] color) {this.color = color;}
+
+    public void dispose() {
+        if(textureBitmap != null)
+            textureBitmap.recycle();
+
+        if(isTextured())
+            TextureManager.getInstance().getTexturePack(GLES20.GL_TEXTURE0)[textureSlot] = -1;
+    }
+
+    public void setTexture(Bitmap bitmap) {
+        loadTexture(bitmap);
+    }
+
+    public void setTexture(String textureFile) {
+        loadTexture(PacManGLRenderer.loadImage(textureFile));
+    }
 }

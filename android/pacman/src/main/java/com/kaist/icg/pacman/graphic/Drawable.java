@@ -6,7 +6,6 @@ import com.kaist.icg.pacman.manager.ShaderManager;
 import com.kaist.icg.pacman.tool.Material;
 
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.ArrayList;
 
 /**
@@ -34,7 +33,6 @@ public class Drawable {
     protected FloatBuffer vertexBuffer;
     protected FloatBuffer normalBuffer;
     protected FloatBuffer textureCoordinatesBuffer;
-    protected ShortBuffer drawOrderBuffer;
 
 
     //Test

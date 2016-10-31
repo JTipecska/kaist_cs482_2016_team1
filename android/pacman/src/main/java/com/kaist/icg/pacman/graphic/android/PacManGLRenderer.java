@@ -123,11 +123,11 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
     public static Bitmap loadImage(String fileName) {
         try {
             Bitmap tmp = BitmapFactory.decodeStream(PacManActivity.context.getAssets().open(fileName));
-            android.graphics.Matrix matrix = new android.graphics.Matrix();
+            /*android.graphics.Matrix matrix = new android.graphics.Matrix();
             matrix.preScale(1.0f, -1.0f);
             Bitmap image = Bitmap.createBitmap(tmp, 0, 0, tmp.getWidth(), tmp.getHeight(), matrix, true);
-            tmp.recycle();
-            return image;
+            tmp.recycle();*/
+            return tmp;
         } catch (IOException e) {
             e.printStackTrace();
         }

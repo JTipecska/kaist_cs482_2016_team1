@@ -5,20 +5,37 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
+
+import com.kaist.icg.pacman.graphic.android.PacManActivity;
+import com.kaist.icg.pacman.graphic.android.PacManGLRenderer;
 
 import java.nio.FloatBuffer;
 
 public class TextElement extends UIElement {
+    private static Paint backgroundImagePaint;
+    private static Typeface textTypeface;
+
     private String text;
     private Bitmap bitmap;
     private Paint paint;
-    private Rect bounds;
     private int backgroundColor;
     private int foregroundColor;
+    private Bitmap backgroundImage;
     private boolean isDirty;
+    private Rect textBounds;
+    private Rect padding;
 
     public TextElement(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer) {
         super(vertexBufferSize, vertexBuffer, normalBuffer, textureCoordinatesBuffer);
+
+        if(backgroundImagePaint == null) {
+            backgroundImagePaint = new Paint();
+            backgroundImagePaint.setAntiAlias(true);
+            backgroundImagePaint.setColor(Color.WHITE);
+
+            textTypeface = Typeface.createFromAsset(PacManActivity.context.getAssets(), "font.ttf");
+        }
 
         this.foregroundColor = Color.WHITE;
         this.backgroundColor = Color.BLUE;
@@ -28,8 +45,11 @@ public class TextElement extends UIElement {
         paint.setTextSize(32);
         paint.setAntiAlias(true);
         paint.setColor(foregroundColor);
+        paint.setTypeface(textTypeface);
 
-        bounds = new Rect();
+        textBounds = new Rect();
+        padding = new Rect();
+        text = "";
     }
 
     @Override
@@ -40,8 +60,10 @@ public class TextElement extends UIElement {
     }
 
     public void setText(String text) {
-        this.text = text;
-        this.isDirty = true;
+        if(!this.text.equals(text)) {
+            this.text = text;
+            this.isDirty = true;
+        }
     }
 
     public void setTextSize(float size) {
@@ -59,29 +81,47 @@ public class TextElement extends UIElement {
         if(this.foregroundColor != foregroundColor)
             this.isDirty = true;
         this.foregroundColor = foregroundColor;
+        this.paint.setColor(foregroundColor);
+    }
+
+    public void setBackgroundImage(String backgroundImageFile) {
+        if(this.backgroundImage != null)
+            this.backgroundImage.recycle();
+        this.backgroundImage = PacManGLRenderer.loadImage(backgroundImageFile);
+        this.isDirty = true;
     }
 
     private void renderTexture() {
         if(bitmap != null)
             bitmap.recycle();
 
-        paint.getTextBounds(text, 0, text.length(), bounds);
-        bounds.right += 5;
+        paint.getTextBounds(text, 0, text.length(), textBounds);
+        textBounds.right += 5;
 
-        bitmap = Bitmap.createBitmap(bounds.width(), bounds.height(), Bitmap.Config.ARGB_4444);
+        bitmap = Bitmap.createBitmap(textBounds.width() + padding.left + padding.right,
+                textBounds.height() + padding.top + padding.bottom,
+                Bitmap.Config.ARGB_4444);
+
         Canvas canvas = new Canvas(bitmap);
         bitmap.eraseColor(backgroundColor);
 
-        canvas.drawText(text, 0, bounds.height(), paint);
+        if(this.backgroundImage != null)
+            canvas.drawBitmap(this.backgroundImage,
+                    new Rect(0, 0, this.backgroundImage.getWidth(), this.backgroundImage.getHeight()),
+                    new Rect(0, 0, textBounds.width() + padding.left + padding.right,
+                            textBounds.height() + padding.top + padding.bottom),
+                    backgroundImagePaint);
 
+        canvas.drawText(text, padding.left, textBounds.height() + padding.top, paint);
+
+        this.updateBounds();
         setTexture(bitmap);
-        setSize(bounds.width(), bounds.height());
+        setScreenSize(textBounds.width(), textBounds.height());
         this.isDirty = false;
     }
 
-    public Rect getBounds() {
-        if(this.isDirty)
-            renderTexture();
-        return bounds;
+    public void setPadding(int top, int right, int bottom, int left) {
+        padding.set(left, top, right ,bottom);
+        this.isDirty = true;
     }
 }

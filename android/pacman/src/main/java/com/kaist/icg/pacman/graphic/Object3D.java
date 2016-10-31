@@ -41,14 +41,14 @@ public class Object3D extends Drawable {
         if(this.textureCoordinatesBuffer == null)
             throw new RuntimeException("Assigned texture file to a mesh without UV mapping information");
 
-        material = new Material(fileName);
+        material.setTexture(fileName);
     }
 
     public void setTexture(Bitmap bitmap) {
         if(this.textureCoordinatesBuffer == null)
             throw new RuntimeException("Assigned texture file to a mesh without UV mapping information");
 
-        material = new Material(bitmap);
+        material.setTexture(bitmap);
     }
 
     public Object3D(int vertexBufferSize, FloatBuffer vertexBuffer,
