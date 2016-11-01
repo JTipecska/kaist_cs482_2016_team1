@@ -21,9 +21,8 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
-import com.kaist.icg.pacman.Game;
+import com.kaist.icg.pacman.View;
 import com.kaist.icg.pacman.graphic.Camera;
-import com.kaist.icg.pacman.manager.InputManager;
 
 import org.apache.commons.io.IOUtils;
 
@@ -46,7 +45,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class PacManGLRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "PacManGLRenderer";
-    private Game game;
+    private View view;
 
     public PacManGLRenderer() {}
 
@@ -59,7 +58,7 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
 
         Camera.getInstance().resetViewMatrix();
 
-        //game.init();
+        //view.init();
     }
 
     @Override
@@ -67,9 +66,9 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
         // Draw background color (clear screen)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-        //call Game main loop
-        if(game != null)
-            game.loop();
+        //call GameView main loop
+        if(view != null)
+            view.loop();
     }
 
     @Override
@@ -79,13 +78,12 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
         GLES20.glViewport(0, 0, width, height);
 
         Camera.getInstance().onSurfaceChanged(width, height);
-        InputManager.getInstance().onSurfaceSizeChanged(width, height);
 
-        game.init();
+        view.init();
     }
 
-    public void setGame(Game game) {
-        this.game = game;
+    public void setView(View view) {
+        this.view = view;
     }
 
     public static int loadShader(int type, String shaderCode){

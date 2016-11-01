@@ -21,16 +21,21 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.kaist.icg.pacman.Game;
+import com.kaist.icg.pacman.GameView;
+import com.kaist.icg.pacman.MenuView;
+import com.kaist.icg.pacman.View;
+import com.kaist.icg.pacman.manager.InputManager;
 
 /**
- * Game activity.
+ * GameView activity.
  */
 public class PacManActivity extends Activity {
 
     public static Context context;
+    public static PacManActivity current;
+
     private PacManGLSurfaceView glView;
-    private Game game;
+    private View currentView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,9 +49,10 @@ public class PacManActivity extends Activity {
         setContentView(R.layout.main);
 
         PacManActivity.context = getApplicationContext();
+        PacManActivity.current = this;
         glView = (PacManGLSurfaceView) findViewById(R.id.main_glSurfaceView);
 
-        game = new Game(glView);
+        currentView = new MenuView(glView);
     }
 
     @Override
@@ -54,7 +60,7 @@ public class PacManActivity extends Activity {
         super.onPause();
 
         glView.onPause();
-        game.onPause();
+        currentView.onPause();
     }
 
     @Override
@@ -62,6 +68,13 @@ public class PacManActivity extends Activity {
         super.onResume();
 
         glView.onResume();
-        game.onResume();
+        currentView.onResume();
+    }
+
+    public void startNewGame() {
+        InputManager.getInstance().setTouchListener(null);
+        currentView.cleanup();
+        currentView = new GameView(glView);
+        currentView.init();
     }
 }

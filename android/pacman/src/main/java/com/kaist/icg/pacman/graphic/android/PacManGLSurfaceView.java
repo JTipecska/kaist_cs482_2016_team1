@@ -20,7 +20,7 @@ import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.kaist.icg.pacman.Game;
+import com.kaist.icg.pacman.View;
 import com.kaist.icg.pacman.manager.InputManager;
 
 /**
@@ -31,7 +31,7 @@ import com.kaist.icg.pacman.manager.InputManager;
 public class PacManGLSurfaceView extends GLSurfaceView {
 
     private final PacManGLRenderer renderer;
-    private Game game;
+    private View view;
 
 
     public PacManGLSurfaceView(Context context, AttributeSet attrs) {
@@ -40,8 +40,8 @@ public class PacManGLSurfaceView extends GLSurfaceView {
         // Create an OpenGL ES 2.0 context.
         setEGLContextClientVersion(2);
 
-        //Pass the Game as argument so renderer can call Game.loop on each frame
-        //Android is ready to draw a new frame > renderer.onDrawFrame > Game.loop
+        //Pass the GameView as argument so renderer can call GameView.loop on each frame
+        //Android is ready to draw a new frame > renderer.onDrawFrame > GameView.loop
         renderer = new PacManGLRenderer();
 
         // Set the Renderer for drawing on the GLSurfaceView
@@ -71,9 +71,9 @@ public class PacManGLSurfaceView extends GLSurfaceView {
         return true;
     }
 
-    public void setGame(Game game) {
-        this.game = game;
-        renderer.setGame(game);
+    public void setView(View view) {
+        this.view = view;
+        renderer.setView(view);
     }
 
     public PacManGLRenderer getRenderer() {

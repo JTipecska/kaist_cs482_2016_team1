@@ -46,7 +46,7 @@ public class UIElement extends Object3D {
     }
 
     public void update() {
-        this.setScreenPosition(bounds.left, bounds.top, EAnchorPoint.TopLeft);
+        this.setScreenPosition(lastScreenPositionX, lastScreenPositionY, anchorPoint);
         this.setScreenSize(bounds.width(), bounds.height());
     }
 
@@ -81,8 +81,8 @@ public class UIElement extends Object3D {
                 this.bounds.bottom = this.bounds.top + elementHeight;
                 break;
             case Center:
-                this.bounds.left = (int) (Camera.getInstance().getScreenWidth() / 2 - elementWidth / 2);
-                this.bounds.top = (int) (Camera.getInstance().getScreenHeight() / 2 - elementHeight / 2);
+                this.bounds.left = (int) (Camera.getInstance().getScreenWidth() / 2 - elementWidth / 2) + x;
+                this.bounds.top = (int) (Camera.getInstance().getScreenHeight() / 2 - elementHeight / 2) + y;
                 this.bounds.right = this.bounds.left + elementWidth;
                 this.bounds.bottom = this.bounds.top + elementHeight;
                 break;
@@ -125,12 +125,21 @@ public class UIElement extends Object3D {
     }
 
     /**
-     * Set the z-index. It should be in range [0;10[
+     * Set the z-index. It should be in range [-10;10[
      * @param z
      */
     public void setZIndex(float z) {
-        if(z < 0 || z > 10)
-            throw new RuntimeException("Trying to set a z-index out of range (0 <= z-index < 10). Current value: " + z);
+        if(z < -10 || z > 10)
+            throw new RuntimeException("Trying to set a z-index out of range (-10 <= z-index < 10). Current value: " + z);
         this.zIndex = z / 10000;
+        update();
+    }
+
+    public Rect getBounds() {
+        return bounds;
+    }
+
+    public void dispose() {
+        this.material.dispose();
     }
 }

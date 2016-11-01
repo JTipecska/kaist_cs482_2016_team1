@@ -116,12 +116,23 @@ public class TextElement extends UIElement {
 
         this.updateBounds();
         setTexture(bitmap);
-        setScreenSize(textBounds.width(), textBounds.height());
+        setScreenSize(textBounds.width() + padding.left + padding.right,
+                textBounds.height() + padding.top + padding.bottom);
         this.isDirty = false;
     }
 
     public void setPadding(int top, int right, int bottom, int left) {
         padding.set(left, top, right ,bottom);
         this.isDirty = true;
+    }
+
+    public void dispose() {
+        super.dispose();
+
+        if(bitmap != null)
+            bitmap.recycle();
+
+        if(backgroundImage != null)
+            backgroundImage.recycle();
     }
 }

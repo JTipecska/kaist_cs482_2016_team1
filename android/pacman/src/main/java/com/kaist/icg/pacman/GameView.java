@@ -14,7 +14,7 @@ import com.kaist.icg.pacman.manager.ShaderManager;
 /**
  * Main game class
  */
-public class Game {
+public class GameView extends View{
 
     private InputManager inputManager;
     private LevelManager levelManager;
@@ -41,9 +41,9 @@ public class Game {
      * Load assets etc...
      * @param mGLView
      */
-    public  Game(PacManGLSurfaceView mGLView) {
+    public GameView(PacManGLSurfaceView mGLView) {
         this.glView = mGLView;
-        this.glView.setGame(this);
+        this.glView.setView(this);
 
         inputManager = InputManager.getInstance();
         levelManager = LevelManager.getInstance();
@@ -51,7 +51,7 @@ public class Game {
     }
 
     public void init() {
-        Log.d("Game", "Loading game with resolution: " +
+        Log.d("GameView", "Loading game with resolution: " +
                 Camera.getInstance().getScreenWidth() + "x" +
                 Camera.getInstance().getScreenHeight() + " px");
         lightPosition = new float[] {0.0f, 0.0f, 0.0f};
@@ -62,20 +62,14 @@ public class Game {
         lastUpdate = SystemClock.uptimeMillis();
         shaderManager.initialize(Camera.getInstance().getProjMatrix(),
                 Camera.getInstance().getViewMatrix(), lightPosition);
-    }
 
-    /**
-     * Called every frame
-     */
-    public void loop() {
-        onRender();
-        onUpdate();
+        this.isInitialized = true;
     }
 
     /**
      * Update objects positions, player input....
      */
-    private void onUpdate() {
+    public void onUpdate() {
         nbFrameSinceLastFPSupdate++;
 
         //Compute time from last onUpdate
@@ -101,7 +95,7 @@ public class Game {
     /**
      * Draw all the scene
      */
-    private void onRender() {
+    public void onRender() {
         scene.render();
         ui.draw();
     }
@@ -117,6 +111,7 @@ public class Game {
     /**
      * Clean memory
      */
+    @Override
     public void cleanup() {
 
     }

@@ -27,9 +27,6 @@ public class InputManager implements SensorEventListener{
     private static final float MAX_HORIZONTAL_MOVEMENT_SPEED = 1;
 
     private float horizontalMovement;
-    private boolean isJumping;
-    private int surface_width;
-    private int surface_height;
 
     //Sensor stuff
     private SensorManager sensorManager;
@@ -40,6 +37,7 @@ public class InputManager implements SensorEventListener{
     private float[] mR = new float[9];
     private float[] mOrientation = new float[3];
     private double roll = 0;
+    private ITouchListener touchListener;
 
     private InputManager() {
         sensorManager = (SensorManager) PacManActivity.context.getSystemService(Context.SENSOR_SERVICE);
@@ -66,6 +64,7 @@ public class InputManager implements SensorEventListener{
      * OnResume: enable gyroscope update
      */
     public void onResume() {
+        System.out.println("resume");
         mLastAccelerometerSet = false;
         mLastMagnetometerSet = false;
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_GAME);
@@ -105,7 +104,8 @@ public class InputManager implements SensorEventListener{
      * @param y current Y touch position
      */
     public void onTouchStart(float x, float y) {
-        isJumping = true;
+        if(touchListener != null)
+            touchListener.onTouchStart(x, y);
     }
 
     /**
@@ -114,20 +114,20 @@ public class InputManager implements SensorEventListener{
      * @param y current Y touch position
      */
     public void onTouchEnd(float x, float y) {
-        isJumping = false;
-    }
-
-    /**
-     * Called when OpenGL surface size change
-     * @param x current X touch position
-     * @param y current Y touch position
-     */
-    public void onSurfaceSizeChanged(int width, int height) {
-        surface_width = width;
-        surface_height = height;
+        if(touchListener != null)
+            touchListener.onTouchEnd(x, y);
     }
 
     public float getHorizontalMovement() {
         return horizontalMovement;
+    }
+
+    public void setTouchListener(ITouchListener touchListener) {
+        this.touchListener = touchListener;
+    }
+
+    public interface ITouchListener {
+        void onTouchStart(float x, float y);
+        void onTouchEnd(float x, float y);
     }
 }

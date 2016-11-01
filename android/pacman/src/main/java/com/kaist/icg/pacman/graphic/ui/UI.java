@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import com.kaist.icg.pacman.graphic.Drawable;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
+import com.kaist.icg.pacman.graphic.ui.custom.FPSCounterElement;
 
 public class UI extends Drawable{
 
@@ -13,13 +14,7 @@ public class UI extends Drawable{
     private TextElement pointText;
 
     public UI() {
-        fpsCounter = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
-        fpsCounter.setBackgroundImage("button_yellow.png");
-        fpsCounter.setBackgroundColor(Color.TRANSPARENT);
-        fpsCounter.setForegroundColor(Color.BLACK);
-        fpsCounter.setTextSize(30);
-        fpsCounter.setScreenPosition(20, 20, UIElement.EAnchorPoint.TopRight);
-        fpsCounter.setPadding(15, 30, 15, 30);
+        fpsCounter = Object3DFactory.getInstance().instanciate("ui.obj", FPSCounterElement.class);
 
         statusBackground = Object3DFactory.getInstance().instanciate("ui.obj", ImageElement.class);
         statusBackground.setTextureFile("status.png");
