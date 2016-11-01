@@ -46,6 +46,7 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "PacManGLRenderer";
     private View view;
+    private IGLRunnable glRunnable;
 
     public PacManGLRenderer() {}
 
@@ -65,6 +66,11 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 unused) {
         // Draw background color (clear screen)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+
+        if(glRunnable != null) {
+            glRunnable.run();
+            glRunnable = null;
+        }
 
         //call GameView main loop
         if(view != null)
@@ -138,5 +144,13 @@ public class PacManGLRenderer implements GLSurfaceView.Renderer {
             Log.e(TAG, glOperation + ": glError " + error);
             throw new RuntimeException(glOperation + ": glError " + error);
         }
+    }
+
+    public void setGlRunnable(IGLRunnable glRunnable) {
+        this.glRunnable = glRunnable;
+    }
+
+    public interface IGLRunnable {
+        void run();
     }
 }

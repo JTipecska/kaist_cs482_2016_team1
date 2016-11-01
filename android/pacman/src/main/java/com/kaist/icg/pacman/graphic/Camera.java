@@ -2,8 +2,6 @@ package com.kaist.icg.pacman.graphic;
 
 import android.opengl.Matrix;
 
-import com.kaist.icg.pacman.graphic.ui.UIElement;
-
 public class Camera {
     private static Camera INSTANCE;
 
@@ -58,7 +56,6 @@ public class Camera {
         frustumRight = frustumRatio;
 
         Matrix.frustumM(mProjMatrix, 0, frustumLeft, frustumRight, frustumBottom, frustumTop, frustumNear, frustumFar);
-        UIElement.updateUIElements();
     }
 
     public void resetViewMatrix() {

@@ -192,5 +192,4 @@ public class ShaderManager {
         draw(modelMatrix, vertexBuffer, normalBuffer, null, count,
                 material, Shader.DIFFUSE);
     }
-
 }

@@ -8,16 +8,8 @@ import com.kaist.icg.pacman.graphic.Object3D;
 import com.kaist.icg.pacman.manager.ShaderManager;
 
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
 
 public class UIElement extends Object3D {
-    private static ArrayList<UIElement> uiElements = new ArrayList<>();
-
-    public static void updateUIElements() {
-        for(UIElement uiElement : uiElements)
-            uiElement.update();
-    }
-
     public enum EAnchorPoint {
         TopLeft,
         TopRight,
@@ -41,8 +33,6 @@ public class UIElement extends Object3D {
         this.shader = ShaderManager.Shader.UI;
         this.anchorPoint = EAnchorPoint.TopLeft;
         this.bounds = new Rect();
-
-        uiElements.add(this);
     }
 
     public void update() {

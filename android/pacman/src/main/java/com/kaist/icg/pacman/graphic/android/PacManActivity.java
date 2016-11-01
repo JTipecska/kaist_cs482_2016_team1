@@ -22,6 +22,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.kaist.icg.pacman.manager.InputManager;
+import com.kaist.icg.pacman.manager.TextureManager;
 import com.kaist.icg.pacman.view.GameView;
 import com.kaist.icg.pacman.view.MenuView;
 import com.kaist.icg.pacman.view.View;
@@ -35,6 +36,7 @@ public class PacManActivity extends Activity {
     public static PacManActivity current;
 
     private PacManGLSurfaceView glView;
+    private View oldView;
     private View currentView;
 
     @Override
@@ -72,9 +74,20 @@ public class PacManActivity extends Activity {
     }
 
     public void startNewGame() {
+        glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
+            @Override
+            public void run() {
+
+                cleanupCurrentView();
+                currentView = new GameView(glView);
+                currentView.init();
+            }
+        });
+    }
+
+    private void cleanupCurrentView() {
         InputManager.getInstance().setTouchListener(null);
         currentView.cleanup();
-        currentView = new GameView(glView);
-        currentView.init();
+        TextureManager.getInstance().cleanup();
     }
 }
