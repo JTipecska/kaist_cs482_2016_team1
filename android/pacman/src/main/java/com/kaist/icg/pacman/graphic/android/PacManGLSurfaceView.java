@@ -20,8 +20,8 @@ import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.kaist.icg.pacman.View;
 import com.kaist.icg.pacman.manager.InputManager;
+import com.kaist.icg.pacman.view.View;
 
 /**
  * A view container where OpenGL ES graphics can be drawn on screen.

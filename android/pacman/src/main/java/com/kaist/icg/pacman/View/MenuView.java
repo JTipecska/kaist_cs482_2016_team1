@@ -1,4 +1,4 @@
-package com.kaist.icg.pacman;
+package com.kaist.icg.pacman.view;
 
 import android.graphics.Color;
 import android.os.SystemClock;

@@ -21,8 +21,8 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 
-import com.kaist.icg.pacman.View;
 import com.kaist.icg.pacman.graphic.Camera;
+import com.kaist.icg.pacman.view.View;
 
 import org.apache.commons.io.IOUtils;
 

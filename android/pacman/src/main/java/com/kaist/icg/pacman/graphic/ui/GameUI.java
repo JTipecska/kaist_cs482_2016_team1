@@ -6,14 +6,14 @@ import com.kaist.icg.pacman.graphic.Drawable;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.graphic.ui.custom.FPSCounterElement;
 
-public class UI extends Drawable{
+public class GameUI extends Drawable{
 
     private TextElement fpsCounter;
     private ImageElement statusBackground;
     private TextElement levelText;
     private TextElement pointText;
 
-    public UI() {
+    public GameUI() {
         fpsCounter = Object3DFactory.getInstance().instanciate("ui.obj", FPSCounterElement.class);
 
         statusBackground = Object3DFactory.getInstance().instanciate("ui.obj", ImageElement.class);

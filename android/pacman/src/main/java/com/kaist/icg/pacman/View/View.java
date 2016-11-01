@@ -1,4 +1,4 @@
-package com.kaist.icg.pacman;
+package com.kaist.icg.pacman.view;
 
 public abstract class View {
     protected boolean isInitialized;

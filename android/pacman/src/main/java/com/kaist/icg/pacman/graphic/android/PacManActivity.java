@@ -21,10 +21,10 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.kaist.icg.pacman.GameView;
-import com.kaist.icg.pacman.MenuView;
-import com.kaist.icg.pacman.View;
 import com.kaist.icg.pacman.manager.InputManager;
+import com.kaist.icg.pacman.view.GameView;
+import com.kaist.icg.pacman.view.MenuView;
+import com.kaist.icg.pacman.view.View;
 
 /**
  * GameView activity.
