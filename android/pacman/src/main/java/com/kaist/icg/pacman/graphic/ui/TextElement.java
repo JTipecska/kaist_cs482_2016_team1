@@ -13,9 +13,9 @@ import com.kaist.icg.pacman.graphic.android.PacManGLRenderer;
 import java.nio.FloatBuffer;
 
 public class TextElement extends UIElement {
-    private static Paint backgroundImagePaint;
     private static Typeface textTypeface;
 
+    private Paint backgroundImagePaint;
     private String text;
     private Bitmap bitmap;
     private Paint paint;
@@ -29,13 +29,12 @@ public class TextElement extends UIElement {
     public TextElement(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer) {
         super(vertexBufferSize, vertexBuffer, normalBuffer, textureCoordinatesBuffer);
 
-        if(backgroundImagePaint == null) {
-            backgroundImagePaint = new Paint();
-            backgroundImagePaint.setAntiAlias(true);
-            backgroundImagePaint.setColor(Color.WHITE);
-
+        if(textTypeface == null)
             textTypeface = Typeface.createFromAsset(PacManActivity.context.getAssets(), "font.ttf");
-        }
+
+        backgroundImagePaint = new Paint();
+        backgroundImagePaint.setAntiAlias(true);
+        backgroundImagePaint.setColor(Color.WHITE);
 
         this.foregroundColor = Color.WHITE;
         this.backgroundColor = Color.BLUE;
@@ -124,6 +123,11 @@ public class TextElement extends UIElement {
     public void setPadding(int top, int right, int bottom, int left) {
         padding.set(left, top, right ,bottom);
         this.isDirty = true;
+    }
+
+    @Override
+    public void setOpacity(float opacity) {
+        super.setOpacity(opacity);
     }
 
     public void dispose() {

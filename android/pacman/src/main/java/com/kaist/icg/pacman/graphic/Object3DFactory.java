@@ -1,7 +1,5 @@
 package com.kaist.icg.pacman.graphic;
 
-import android.util.Log;
-
 import com.kaist.icg.pacman.graphic.android.PacManActivity;
 
 import java.io.BufferedReader;
@@ -46,8 +44,7 @@ public class Object3DFactory {
         if (data == null) {
             data = new Object3DData(file);
             objectsData.put(file, data);
-        } else
-            Log.d("Object3DFactory", "Cloning [" + file + "] ");
+        }
 
         try {
             if (data.hasTexture)
@@ -97,7 +94,6 @@ public class Object3DFactory {
 
             loadFile(file);
             buildBuffers();
-            Log.d("Object3DFactory", "[" + file + "] " + nbVertices + " vertices" + (this.hasTexture ? " with texture" : ""));
 
             vertexBufferSize = faceList.size() * 3;
         }

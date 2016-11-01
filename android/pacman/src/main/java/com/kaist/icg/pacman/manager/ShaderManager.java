@@ -87,6 +87,7 @@ public class ShaderManager {
     // link all the material specific variables with the shader
     public void linkMaterialVariables(Material material){
         // uniforms
+        int opacityHandle = GLES20.glGetUniformLocation(program, "uOpacity");
         int lightHandle = GLES20.glGetUniformLocation(program, "uLight");
         int ambientHandle = GLES20.glGetUniformLocation(program, "uAmbient");
         int diffuseHandle = GLES20.glGetUniformLocation(program, "uDiffuse");
@@ -95,6 +96,7 @@ public class ShaderManager {
         int colorHandle = GLES20.glGetUniformLocation(program, "uColor");
         int textureHandle = GLES20.glGetUniformLocation(program, "uTexture");
 
+        GLES20.glUniform1f(opacityHandle, material.getOpacity());
         GLES20.glUniform3fv(lightHandle, 1, lightPosition, 0);
         GLES20.glUniform3fv(ambientHandle, 1, material.getAmbientLight(), 0);
         GLES20.glUniform3fv(diffuseHandle, 1, material.getDiffuseLight(), 0);

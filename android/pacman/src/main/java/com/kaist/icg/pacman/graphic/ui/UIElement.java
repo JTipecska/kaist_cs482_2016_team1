@@ -10,6 +10,7 @@ import com.kaist.icg.pacman.manager.ShaderManager;
 import java.nio.FloatBuffer;
 
 public class UIElement extends Object3D {
+
     public enum EAnchorPoint {
         TopLeft,
         TopRight,
@@ -18,14 +19,15 @@ public class UIElement extends Object3D {
         Center
     }
 
-    protected int elementWidth;
-    protected int elementHeight;
+    protected int elementWidth = 1;
+    protected int elementHeight = 1;
     protected Rect bounds;
     protected EAnchorPoint anchorPoint;
     protected float zIndex;
+    protected float opacity;
 
-    private int lastScreenPositionX;
-    private int lastScreenPositionY;
+    protected int lastScreenPositionX;
+    protected int lastScreenPositionY;
 
     public UIElement(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer) {
         super(vertexBufferSize, vertexBuffer, normalBuffer, textureCoordinatesBuffer);
@@ -35,7 +37,7 @@ public class UIElement extends Object3D {
         this.bounds = new Rect();
     }
 
-    public void update() {
+    private void update() {
         this.setScreenPosition(lastScreenPositionX, lastScreenPositionY, anchorPoint);
         this.setScreenSize(bounds.width(), bounds.height());
     }
@@ -123,6 +125,14 @@ public class UIElement extends Object3D {
             throw new RuntimeException("Trying to set a z-index out of range (-10 <= z-index < 10). Current value: " + z);
         this.zIndex = z / 10000;
         update();
+    }
+
+    public void setOpacity(float opacity) {
+        this.material.setOpacity(opacity);
+    }
+
+    public float getOpacity() {
+        return material.getOpacity();
     }
 
     public Rect getBounds() {

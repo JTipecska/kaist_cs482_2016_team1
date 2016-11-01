@@ -20,13 +20,7 @@ public class GameView extends View{
     private LevelManager levelManager;
     private ShaderManager shaderManager;
 
-    private long lastUpdate;
-    private long elapsedTime;
     private PacManGLSurfaceView glView;
-
-    //FPS stuff
-    private long lastFPSupdate;
-    private int nbFrameSinceLastFPSupdate;
 
     //Pipe
     private Scene scene;
@@ -69,27 +63,13 @@ public class GameView extends View{
     /**
      * Update objects positions, player input....
      */
-    public void onUpdate() {
-        nbFrameSinceLastFPSupdate++;
-
-        //Compute time from last onUpdate
-        elapsedTime = SystemClock.uptimeMillis() - lastUpdate;
+    public void onUpdate(long elapsedTime) {
 
         levelManager.update(elapsedTime);
         inputManager.update(elapsedTime);
+        gameUi.update(elapsedTime);
 
         scene.onUpdate(elapsedTime);
-
-        //FPS counter update
-        if(SystemClock.uptimeMillis() - lastFPSupdate > 1000) {
-            //Compute FPS: number_frame_drew / (elapsed_time / 1000)
-            gameUi.updateFPScounter((int) (nbFrameSinceLastFPSupdate / ((SystemClock.uptimeMillis() -
-                                lastFPSupdate) / 1000)));
-
-            nbFrameSinceLastFPSupdate = 0;
-            lastFPSupdate = SystemClock.uptimeMillis();
-        }
-        lastUpdate = SystemClock.uptimeMillis();
     }
 
     /**

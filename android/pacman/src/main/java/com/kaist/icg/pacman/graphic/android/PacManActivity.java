@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import com.kaist.icg.pacman.manager.InputManager;
 import com.kaist.icg.pacman.manager.TextureManager;
 import com.kaist.icg.pacman.view.GameView;
+import com.kaist.icg.pacman.view.HighScoreView;
 import com.kaist.icg.pacman.view.MenuView;
 import com.kaist.icg.pacman.view.View;
 
@@ -54,7 +55,7 @@ public class PacManActivity extends Activity {
         PacManActivity.current = this;
         glView = (PacManGLSurfaceView) findViewById(R.id.main_glSurfaceView);
 
-        currentView = new MenuView(glView);
+        currentView = new MenuView(glView, false);
     }
 
     @Override
@@ -80,6 +81,28 @@ public class PacManActivity extends Activity {
 
                 cleanupCurrentView();
                 currentView = new GameView(glView);
+                currentView.init();
+            }
+        });
+    }
+
+    public void startHighScoreView() {
+        glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
+            @Override
+            public void run() {
+                cleanupCurrentView();
+                currentView = new HighScoreView(glView);
+                currentView.init();
+            }
+        });
+    }
+
+    public void startMenuView() {
+        glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
+            @Override
+            public void run() {
+                cleanupCurrentView();
+                currentView = new MenuView(glView, true);
                 currentView.init();
             }
         });

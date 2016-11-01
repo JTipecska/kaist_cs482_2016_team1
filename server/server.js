@@ -1,7 +1,7 @@
 var express = require('express')
 var app = express();
 var fs = require('fs');
-var port = 8080;
+var port = 7020;
 var scoresFile = "scores.json";
 var scores;
 var maxHighScore = 5;

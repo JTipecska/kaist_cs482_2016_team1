@@ -8,7 +8,7 @@ import com.kaist.icg.pacman.graphic.ui.custom.FPSCounterElement;
 
 public class GameUI extends Drawable{
 
-    private TextElement fpsCounter;
+    private FPSCounterElement fpsCounter;
     private ImageElement statusBackground;
     private TextElement levelText;
     private TextElement pointText;
@@ -43,7 +43,7 @@ public class GameUI extends Drawable{
         this.addChild(pointText);
     }
 
-    public void updateFPScounter(int fps) {
-        fpsCounter.setText(fps + " FPS");
+    public void update(long elapsedTime) {
+        fpsCounter.update(elapsedTime);
     }
 }

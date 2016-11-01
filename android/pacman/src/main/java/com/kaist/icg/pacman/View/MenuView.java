@@ -10,18 +10,12 @@ import com.kaist.icg.pacman.graphic.android.PacManGLSurfaceView;
 import com.kaist.icg.pacman.graphic.ui.ImageElement;
 import com.kaist.icg.pacman.graphic.ui.TextElement;
 import com.kaist.icg.pacman.graphic.ui.UIElement;
+import com.kaist.icg.pacman.graphic.ui.custom.FPSCounterElement;
 import com.kaist.icg.pacman.manager.InputManager;
 import com.kaist.icg.pacman.manager.ShaderManager;
 import com.kaist.icg.pacman.tool.FloatAnimation;
 
 public class MenuView extends View implements InputManager.ITouchListener{
-
-    //FPS stuff
-    private long lastUpdate;
-    private long elapsedTime;
-    private long lastFPSupdate;
-    private int nbFrameSinceLastFPSupdate;
-
     private final ShaderManager shaderManager;
     private InputManager inputManager;
     private PacManGLSurfaceView glView;
@@ -31,15 +25,19 @@ public class MenuView extends View implements InputManager.ITouchListener{
     private ImageElement background1;
     private ImageElement background2;
     private ImageElement title;
-    private TextElement fpsCounter;
+    private FPSCounterElement fpsCounter;
 
     private TextElement btnNewGame;
     private TextElement btnHighscore;
     private TextElement btnQuit;
 
     private FloatAnimation backgroundAnimation;
+    private FloatAnimation fadeOutAnimation;
+    private boolean fadeOut;
+    private FloatAnimation fadeInAnimation;
+    private boolean fadeIn;
 
-    public MenuView(PacManGLSurfaceView mGLView) {
+    public MenuView(PacManGLSurfaceView mGLView, boolean fadeIn) {
         this.glView = mGLView;
         this.glView.setView(this);
 
@@ -49,12 +47,11 @@ public class MenuView extends View implements InputManager.ITouchListener{
         shaderManager = ShaderManager.getInstance();
 
         inputManager.setTouchListener(this);
+        this.fadeIn = fadeIn;
     }
 
     @Override
     public void init() {
-        System.out.println("Init: " + Camera.getInstance().getScreenWidth() + "x" + Camera.getInstance().getScreenHeight());
-
         background1 = Object3DFactory.getInstance().instanciate("ui.obj", ImageElement.class);
         background1.setTextureFile("menuBg.png");
         background1.setScreenSize(Camera.getInstance().getScreenWidth(), Camera.getInstance().getScreenHeight());
@@ -67,7 +64,7 @@ public class MenuView extends View implements InputManager.ITouchListener{
 
         backgroundAnimation = new FloatAnimation(0, Camera.getInstance().getScreenWidth(), 7000, true, false);
 
-        fpsCounter = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
+        fpsCounter = Object3DFactory.getInstance().instanciate("ui.obj", FPSCounterElement.class);
         fpsCounter.setBackgroundImage("button_yellow.png");
         fpsCounter.setBackgroundColor(Color.TRANSPARENT);
         fpsCounter.setForegroundColor(Color.BLACK);
@@ -102,7 +99,6 @@ public class MenuView extends View implements InputManager.ITouchListener{
         btnHighscore.setPadding(30, 50, 40, 50);
         btnHighscore.setZIndex(1);
 
-
         btnQuit = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
         btnQuit.setBackgroundImage("button_yellow.png");
         btnQuit.setBackgroundColor(Color.TRANSPARENT);
@@ -120,9 +116,7 @@ public class MenuView extends View implements InputManager.ITouchListener{
     }
 
     @Override
-    public void onUpdate() {
-        nbFrameSinceLastFPSupdate++;
-
+    public void onUpdate(long elapsedTime) {
         //Compute time from last onUpdate
         elapsedTime = SystemClock.uptimeMillis() - lastUpdate;
 
@@ -133,16 +127,14 @@ public class MenuView extends View implements InputManager.ITouchListener{
         background2.setScreenPosition((int) (Camera.getInstance().getScreenWidth() - backgroundAnimation.getValue()),
                 0, UIElement.EAnchorPoint.TopLeft);
 
-        //FPS counter update
-        if(SystemClock.uptimeMillis() - lastFPSupdate > 1000) {
-            //Compute FPS: number_frame_drew / (elapsed_time / 1000)
-            fpsCounter.setText((int) (nbFrameSinceLastFPSupdate / ((SystemClock.uptimeMillis() -
-                    lastFPSupdate) / 1000)) + " FPS");
+        fpsCounter.update(elapsedTime);
 
-            nbFrameSinceLastFPSupdate = 0;
-            lastFPSupdate = SystemClock.uptimeMillis();
+        if(fadeOut) {
+            fadeOutAnimation.update();
+            btnNewGame.setOpacity(fadeOutAnimation.getValue());
+            btnHighscore.setOpacity(fadeOutAnimation.getValue());
+            btnQuit.setOpacity(fadeOutAnimation.getValue());
         }
-        lastUpdate = SystemClock.uptimeMillis();
     }
 
     @Override
@@ -183,7 +175,15 @@ public class MenuView extends View implements InputManager.ITouchListener{
             PacManActivity.current.startNewGame();
         }
         else if(btnHighscore.getBounds().contains((int)x, (int)y)) {
-            //TODO: HighScoreView
+            fadeOutAnimation = new FloatAnimation(1, 0, 300, false, false);
+            fadeOut = true;
+            fadeOutAnimation.setAnimationStateListener(new FloatAnimation.IAnimationStateListener() {
+                @Override
+                public void onEnd() {
+                    fadeOut = false;
+                    PacManActivity.current.startHighScoreView();
+                }
+            });
         }
         else if(btnQuit.getBounds().contains((int)x, (int)y)) {
             PacManActivity.current.finish();

@@ -15,6 +15,7 @@ public class Material {
     private float[] diffuseLight = {0.1f, 0.1f, 0.1f};
     private float[] specularLight = {0.1f, 0.1f, 0.1f};
     private float shininess = 0.1f;
+    private float opacity = 1.0f;
 
     private boolean textured;
     private Bitmap textureBitmap;
@@ -105,5 +106,13 @@ public class Material {
 
     public void setTexture(String textureFile) {
         loadTexture(PacManGLRenderer.loadImage(textureFile));
+    }
+
+    public float getOpacity() {
+        return opacity;
+    }
+
+    public void setOpacity(float opacity) {
+        this.opacity = opacity;
     }
 }

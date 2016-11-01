@@ -18,6 +18,7 @@ public class FloatAnimation {
     private long overflow;
     private float current;
     private boolean end;
+    private IAnimationStateListener animationStateListener;
 
     public FloatAnimation(float from, float to, long animationTime) {
         this.from = from;
@@ -48,6 +49,8 @@ public class FloatAnimation {
             if(!loop && !reverse) {
                 end = true;
                 current = to;
+                if(animationStateListener != null)
+                    animationStateListener.onEnd();
                 return to;
             }
             else if(loop && !reverse) {}
@@ -58,6 +61,8 @@ public class FloatAnimation {
             else {
                 end = true;
                 current = from;
+                if(animationStateListener != null)
+                    animationStateListener.onEnd();
                 return from;
             }
 
@@ -77,5 +82,13 @@ public class FloatAnimation {
 
     public float getValue() {
         return current;
+    }
+
+    public void setAnimationStateListener(IAnimationStateListener animationStateListener) {
+        this.animationStateListener = animationStateListener;
+    }
+
+    public interface IAnimationStateListener {
+        void onEnd();
     }
 }

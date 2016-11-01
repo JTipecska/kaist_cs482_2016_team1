@@ -49,7 +49,6 @@ public class InputManager implements SensorEventListener{
      */
     public void update(float timeElapsed) {
         //TODO: do something with horizontalMovement and isJumping (move objects...)
-        //System.out.println(horizontalMovement + "\t\t" + isJumping + "\t\t" + timeElapsed);
     }
 
     /**
@@ -64,7 +63,6 @@ public class InputManager implements SensorEventListener{
      * OnResume: enable gyroscope update
      */
     public void onResume() {
-        System.out.println("resume");
         mLastAccelerometerSet = false;
         mLastMagnetometerSet = false;
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_GAME);
