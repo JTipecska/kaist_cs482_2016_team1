@@ -52,19 +52,19 @@ public class MenuView extends View implements InputManager.ITouchListener{
 
     @Override
     public void init() {
-        background1 = Object3DFactory.getInstance().instanciate("ui.obj", ImageElement.class);
+        background1 = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         background1.setTextureFile("menuBg.png");
         background1.setScreenSize(Camera.getInstance().getScreenWidth(), Camera.getInstance().getScreenHeight());
         background1.setScreenPosition(0, 0, UIElement.EAnchorPoint.TopLeft);
 
-        background2 = Object3DFactory.getInstance().instanciate("ui.obj", ImageElement.class);
+        background2 = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         background2.setTextureFile("menuBg.png");
         background2.setScreenSize(1080, 1794);
         background2.setScreenPosition(Camera.getInstance().getScreenWidth(), 0, UIElement.EAnchorPoint.TopLeft);
 
         backgroundAnimation = new FloatAnimation(0, Camera.getInstance().getScreenWidth(), 7000, true, false);
 
-        fpsCounter = Object3DFactory.getInstance().instanciate("ui.obj", FPSCounterElement.class);
+        fpsCounter = Object3DFactory.getInstance().instanciate("objects/ui.obj", FPSCounterElement.class);
         fpsCounter.setBackgroundImage("button_yellow.png");
         fpsCounter.setBackgroundColor(Color.TRANSPARENT);
         fpsCounter.setForegroundColor(Color.BLACK);
@@ -73,13 +73,13 @@ public class MenuView extends View implements InputManager.ITouchListener{
         fpsCounter.setPadding(15, 30, 15, 30);
         fpsCounter.setZIndex(1);
 
-        title = Object3DFactory.getInstance().instanciate("ui.obj", ImageElement.class);
+        title = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         title.setTextureFile("title.png");
         title.setScreenSize(799, 206);
         title.setScreenPosition(0, -500, UIElement.EAnchorPoint.Center);
         title.setZIndex(1);
 
-        btnNewGame = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
+        btnNewGame = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
         btnNewGame.setBackgroundImage("button_yellow.png");
         btnNewGame.setBackgroundColor(Color.TRANSPARENT);
         btnNewGame.setForegroundColor(Color.BLACK);
@@ -89,7 +89,7 @@ public class MenuView extends View implements InputManager.ITouchListener{
         btnNewGame.setPadding(30, 50, 40, 50);
         btnNewGame.setZIndex(1);
 
-        btnHighscore = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
+        btnHighscore = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
         btnHighscore.setBackgroundImage("button_yellow.png");
         btnHighscore.setBackgroundColor(Color.TRANSPARENT);
         btnHighscore.setForegroundColor(Color.BLACK);
@@ -99,7 +99,7 @@ public class MenuView extends View implements InputManager.ITouchListener{
         btnHighscore.setPadding(30, 50, 40, 50);
         btnHighscore.setZIndex(1);
 
-        btnQuit = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
+        btnQuit = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
         btnQuit.setBackgroundImage("button_yellow.png");
         btnQuit.setBackgroundColor(Color.TRANSPARENT);
         btnQuit.setForegroundColor(Color.BLACK);

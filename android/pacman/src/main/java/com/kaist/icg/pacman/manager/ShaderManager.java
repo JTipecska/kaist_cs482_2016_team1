@@ -57,7 +57,7 @@ public class ShaderManager {
 
     public void loadVertexShader() {
         int vertexShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_VERTEX_SHADER, "basic-gl2.vshader");
+                GLES20.GL_VERTEX_SHADER, "shader/basic-gl2.vshader");
         GLES20.glAttachShader(program, vertexShader);
     }
 
@@ -65,19 +65,19 @@ public class ShaderManager {
         int fragmentShader = 0;
         switch(shader){
             case TOON:  fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                    GLES20.GL_FRAGMENT_SHADER, "toon-gl2.fshader");
+                    GLES20.GL_FRAGMENT_SHADER, "shader/toon-gl2.fshader");
                 break;
             case PHONG:  fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                    GLES20.GL_FRAGMENT_SHADER, "phong-gl2.fshader");
+                    GLES20.GL_FRAGMENT_SHADER, "shader/phong-gl2.fshader");
                 break;
             case DIFFUSE:  fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                    GLES20.GL_FRAGMENT_SHADER, "diffuse-gl2.fshader");
+                    GLES20.GL_FRAGMENT_SHADER, "shader/diffuse-gl2.fshader");
                 break;
             case UI:  fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                    GLES20.GL_FRAGMENT_SHADER, "ui.fshader");
+                    GLES20.GL_FRAGMENT_SHADER, "shader/ui.fshader");
                 break;
             default:  fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                    GLES20.GL_FRAGMENT_SHADER, "diffuse-gl2.fshader");
+                    GLES20.GL_FRAGMENT_SHADER, "shader/diffuse-gl2.fshader");
                 break;
         }
         GLES20.glAttachShader(program, fragmentShader);

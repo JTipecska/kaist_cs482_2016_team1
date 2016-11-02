@@ -13,7 +13,7 @@ public class Pipe extends Drawable {
 
     public Pipe() {
         for(int i = 0; i < NB_PIPE_PART; i++) {
-            mesh = Object3DFactory.getInstance().instanciate("pipe0.obj", Object3D.class);
+            mesh = Object3DFactory.getInstance().instanciate("objects/pipe0.obj", Object3D.class);
             mesh.setShader(ShaderManager.Shader.DIFFUSE);
             mesh.setPosition(0, 0, 2 + -i * PIPE_SIZE);
             addChild(mesh);

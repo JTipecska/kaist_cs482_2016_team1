@@ -1,0 +1,7 @@
+#Sun Sep 25 19:08:40 KST 2016
+base.0=C\:\\Users\\Lou\\Desktop\\kaist_cs482_2016_team1\\android\\lou\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run-bootstrap_bcf4025ed09d78b3d68ce27f48c4df6f775c2fc3
+renamed.1=classes.dex
+renamed.0=classes2.dex
+file.1=C\:\\Users\\Lou\\Desktop\\kaist_cs482_2016_team1\\android\\lou\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run_60a7fa1fc3dc0c94e1bf40e8ae8146532faf6145\\classes.dex
+base.1=C\:\\Users\\Lou\\Desktop\\kaist_cs482_2016_team1\\android\\lou\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run_60a7fa1fc3dc0c94e1bf40e8ae8146532faf6145
+file.0=C\:\\Users\\Lou\\Desktop\\kaist_cs482_2016_team1\\android\\lou\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run-bootstrap_bcf4025ed09d78b3d68ce27f48c4df6f775c2fc3\\classes.dex
