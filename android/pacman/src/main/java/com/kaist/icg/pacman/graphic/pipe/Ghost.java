@@ -17,6 +17,10 @@ public class Ghost extends Object3D {
     private double angle;
     private float distance, spawn;
 
+    public Ghost(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer) {
+        super(vertexBufferSize, vertexBuffer, normalBuffer, textureCoordinatesBuffer);
+    }
+
     public Ghost(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer) {
         super(vertexBufferSize, vertexBuffer, normalBuffer);
     }

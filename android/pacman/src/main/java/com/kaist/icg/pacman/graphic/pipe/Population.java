@@ -16,7 +16,7 @@ public class Population extends Drawable {
 
     public Population() {
         for(int i = 0; i < NB_PIPE_PART; i++) {
-            Ghost ghost = Object3DFactory.getInstance().instanciate("Ghost.obj", Ghost.class);
+            Ghost ghost = Object3DFactory.getInstance().instanciate("Coin_ball.obj", Ghost.class);
 
             angle = Math.random() * (Math.PI * 2);
             ghost.setShader(ShaderManager.Shader.DIFFUSE);
