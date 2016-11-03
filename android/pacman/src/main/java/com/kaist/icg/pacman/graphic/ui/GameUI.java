@@ -14,14 +14,14 @@ public class GameUI extends Drawable{
     private TextElement pointText;
 
     public GameUI() {
-        fpsCounter = Object3DFactory.getInstance().instanciate("ui.obj", FPSCounterElement.class);
+        fpsCounter = Object3DFactory.getInstance().instanciate("objects/ui.obj", FPSCounterElement.class);
 
-        statusBackground = Object3DFactory.getInstance().instanciate("ui.obj", ImageElement.class);
+        statusBackground = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         statusBackground.setTextureFile("status.png");
         statusBackground.setScreenSize(450, 200);
         statusBackground.setScreenPosition(0, 0, UIElement.EAnchorPoint.TopLeft);
 
-        levelText = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
+        levelText = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
         levelText.setBackgroundColor(Color.TRANSPARENT);
         levelText.setForegroundColor(Color.BLACK);
         levelText.setTextSize(40);
@@ -29,7 +29,7 @@ public class GameUI extends Drawable{
         levelText.setText("Level: 1");
         levelText.setZIndex(1);
 
-        pointText = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
+        pointText = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
         pointText.setBackgroundColor(Color.TRANSPARENT);
         pointText.setForegroundColor(Color.BLACK);
         pointText.setTextSize(40);
