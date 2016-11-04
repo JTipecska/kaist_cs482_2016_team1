@@ -16,7 +16,7 @@ import java.nio.FloatBuffer;
 public class ShaderManager {
 
     public enum Shader {
-        TOON, PHONG, DIFFUSE, UI
+        DIFFUSE, TOON, PHONG, UI
     }
 
     //Singleton
@@ -29,6 +29,8 @@ public class ShaderManager {
         return INSTANCE;
     }
 
+    private int shaderPrograms = 4;
+
     private float[] projectionMatrix;
     private float[] viewMatrix;
     private float[] lightPosition;
@@ -37,8 +39,9 @@ public class ShaderManager {
     float[] normalMatrix = new float[16];
 
     //OpenGL program
-    private int program;
+    private int[] programs;
     private Shader currentShader = Shader.TOON;
+    private int currentProgram = 0;
 
     private ShaderManager() {}
 
@@ -48,44 +51,43 @@ public class ShaderManager {
         this.viewMatrix = viewMatrix;
         this.lightPosition = lightPosition;
 
-        program = GLES20.glCreateProgram();
-        loadVertexShader();
-        loadFragmentShader(currentShader);
-        GLES20.glLinkProgram(program);
-        GLES20.glUseProgram(program);
-    }
+        programs = new int[shaderPrograms];
 
-    public void loadVertexShader() {
         int vertexShader = PacManGLRenderer.loadShaderFromFile(
                 GLES20.GL_VERTEX_SHADER, "shader/basic-gl2.vshader");
-        GLES20.glAttachShader(program, vertexShader);
-    }
 
-    public void loadFragmentShader(Shader shader){
-        int fragmentShader = 0;
-        switch(shader){
-            case TOON:  fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                    GLES20.GL_FRAGMENT_SHADER, "shader/toon-gl2.fshader");
-                break;
-            case PHONG:  fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                    GLES20.GL_FRAGMENT_SHADER, "shader/phong-gl2.fshader");
-                break;
-            case DIFFUSE:  fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                    GLES20.GL_FRAGMENT_SHADER, "shader/diffuse-gl2.fshader");
-                break;
-            case UI:  fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                    GLES20.GL_FRAGMENT_SHADER, "shader/ui.fshader");
-                break;
-            default:  fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                    GLES20.GL_FRAGMENT_SHADER, "shader/diffuse-gl2.fshader");
-                break;
+        for (int i = 0; i < shaderPrograms; ++i){
+            programs[i] = GLES20.glCreateProgram();
+            GLES20.glAttachShader(programs[i], vertexShader);
         }
-        GLES20.glAttachShader(program, fragmentShader);
-    }
 
+
+        int fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                GLES20.GL_FRAGMENT_SHADER, "shader/diffuse-gl2.fshader");
+        GLES20.glAttachShader(programs[0], fragmentShader);
+
+        fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                GLES20.GL_FRAGMENT_SHADER, "shader/toon-gl2.fshader");
+        GLES20.glAttachShader(programs[1], fragmentShader);
+
+        fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                GLES20.GL_FRAGMENT_SHADER, "shader/phong-gl2.fshader");
+        GLES20.glAttachShader(programs[2], fragmentShader);
+
+        fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                GLES20.GL_FRAGMENT_SHADER, "shader/ui.fshader");
+        GLES20.glAttachShader(programs[3], fragmentShader);
+
+        GLES20.glLinkProgram(programs[0]);
+        GLES20.glLinkProgram(programs[1]);
+        GLES20.glLinkProgram(programs[2]);
+        GLES20.glLinkProgram(programs[3]);
+
+        GLES20.glUseProgram(programs[0]);
+    }
 
     // link all the material specific variables with the shader
-    public void linkMaterialVariables(Material material){
+    public void linkMaterialVariables(Material material, int program){
         // uniforms
         int opacityHandle = GLES20.glGetUniformLocation(program, "uOpacity");
         int lightHandle = GLES20.glGetUniformLocation(program, "uLight");
@@ -115,15 +117,32 @@ public class ShaderManager {
     public void draw(float[] modelMatrix,
                      FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer,
                      int count, Material material, Shader shader) {
-        if (shader != currentShader) {
-            program = GLES20.glCreateProgram();
-            loadVertexShader();
-            loadFragmentShader(shader);
-            GLES20.glLinkProgram(program);
-            GLES20.glUseProgram(program);
-        }
 
-        currentShader = shader;
+        if (shader != currentShader) {
+            switch (shader) {
+                case DIFFUSE:
+                    GLES20.glUseProgram(programs[0]);
+                    currentProgram = programs[0];
+                    break;
+                case TOON:
+                    GLES20.glUseProgram(programs[1]);
+                    currentProgram = programs[1];
+                    break;
+                case PHONG:
+                    GLES20.glUseProgram(programs[2]);
+                    currentProgram = programs[2];
+                    break;
+                case UI:
+                    GLES20.glUseProgram(programs[3]);
+                    currentProgram = programs[3];
+                    break;
+                default:
+                    GLES20.glUseProgram(programs[0]);
+                    currentProgram = programs[0];
+                    break;
+            }
+            currentShader = shader;
+        }
 
         // compute model view matrix
         Matrix.multiplyMM(modelViewMatrix, 0, viewMatrix, 0, modelMatrix, 0);
@@ -138,9 +157,9 @@ public class ShaderManager {
         Matrix.transposeM(normalMatrix, 0, temp, 0);
 
         //Retrieve uniforms handlers
-        int projectionMatrixHandle = GLES20.glGetUniformLocation(program, "uProjMatrix");
-        int modelViewMatrixHandle = GLES20.glGetUniformLocation(program, "uModelViewMatrix");
-        int normalMatrixHandle = GLES20.glGetUniformLocation(program, "uNormalMatrix");
+        int projectionMatrixHandle = GLES20.glGetUniformLocation(currentProgram, "uProjMatrix");
+        int modelViewMatrixHandle = GLES20.glGetUniformLocation(currentProgram, "uModelViewMatrix");
+        int normalMatrixHandle = GLES20.glGetUniformLocation(currentProgram, "uNormalMatrix");
 
         //Set uniforms
         GLES20.glUniformMatrix4fv(projectionMatrixHandle, 1, false, projectionMatrix, 0);
@@ -148,9 +167,9 @@ public class ShaderManager {
         GLES20.glUniformMatrix4fv(normalMatrixHandle, 1, false, normalMatrix, 0);
 
         //Retrieve attributes handlers
-        int positionHandle = GLES20.glGetAttribLocation(program, "aPosition");
-        int normalHandle = GLES20.glGetAttribLocation(program, "aNormal");
-        int textureCoordinatesHandle = GLES20.glGetAttribLocation(program, "aTextureCoordinate");
+        int positionHandle = GLES20.glGetAttribLocation(currentProgram, "aPosition");
+        int normalHandle = GLES20.glGetAttribLocation(currentProgram, "aNormal");
+        int textureCoordinatesHandle = GLES20.glGetAttribLocation(currentProgram, "aTextureCoordinate");
 
         //Set attributes
         GLES20.glEnableVertexAttribArray(positionHandle);
@@ -174,7 +193,7 @@ public class ShaderManager {
 
         }
 
-        linkMaterialVariables(material);
+        linkMaterialVariables(material, currentProgram);
 
         //actual drawing
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, count);

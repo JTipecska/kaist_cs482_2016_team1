@@ -14,7 +14,7 @@ public class Material {
     private float[] ambientLight = {0.1f, 0.1f, 0.1f};
     private float[] diffuseLight = {0.1f, 0.1f, 0.1f};
     private float[] specularLight = {0.1f, 0.1f, 0.1f};
-    private float shininess = 0.1f;
+    private float shininess = 16.0f;
     private float opacity = 1.0f;
 
     private boolean textured;
