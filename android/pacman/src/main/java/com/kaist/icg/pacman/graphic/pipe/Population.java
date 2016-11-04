@@ -16,8 +16,9 @@ public class Population extends Drawable {
 
     public Population() {
         for(int i = 0; i < NB_PIPE_PART; i++) {
-            Ghost ghost = Object3DFactory.getInstance().instanciate("objects/Ghost_red.obj", Ghost.class);
+            Ghost ghost = Object3DFactory.getInstance().instanciate("objects/Ghost_orange.obj", Ghost.class);
 
+            ghost.setTextureFile("Ghost_orange.png");
             angle = Math.random() * (Math.PI * 2);
             ghost.setShader(ShaderManager.Shader.PHONG);
             ghost.setScale(0.15f, 0.15f, 0.15f);
