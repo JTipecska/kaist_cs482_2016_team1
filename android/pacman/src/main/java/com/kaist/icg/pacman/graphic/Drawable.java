@@ -165,4 +165,7 @@ public class Drawable {
         children.add(child);
         child.parent = this;
     }
+     public void removeChild(Drawable child) {
+         child.parent.children.remove(child);
+     }
 }
