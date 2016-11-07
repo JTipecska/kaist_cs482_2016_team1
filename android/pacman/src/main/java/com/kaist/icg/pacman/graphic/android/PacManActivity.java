@@ -18,6 +18,7 @@ package com.kaist.icg.pacman.graphic.android;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -55,7 +56,7 @@ public class PacManActivity extends Activity {
         PacManActivity.current = this;
         glView = (PacManGLSurfaceView) findViewById(R.id.main_glSurfaceView);
 
-        currentView = new GameView(glView);
+        currentView = new MenuView(glView);
     }
 
     @Override
@@ -78,7 +79,6 @@ public class PacManActivity extends Activity {
         glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
             @Override
             public void run() {
-
                 cleanupCurrentView();
                 currentView = new GameView(glView);
                 currentView.init();

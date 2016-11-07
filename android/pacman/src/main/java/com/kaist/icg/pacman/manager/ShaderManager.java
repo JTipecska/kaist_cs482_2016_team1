@@ -43,6 +43,8 @@ public class ShaderManager {
     private Shader currentShader = Shader.TOON;
     private int currentProgram = 0;
 
+    private boolean initialized = false;
+
     private ShaderManager() {}
 
     public void initialize(float[] projectionMatrix, float[] viewMatrix,
@@ -51,46 +53,50 @@ public class ShaderManager {
         this.viewMatrix = viewMatrix;
         this.lightPosition = lightPosition;
 
-        programs = new int[shaderPrograms];
+        if(!initialized) {
+            programs = new int[shaderPrograms];
 
-        int vertexShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_VERTEX_SHADER, "shader/basic-gl2.vshader");
+            int vertexShader = PacManGLRenderer.loadShaderFromFile(
+                    GLES20.GL_VERTEX_SHADER, "shader/basic-gl2.vshader");
 
-        for (int i = 0; i < shaderPrograms; ++i){
-            programs[i] = GLES20.glCreateProgram();
-            GLES20.glAttachShader(programs[i], vertexShader);
+            for (int i = 0; i < shaderPrograms; ++i) {
+                programs[i] = GLES20.glCreateProgram();
+                GLES20.glAttachShader(programs[i], vertexShader);
+            }
+
+
+            int fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                    GLES20.GL_FRAGMENT_SHADER, "shader/diffuse-gl2.fshader");
+            GLES20.glAttachShader(programs[0], fragmentShader);
+
+            fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                    GLES20.GL_FRAGMENT_SHADER, "shader/toon-gl2.fshader");
+            GLES20.glAttachShader(programs[1], fragmentShader);
+
+            fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                    GLES20.GL_FRAGMENT_SHADER, "shader/phong-gl2.fshader");
+            GLES20.glAttachShader(programs[2], fragmentShader);
+
+            fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                    GLES20.GL_FRAGMENT_SHADER, "shader/ui.fshader");
+            GLES20.glAttachShader(programs[3], fragmentShader);
+
+            fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                    GLES20.GL_FRAGMENT_SHADER, "shader/diffuseTex-gl2.fshader");
+            GLES20.glAttachShader(programs[4], fragmentShader);
+
+            fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                    GLES20.GL_FRAGMENT_SHADER, "shader/toonTex-gl2.fshader");
+            GLES20.glAttachShader(programs[5], fragmentShader);
+
+            for (int i = 0; i < shaderPrograms; ++i) {
+                GLES20.glLinkProgram(programs[i]);
+            }
+
+            GLES20.glUseProgram(programs[0]);
+
+            this.initialized = true;
         }
-
-
-        int fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "shader/diffuse-gl2.fshader");
-        GLES20.glAttachShader(programs[0], fragmentShader);
-
-        fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "shader/toon-gl2.fshader");
-        GLES20.glAttachShader(programs[1], fragmentShader);
-
-        fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "shader/phong-gl2.fshader");
-        GLES20.glAttachShader(programs[2], fragmentShader);
-
-        fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "shader/ui.fshader");
-        GLES20.glAttachShader(programs[3], fragmentShader);
-
-        fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "shader/diffuseTex-gl2.fshader");
-        GLES20.glAttachShader(programs[4], fragmentShader);
-
-        fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "shader/toonTex-gl2.fshader");
-        GLES20.glAttachShader(programs[5], fragmentShader);
-
-        for (int i = 0; i < shaderPrograms; ++i) {
-            GLES20.glLinkProgram(programs[i]);
-        }
-
-        GLES20.glUseProgram(programs[0]);
     }
 
     // link all the material specific variables with the shader
@@ -114,7 +120,7 @@ public class ShaderManager {
         GLES20.glUniform3fv(colorHandle, 1, material.getColor(), 0);
 
         if(material.isTextured()) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glActiveTexture(material.getTextureBloc());
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.getTextureDataHandler());
             GLES20.glUniform1i(textureHandle, 0);
         }

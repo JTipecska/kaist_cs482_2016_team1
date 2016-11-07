@@ -15,10 +15,13 @@ public class Population extends Drawable {
     private double angle;
 
     public Population() {
-        for(int i = 0; i < NB_PIPE_PART; i++) {
-            Ghost ghost = Object3DFactory.getInstance().instanciate("objects/Ghost_orange.obj", Ghost.class);
+        for (int i = 0; i < NB_PIPE_PART; i++) {
+
+            Ghost ghost = Object3DFactory.getInstance()
+                    .instanciate("objects/Ghost.obj", Ghost.class);
 
             ghost.setTextureFile("Ghost_orange.png");
+
             angle = Math.random() * (Math.PI * 2);
             ghost.setShader(ShaderManager.Shader.TOONTEX);
             ghost.setScale(0.15f, 0.15f, 0.15f);
@@ -27,11 +30,12 @@ public class Population extends Drawable {
             addChild(ghost);
         }
     }
-    public void onUpdate(float translationZ) {
-        for(int i = 0; i < NB_PIPE_PART;i++)
-            children.get(i).translate(0,0, translationZ );
 
-        if(children.get(0).getPosition()[2] > 2 + 1f) {
+    public void onUpdate(float translationZ) {
+        for (int i = 0; i < NB_PIPE_PART; i++)
+            children.get(i).translate(0, 0, translationZ);
+
+        if (children.get(0).getPosition()[2] > 2 + 1f) {
             angle = Math.random() * (Math.PI * 2);
             children.get(0).setRotation(0, 0, 1, (float) angle * radToDeg + 90);
             children.get(0).setPosition((float) (Math.cos(angle) * 1.8), (float) (Math.sin(angle) * 1.8), children.get(19).getPosition()[2] - PIPE_SIZE);

@@ -37,6 +37,10 @@ public class MenuView extends View implements InputManager.ITouchListener{
     private FloatAnimation fadeInAnimation;
     private boolean fadeIn;
 
+    public MenuView(PacManGLSurfaceView mGLView) {
+        this(mGLView, false);
+    }
+
     public MenuView(PacManGLSurfaceView mGLView, boolean fadeIn) {
         this.glView = mGLView;
         this.glView.setView(this);

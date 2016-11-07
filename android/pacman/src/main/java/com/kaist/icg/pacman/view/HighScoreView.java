@@ -31,7 +31,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HighScoreView extends View implements InputManager.ITouchListener {
-    private static final int MAX_SCORE = 5;
     private static final DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
     private final ShaderManager shaderManager;
@@ -71,67 +70,21 @@ public class HighScoreView extends View implements InputManager.ITouchListener {
         shaderManager = ShaderManager.getInstance();
 
         inputManager.setTouchListener(this);
-
-        if(isConnected) {
-            try {
-                Call<List<Score>> call = ScoreService.getService().getAllScores();
-
-                call.enqueue(new Callback<List<Score>>() {
-                    @Override
-                    public void onResponse(Response<List<Score>> response) {
-                        if (!titleIn) {
-                            btnBack.setOpacity(1);
-                            highScoreBg.setOpacity(1);
-                            for (TextElement txt : scoresElements)
-                                txt.setOpacity(1);
-                        }
-
-                        scores = response.body();
-                        Collections.reverse(scores);
-
-                        int from = -((1192 - 200) / 2) + 170 + 100;
-                        int step = (1192 - 200) / scores.size();
-                        for (int i = 0; i < scores.size(); i++) {
-                            Date date = new Date(scores.get(i).getDate());
-                            TextElement txt = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
-                            txt.setBackgroundColor(Color.TRANSPARENT);
-                            txt.setForegroundColor(Color.BLACK);
-                            txt.setTextSize(30);
-                            txt.setScreenPosition(0, from + step * i, UIElement.EAnchorPoint.Center);
-                            txt.setText(scores.get(i).getName() + "     " +
-                                    scores.get(i).getScore() + "      " +
-                                    dateFormat.format(date));
-                            txt.setOpacity(highScoreBg.getOpacity());
-                            txt.setZIndex(2);
-
-                            scoresElements.add(txt);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
     public void init() {
-        background1 = Object3DFactory.getInstance().instanciate("ui.obj", ImageElement.class);
+        background1 = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         background1.setTextureFile("menuBg.png");
         background1.setScreenSize(Camera.getInstance().getScreenWidth(), Camera.getInstance().getScreenHeight());
         background1.setScreenPosition(0, 0, UIElement.EAnchorPoint.TopLeft);
 
-        background2 = Object3DFactory.getInstance().instanciate("ui.obj", ImageElement.class);
+        background2 = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         background2.setTextureFile("menuBg.png");
         background2.setScreenSize(1080, 1794);
         background2.setScreenPosition(Camera.getInstance().getScreenWidth(), 0, UIElement.EAnchorPoint.TopLeft);
 
-        highScoreBg = Object3DFactory.getInstance().instanciate("ui.obj", ImageElement.class);
+        highScoreBg = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         highScoreBg.setTextureFile("highScoreBg.png");
         highScoreBg.setScreenSize(956, 1192);
         highScoreBg.setScreenPosition(0, 170, UIElement.EAnchorPoint.Center);
@@ -140,7 +93,7 @@ public class HighScoreView extends View implements InputManager.ITouchListener {
 
         backgroundAnimation = new FloatAnimation(0, Camera.getInstance().getScreenWidth(), 7000, true, false);
 
-        fpsCounter = Object3DFactory.getInstance().instanciate("ui.obj", FPSCounterElement.class);
+        fpsCounter = Object3DFactory.getInstance().instanciate("objects/ui.obj", FPSCounterElement.class);
         fpsCounter.setBackgroundImage("button_yellow.png");
         fpsCounter.setBackgroundColor(Color.TRANSPARENT);
         fpsCounter.setForegroundColor(Color.BLACK);
@@ -149,13 +102,13 @@ public class HighScoreView extends View implements InputManager.ITouchListener {
         fpsCounter.setPadding(15, 30, 15, 30);
         fpsCounter.setZIndex(1);
 
-        title = Object3DFactory.getInstance().instanciate("ui.obj", ImageElement.class);
+        title = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         title.setTextureFile("title.png");
         title.setScreenSize(799, 206);
         title.setScreenPosition(0, -500, UIElement.EAnchorPoint.Center);
         title.setZIndex(1);
 
-        btnBack = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
+        btnBack = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
         btnBack.setBackgroundImage("button_yellow.png");
         btnBack.setBackgroundColor(Color.TRANSPARENT);
         btnBack.setForegroundColor(Color.BLACK);
@@ -166,7 +119,7 @@ public class HighScoreView extends View implements InputManager.ITouchListener {
         btnBack.setZIndex(1);
         btnBack.setOpacity(0);
 
-        notConnected = Object3DFactory.getInstance().instanciate("ui.obj", TextElement.class);
+        notConnected = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
         notConnected.setBackgroundImage("button_yellow.png");
         notConnected.setBackgroundColor(Color.TRANSPARENT);
         notConnected.setForegroundColor(Color.BLACK);
@@ -195,6 +148,52 @@ public class HighScoreView extends View implements InputManager.ITouchListener {
             }
         });
         titleIn = true;
+
+        if(isConnected) {
+            try {
+                Call<List<Score>> call = ScoreService.getService().getAllScores();
+
+                call.enqueue(new Callback<List<Score>>() {
+                    @Override
+                    public void onResponse(Response<List<Score>> response) {
+                        if (!titleIn) {
+                            btnBack.setOpacity(1);
+                            highScoreBg.setOpacity(1);
+                            for (TextElement txt : scoresElements)
+                                txt.setOpacity(1);
+                        }
+
+                        scores = response.body();
+                        Collections.reverse(scores);
+
+                        int from = -((1192 - 200) / 2) + 170 + 100;
+                        int step = (1192 - 200) / scores.size();
+                        for (int i = 0; i < scores.size(); i++) {
+                            Date date = new Date(scores.get(i).getDate());
+                            TextElement txt = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
+                            txt.setBackgroundColor(Color.TRANSPARENT);
+                            txt.setForegroundColor(Color.BLACK);
+                            txt.setTextSize(30);
+                            txt.setScreenPosition(0, from + step * i, UIElement.EAnchorPoint.Center);
+                            txt.setText(scores.get(i).getName() + "     " +
+                                    scores.get(i).getScore() + "      " +
+                                    dateFormat.format(date));
+                            txt.setOpacity(highScoreBg.getOpacity());
+                            txt.setZIndex(2);
+
+                            scoresElements.add(txt);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         this.isInitialized = true;
     }

@@ -19,20 +19,25 @@ public class TextureManager {
         textureSlots = new HashMap<>();
     }
 
-    public int getFreeTextureSlot(int packIndex) {
-        int[] materials = textureSlots.get(packIndex);
+    public TextureSlot getFreeTextureSlot() {
+        for(Integer j : textureSlots.keySet()) {
+            int[] materials = textureSlots.get(j);
 
-        if(materials == null) {
-            materials = new int[32];
-            textureSlots.put(packIndex, materials);
-            for(int i = 0; i<32; i++)
-                materials[i] = -1;
+            for(int i = 0; i<32; i++) {
+                if(materials[i] == -1) {
+                    return new TextureSlot(j, i);
+                }
+            }
         }
 
-        for(int i = 0; i<32; i++) {
-            if(materials[i] == -1) {
-                return i;
-            }
+        if(textureSlots.size() < 32) {
+            int[] materials = new int[32];
+            int bloc = GLES20.GL_TEXTURE0 + textureSlots.size();
+            textureSlots.put(bloc, materials);
+            for(int i = 0; i<32; i++)
+                materials[i] = -1;
+
+            return new TextureSlot(bloc, 0);
         }
 
         throw new RuntimeException("Not enough texture slot. Please dispose old materials");
@@ -43,15 +48,39 @@ public class TextureManager {
     }
 
     public void cleanup() {
-        for(int i = 0; i<textureSlots.size(); i++) {
-            if(textureSlots.get(i) != null) {
-                for (int j = 0; j < textureSlots.get(i).length; j++) {
-                    if(textureSlots.get(i)[j] != -1) {
-                        GLES20.glDeleteTextures(1, textureSlots.get(i), j);
-                        textureSlots.get(i)[j] = -1;
-                    }
+        for(Integer i : textureSlots.keySet()) {
+            for (int j = 0; j < textureSlots.get(i).length; j++) {
+                if(textureSlots.get(i)[j] != -1) {
+                    GLES20.glDeleteTextures(1, textureSlots.get(i), j);
+                    textureSlots.get(i)[j] = -1;
                 }
             }
+        }
+    }
+
+    public class TextureSlot {
+        private int bloc;
+        private int slot;
+
+        public TextureSlot(int bloc, int slot) {
+            this.bloc = bloc;
+            this.slot = slot;
+        }
+
+        public int getBloc() {
+            return bloc;
+        }
+
+        public void setBloc(int bloc) {
+            this.bloc = bloc;
+        }
+
+        public int getSlot() {
+            return slot;
+        }
+
+        public void setSlot(int slot) {
+            this.slot = slot;
         }
     }
 }
