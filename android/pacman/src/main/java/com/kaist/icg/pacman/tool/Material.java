@@ -11,9 +11,9 @@ import com.kaist.icg.pacman.manager.TextureManager;
 public class Material {
     private float[] color = {1, 1, 1};
     //TODO: we might just set a costant ambientLight for the whole scene
-    private float[] ambientLight = {0.1f, 0.1f, 0.1f};
-    private float[] diffuseLight = {0.1f, 0.1f, 0.1f};
-    private float[] specularLight = {0.1f, 0.1f, 0.1f};
+    private float[] ambientLight = {0.1f, 0.0f, 0.0f};
+    private float[] diffuseLight = {0.5f, 0.0f, 0.0f};
+    private float[] specularLight = {1.0f, 1.0f, 1.0f};
     private float shininess = 16.0f;
     private float opacity = 1.0f;
 

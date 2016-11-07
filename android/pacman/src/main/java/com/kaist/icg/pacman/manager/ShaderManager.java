@@ -16,7 +16,7 @@ import java.nio.FloatBuffer;
 public class ShaderManager {
 
     public enum Shader {
-        DIFFUSE, TOON, PHONG, UI, DIFFUSETEX
+        DIFFUSE, TOON, PHONG, UI, DIFFUSETEX, TOONTEX
     }
 
     //Singleton
@@ -29,7 +29,7 @@ public class ShaderManager {
         return INSTANCE;
     }
 
-    private int shaderPrograms = 5;
+    private int shaderPrograms = 6;
 
     private float[] projectionMatrix;
     private float[] viewMatrix;
@@ -82,11 +82,13 @@ public class ShaderManager {
                 GLES20.GL_FRAGMENT_SHADER, "shader/diffuseTex-gl2.fshader");
         GLES20.glAttachShader(programs[4], fragmentShader);
 
-        GLES20.glLinkProgram(programs[0]);
-        GLES20.glLinkProgram(programs[1]);
-        GLES20.glLinkProgram(programs[2]);
-        GLES20.glLinkProgram(programs[3]);
-        GLES20.glLinkProgram(programs[4]);
+        fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                GLES20.GL_FRAGMENT_SHADER, "shader/toonTex-gl2.fshader");
+        GLES20.glAttachShader(programs[5], fragmentShader);
+
+        for (int i = 0; i < shaderPrograms; ++i) {
+            GLES20.glLinkProgram(programs[i]);
+        }
 
         GLES20.glUseProgram(programs[0]);
     }
@@ -144,6 +146,10 @@ public class ShaderManager {
                 case DIFFUSETEX:
                     GLES20.glUseProgram(programs[4]);
                     currentProgram = programs[4];
+                    break;
+                case TOONTEX:
+                    GLES20.glUseProgram(programs[5]);
+                    currentProgram = programs[5];
                     break;
                 default:
                     GLES20.glUseProgram(programs[0]);
