@@ -43,7 +43,7 @@ float dist = distance(uLight, vPosition);
 float attenuation = uAttConst + uAttLin * dist + uAttExp * pow(dist, 2.0);
 
  //not sure about the look of the specular component
- vec3 color = uColor * diffuse/attenuation;// + specular * specMask)/attenuation;
+ vec3 color = uColor * diffuse/attenuation + (vec3(0.4, 0.4, 0.4)*specular * specMask)/attenuation;
 
 
  gl_FragColor = vec4(color,1);

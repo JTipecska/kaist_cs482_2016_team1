@@ -16,7 +16,7 @@ varying vec2 vTextureCoordinate;
 //for diffuse color
 const int levels = 5;
 const float scaleFactor = 1.0 / float(levels);
-const float uAttConst = 2.5, uAttLin = 0.1, uAttExp = 0.2;
+const float uAttConst = 1.0, uAttLin = 0.05, uAttExp = 0.1;
 
 void main()
 {
