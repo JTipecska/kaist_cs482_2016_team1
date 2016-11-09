@@ -18,7 +18,7 @@ public class Population extends Drawable {
         for (int i = 0; i < NB_PIPE_PART; i++) {
 
             Ghost ghost = Object3DFactory.getInstance()
-                    .instanciate("objects/Coin_ball_bigger.obj", Ghost.class);
+                    .instanciate("objects/Ghost_small.obj", Ghost.class);
 
             //ghost.setTextureFile("Ghost_orange.png");
 
