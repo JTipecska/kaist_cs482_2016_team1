@@ -4,6 +4,8 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.kaist.icg.pacman.graphic.Camera;
+import com.kaist.icg.pacman.graphic.Object3D;
+import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.graphic.android.PacManGLSurfaceView;
 import com.kaist.icg.pacman.graphic.pipe.Scene;
 import com.kaist.icg.pacman.graphic.ui.GameUI;
@@ -24,6 +26,9 @@ public class GameView extends View{
 
     //Pipe
     private Scene scene;
+
+    //Ghost single Object
+    //private Object3D ghost;
 
     //Light
     private float[] lightPosition;
@@ -51,6 +56,8 @@ public class GameView extends View{
         lightPosition = new float[] {0.0f, 0.0f, 0.0f};
 
         scene = new Scene();
+        //ghost = Object3DFactory.getInstance().instanciate("objects/Ghost.obj", Object3D.class);
+        //ghost.setPosition(0,-1,2.5f);
         gameUi = new GameUI();
 
         lastUpdate = SystemClock.uptimeMillis();
@@ -77,6 +84,8 @@ public class GameView extends View{
      */
     public void onRender() {
         scene.render();
+
+        //ghost.draw();
         gameUi.draw();
     }
 

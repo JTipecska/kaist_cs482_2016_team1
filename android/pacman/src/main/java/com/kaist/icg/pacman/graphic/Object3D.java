@@ -19,7 +19,7 @@ public class Object3D extends Drawable {
         this.vertexBufferSize = vertexBufferSize;
         this.vertexBuffer = vertexBuffer;
         this.normalBuffer = normalBuffer;
-        this.hasTexture = false;
+        this.hasTexture = true;
         this.color = new float[] {(float) Math.random(), (float) Math.random(), (float) Math.random()};
 
         material = new Material(color);
