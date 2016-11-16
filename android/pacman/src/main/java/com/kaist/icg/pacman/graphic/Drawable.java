@@ -40,7 +40,7 @@ public class Drawable {
     public ArrayList<Drawable> children;
 
 
-    protected Material material;
+    public Material material;
     protected ShaderManager.Shader shader = ShaderManager.Shader.TOON;
 
     public void setShader(ShaderManager.Shader shader) {this.shader = shader;}

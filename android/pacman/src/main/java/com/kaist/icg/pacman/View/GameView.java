@@ -1,9 +1,12 @@
 package com.kaist.icg.pacman.view;
 
+import android.opengl.GLES20;
 import android.os.SystemClock;
 import android.util.Log;
 
 import com.kaist.icg.pacman.graphic.Camera;
+import com.kaist.icg.pacman.graphic.Object3D;
+import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.graphic.android.PacManGLSurfaceView;
 import com.kaist.icg.pacman.graphic.pipe.Scene;
 import com.kaist.icg.pacman.graphic.ui.GameUI;
@@ -24,6 +27,7 @@ public class GameView extends View{
 
     //Pipe
     private Scene scene;
+    private Object3D mesh;
 
     //Light
     private float[] lightPosition;
@@ -51,6 +55,13 @@ public class GameView extends View{
         lightPosition = new float[] {0.0f, 0.0f, 0.0f};
 
         scene = new Scene();
+        /*mesh = Object3DFactory.getInstance().instanciate("objects/pipe1.obj", Object3D.class);
+        mesh.setTextureFile("Ghost_orange.png");
+        mesh.setNormalmapFile("normal1.png");
+        mesh.setShader(ShaderManager.Shader.TOONTEX);
+        float[] color = {0.2f, 0.4f, 0.7f};
+        mesh.material.setColor(color);
+        mesh.translate(0.0f, 0.0f, 1.0f);*/
         gameUi = new GameUI();
 
         lastUpdate = SystemClock.uptimeMillis();
@@ -76,7 +87,9 @@ public class GameView extends View{
      * Draw all the scene
      */
     public void onRender() {
+        GLES20.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         scene.render();
+        //mesh.draw();
         gameUi.draw();
     }
 

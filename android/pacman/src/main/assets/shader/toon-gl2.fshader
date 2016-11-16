@@ -13,7 +13,7 @@ varying vec3 vPosition;
 
 //number of levels
 //for diffuse color
-const int levels = 5;
+const int levels = 3;
 const float scaleFactor = 1.0 / float(levels);
 const float uAttConst = 1.0, uAttLin = 0.05, uAttExp = 0.1;
 
@@ -41,6 +41,8 @@ void main()
 
 float dist = distance(uLight, vPosition);
 float attenuation = uAttConst + uAttLin * dist + uAttExp * pow(dist, 2.0);
+
+//float edgeDetection = (dot(V, vNormal) > 0.4f) ? 1 : 0;
 
  //not sure about the look of the specular component
  vec3 color = uColor * diffuse/attenuation + (vec3(0.4, 0.4, 0.4)*specular * specMask)/attenuation;
