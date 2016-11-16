@@ -169,7 +169,11 @@ public class Object3D extends Drawable {
             bitangentBuffer.put(bitangent);
             bitangentBuffer.put(bitangent);
             bitangentBuffer.put(bitangent);
+
+
         }
+        vertexBuffer.position(0);
+        textureCoordinatesBuffer.position(0);
     }
 
     /**
