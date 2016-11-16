@@ -24,14 +24,14 @@ void main() {
 
   vTextureCoordinate = aTextureCoordinate;
 
-   vec4 vertexNormal_cameraspace = uModelViewMatrix * normalize(vec4(aNormal, 0.0));
+   /*vec4 vertexNormal_cameraspace = uModelViewMatrix * normalize(vec4(aNormal, 0.0));
    vec4 vertexTangent_cameraspace = uModelViewMatrix * normalize(vec4(aTangent, 0.0));
    vec4 vertexBitangent_cameraspace = uModelViewMatrix * normalize(vec4(aBitangent, 0.0));
 
     TBN = transpose(mat3(
         vertexTangent_cameraspace.rgb,
         vertexBitangent_cameraspace.rgb,
-        vertexNormal_cameraspace.rgb));
+        vertexNormal_cameraspace.rgb));*/
 
   gl_Position = uProjMatrix * tPosition;
 }
