@@ -14,68 +14,130 @@ public class TextureManager {
         return INSTANCE;
     }
 
-    private HashMap<Integer, TextureInfo[]> textureSlots;
+    private HashMap<Integer, TextureBloc> textureBlocs;
 
     private TextureManager() {
-        textureSlots = new HashMap<>();
+        textureBlocs = new HashMap<>();
     }
 
-    public TextureMemoryInfo getTextureSlotFor(Bitmap texture) {
-        for(Integer j : textureSlots.keySet()) {
-            TextureInfo[] textures = textureSlots.get(j);
+    public TextureInfo getTextureSlotFor(Bitmap texture) {
+        for(Integer j : textureBlocs.keySet()) {
+            TextureBloc textureBloc = textureBlocs.get(j);
             for(int i = 0; i<32; i++) {
-                if(textures[i].getHandler() == -1 ||
-                        (textures[i].getBitmap() != null && textures[i].getBitmap().sameAs(texture))) {
-                    if(textures[i].getBitmap() != null && textures[i].getBitmap().sameAs(texture))
+                boolean isFree = textureBloc.getTextureHandlers()[i] == -1;
+                boolean isSameTexture = (textureBloc.getTextures()[i] != null && textureBloc.getTextures()[i].sameAs(texture));
+                if(isFree || isSameTexture) {
+                    if(isSameTexture)
                         System.out.println("Use existing texture slot");
                     else
                         System.out.println("Use new texture slot");
-                    return new TextureMemoryInfo(j, i);
+
+                    textureBloc.getTextures()[i] = texture;
+                    return new TextureInfo(j, i, textureBloc.getTextures()[i]);
                 }
             }
         }
 
-        if(textureSlots.size() < 32) {
+        if(textureBlocs.size() < 32) {
             System.out.println("Create new texture bloc");
-            TextureInfo[] materials = new TextureInfo[32];
-            int bloc = GLES20.GL_TEXTURE0 + textureSlots.size();
-            textureSlots.put(bloc, materials);
-            for(int i = 0; i<32; i++) {
-                materials[i] = new TextureInfo();
-            }
+            TextureBloc textureBloc = new TextureBloc();
+            int bloc = GLES20.GL_TEXTURE0 + textureBlocs.size();
+            textureBlocs.put(bloc, textureBloc);
+            textureBloc.getTextures()[0] = texture;
 
-            return new TextureMemoryInfo(bloc, 0);
+            return new TextureInfo(bloc, 0, texture);
         }
 
         throw new RuntimeException("Not enough texture slot. Please dispose old materials");
     }
 
-    public TextureInfo[] getTextureInfoForBloc(int bloc) {
-        return textureSlots.get(bloc);
+    public int[] getTextureHandlerArrayFromTextureInfo(TextureInfo ti) {
+        return textureBlocs.get(ti.getBloc()).getTextureHandlers();
     }
 
-    public TextureInfo getTextureInfoFromMemoryInfo(TextureMemoryInfo info) {
-        return textureSlots.get(info.getBloc())[info.getSlot()];
+    public void cleanupTexture(TextureInfo ti) {
+        if(textureBlocs.get(ti.getBloc()).getTextures()[ti.getSlot()] != null) {
+            GLES20.glDeleteTextures(1, textureBlocs.get(ti.getBloc()).getTextureHandlers(), ti.getSlot());
+            textureBlocs.get(ti.getBloc()).getTextureHandlers()[ti.getSlot()] = -1;
+            textureBlocs.get(ti.getBloc()).getTextures()[ti.getSlot()].recycle();
+            textureBlocs.get(ti.getBloc()).getTextures()[ti.getSlot()] = null;
+        }
     }
 
     public void cleanup() {
-        for(Integer i : textureSlots.keySet()) {
-            for (int j = 0; j < textureSlots.get(i).length; j++) {
-                if(textureSlots.get(i)[j].getSlot() != -1) {
-                    GLES20.glDeleteTextures(1, textureSlots.get(i)[j].getHandlerArray(), 0);
-                    textureSlots.get(i)[j].setSlot(-1);
+        for(Integer i : textureBlocs.keySet()) {
+            for (int j = 0; j < textureBlocs.get(i).getTextureHandlers().length; j++) {
+                if(textureBlocs.get(i).getTextureHandlers()[j] != -1) {
+                    GLES20.glDeleteTextures(1, textureBlocs.get(i).getTextureHandlers(), j);
+                    textureBlocs.get(i).getTextureHandlers()[j] = -1;
+                    textureBlocs.get(i).getTextures()[j].recycle();
+                    textureBlocs.get(i).getTextures()[j] = null;
                 }
             }
         }
     }
 
-    public class TextureMemoryInfo {
+    public static boolean sameTexture(Bitmap i1, Bitmap i2) {
+        if(i1.getWidth() != i2.getWidth() || i1.getHeight() != i2.getHeight())
+            return false;
+
+        for(int x = 0; x<i1.getWidth(); x++) {
+            for (int y = 0; y < i1.getHeight(); y++) {
+                if(i1.getPixel(x, y) != i2.getPixel(x, y))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    public class TextureBloc {
+        private int blocIndex;
+        private int[] textureHandlers;
+        private Bitmap[] textures;
+
+        public TextureBloc() {
+            textureHandlers = new int[32];
+            for (int i = 0; i < textureHandlers.length; i++) {
+                textureHandlers[i] = -1;
+            }
+            textures = new Bitmap[32];
+        }
+
+        public int getBlocIndex() {
+            return blocIndex;
+        }
+
+        public void setBlocIndex(int blocIndex) {
+            this.blocIndex = blocIndex;
+        }
+
+        public int[] getTextureHandlers() {
+            return textureHandlers;
+        }
+
+        public void setTextureHandlers(int[] textureHandlers) {
+            this.textureHandlers = textureHandlers;
+        }
+
+        public Bitmap[] getTextures() {
+            return textures;
+        }
+
+        public void setTextures(Bitmap[] textures) {
+            this.textures = textures;
+        }
+    }
+
+    public class TextureInfo {
         private int bloc;
         private int slot;
+        private Bitmap texture;
 
-        public TextureMemoryInfo(int bloc, int slot) {
+        public TextureInfo(int bloc, int slot, Bitmap texture) {
             this.bloc = bloc;
             this.slot = slot;
+            this.texture = texture;
         }
 
         public int getBloc() {
@@ -93,50 +155,13 @@ public class TextureManager {
         public void setSlot(int slot) {
             this.slot = slot;
         }
-    }
 
-    public class TextureInfo {
-        private Bitmap bitmap;
-        private int slot;
-        private int[] handlerArray;
-
-        public TextureInfo() {
-            this.slot = -1;
-            handlerArray = new int[] {-1};
+        public Bitmap getTexture() {
+            return texture;
         }
 
-        public TextureInfo(Bitmap bitmap, int slot) {
-            this.bitmap = bitmap;
-            this.slot = slot;
-            handlerArray = new int[] {-1};
-        }
-
-        public Bitmap getBitmap() {
-            return bitmap;
-        }
-
-        public void setBitmap(Bitmap bitmap) {
-            this.bitmap = bitmap;
-        }
-
-        public int getSlot() {
-            return slot;
-        }
-
-        public void setSlot(int slot) {
-            this.slot = slot;
-        }
-
-        public int[] getHandlerArray() {
-            return handlerArray;
-        }
-
-        public int getHandler() {
-            return handlerArray[0];
-        }
-
-        public void setHandler(int h) {
-            handlerArray[0] = h;
+        public void setTexture(Bitmap texture) {
+            this.texture = texture;
         }
     }
 }
