@@ -47,19 +47,6 @@ public class Population extends Drawable {
             unusedGhosts.addChild(usedGhosts.children.get(0));
         }
 
-<<<<<<< HEAD
-            Ghost ghost = Object3DFactory.getInstance()
-                    .instanciate("objects/Ghost_blender.obj", Ghost.class);
-
-            ghost.setTextureFile("Ghost_blue.png");
-
-            angle = Math.random() * (Math.PI * 2);
-            ghost.setShader(ShaderManager.Shader.TOONTEX);
-            //ghost.setScale(0.15f, 0.15f, 0.15f);
-            ghost.setRotation(0, 0, 1, (float) angle * radToDeg + 90);
-            ghost.setPosition((float) (Math.cos(angle) * 1.8), (float) (Math.sin(angle) * 1.8), -i + 0.5f);
-            addChild(ghost);
-=======
         for(Drawable child : usedCoins.children) {
             child.translate(0, 0, translationZ);
         }
@@ -82,7 +69,6 @@ public class Population extends Drawable {
             unusedGhosts.children.get(0).setRotation(0, 0, 1, (float) angle * radToDeg + 90);
             unusedGhosts.children.get(0).setPosition((float) (Math.cos(angle) * 1.8), (float) (Math.sin(angle) * 1.8), -20f);
             usedGhosts.addChild(unusedGhosts.children.get(0));
->>>>>>> a15850ee259d9694dee55bbc87b3220a7a1a9546
         }
     }
 
