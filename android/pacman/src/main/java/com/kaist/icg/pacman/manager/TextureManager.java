@@ -27,11 +27,6 @@ public class TextureManager {
                 boolean isFree = textureBloc.getTextureHandlers()[i] == -1;
                 boolean isSameTexture = (textureBloc.getTextures()[i] != null && textureBloc.getTextures()[i].sameAs(texture));
                 if(isFree || isSameTexture) {
-                    if(isSameTexture)
-                        System.out.println("Use existing texture slot");
-                    else
-                        System.out.println("Use new texture slot");
-
                     textureBloc.getTextures()[i] = texture;
                     return new TextureInfo(j, i, textureBloc.getTextures()[i]);
                 }
