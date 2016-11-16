@@ -21,7 +21,8 @@ public class Material {
     private Bitmap textureBitmap;
     private int textureDataHandler;
     private int textureBloc;
-    private TextureManager.TextureSlot textureSlot;
+    private TextureManager.TextureMemoryInfo textureMemoryInfo;
+    private TextureManager.TextureInfo textureInfo;
 
     public Material(float[] color) {
         this.color = color;
@@ -40,11 +41,13 @@ public class Material {
         this.textureBitmap = texture;
         this.textured = true;
 
-        if (textureSlot == null)
-            textureSlot = TextureManager.getInstance().getFreeTextureSlot();
-        GLES20.glGenTextures(1, TextureManager.getInstance().getTexturePack(textureSlot.getBloc()), textureSlot.getSlot());
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
-                TextureManager.getInstance().getTexturePack(textureSlot.getBloc())[textureSlot.getSlot()]);
+        if (textureMemoryInfo == null) {
+            textureMemoryInfo = TextureManager.getInstance().getTextureSlotFor(texture);
+            textureInfo = TextureManager.getInstance().getTextureInfoFromMemoryInfo(textureMemoryInfo);
+        }
+
+        GLES20.glGenTextures(1, textureInfo.getHandlerArray(), 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureInfo.getHandlerArray()[0]);
 
         // Set filtering
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
@@ -60,11 +63,11 @@ public class Material {
 
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, textureBitmap, 0);
 
-        if (TextureManager.getInstance().getTexturePack(textureSlot.getBloc())[textureSlot.getSlot()] == 0)
+        if (textureInfo.getHandlerArray()[0] == 0)
             throw new RuntimeException("Error loading textureBitmap.");
 
-        this.textureDataHandler = TextureManager.getInstance().getTexturePack(textureSlot.getBloc())[textureSlot.getSlot()];
-        this.textureBloc = textureSlot.getBloc();
+        this.textureDataHandler = textureInfo.getHandler();
+        this.textureBloc = textureMemoryInfo.getBloc();
     }
 
     public Material(float[] color, float[] aLight, float[] dLight,
@@ -125,7 +128,7 @@ public class Material {
             textureBitmap.recycle();
 
         if (isTextured())
-            TextureManager.getInstance().getTexturePack(textureSlot.getBloc())[textureSlot.getSlot()] = -1;
+            textureInfo.setHandler(-1);
     }
 
     public void setTexture(Bitmap bitmap) {
