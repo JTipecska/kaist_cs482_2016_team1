@@ -15,7 +15,7 @@ public class Pipe extends Drawable {
         for(int i = 0; i < NB_PIPE_PART; i++) {
             mesh = Object3DFactory.getInstance().instanciate("objects/pipe1.obj", Object3D.class);
             mesh.setTextureFile("Ghost_orange.png");
-            mesh.setNormalmapFile("normal1.png");
+            mesh.setNormalmapFile("normal.png");
             mesh.setShader(ShaderManager.Shader.DIFFUSE);
             mesh.setPosition(0, 0, 2 + -i * PIPE_SIZE);
             float[] color = {0.4f, 0.4f, 0.4f};
