@@ -27,7 +27,7 @@ public class Material {
     private Bitmap normalBitmap;
     private int normalDataHandler;
     private int normalBloc;
-    private TextureManager.TextureSlot normalSlot;
+    private TextureManager.TextureInfo normalSlot;
 
     public Material(float[] color) {
         this.color = color;
@@ -77,7 +77,7 @@ public class Material {
     }
 
     private void loadNormal(Bitmap normal) {
-        this.normalBitmap = normal;
+        /*this.normalBitmap = normal;
         this.normalMap = true;
 
         if (normalSlot == null)
@@ -104,7 +104,7 @@ public class Material {
             throw new RuntimeException("Error loading normalBitmap.");
 
         this.normalDataHandler = TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()];
-        this.normalBloc = normalSlot.getBloc();
+        this.normalBloc = normalSlot.getBloc();*/
     }
 
     public Material(float[] color, float[] aLight, float[] dLight,
@@ -192,8 +192,8 @@ public class Material {
         if (normalBitmap != null)
             normalBitmap.recycle();
 
-        if (hasNormalMap())
-            TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()] = -1;
+        if (hasNormalMap()){}
+            //TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()] = -1;
     }
 
     public void setNormalMap(Bitmap bitmap) {
