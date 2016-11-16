@@ -27,7 +27,9 @@ public class GameView extends View{
 
     //Pipe
     private Scene scene;
-    private Object3D mesh;
+
+    //Ghost single Object
+    //private Object3D ghost;
 
     //Light
     private float[] lightPosition;
@@ -55,13 +57,6 @@ public class GameView extends View{
         lightPosition = new float[] {0.0f, 0.0f, 0.0f};
 
         scene = new Scene();
-        /*mesh = Object3DFactory.getInstance().instanciate("objects/pipe1.obj", Object3D.class);
-        mesh.setTextureFile("Ghost_orange.png");
-        mesh.setNormalmapFile("normal1.png");
-        mesh.setShader(ShaderManager.Shader.TOONTEX);
-        float[] color = {0.2f, 0.4f, 0.7f};
-        mesh.material.setColor(color);
-        mesh.translate(0.0f, 0.0f, 1.0f);*/
         gameUi = new GameUI();
 
         lastUpdate = SystemClock.uptimeMillis();
@@ -89,7 +84,6 @@ public class GameView extends View{
     public void onRender() {
         GLES20.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         scene.render();
-        //mesh.draw();
         gameUi.draw();
     }
 

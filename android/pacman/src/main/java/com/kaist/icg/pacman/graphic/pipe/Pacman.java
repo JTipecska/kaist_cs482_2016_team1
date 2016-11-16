@@ -5,16 +5,18 @@ import com.kaist.icg.pacman.graphic.Object3D;
 import java.nio.FloatBuffer;
 
 /**
- * Created by root on 16. 10. 17.
+ * Created by root on 16. 11. 16.
  */
 
-public class Ghost extends Object3D {
+public class Pacman extends Object3D {
 
-    public Ghost(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer) {
+    private Object3D mesh;
+
+    public Pacman(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer) {
         super(vertexBufferSize, vertexBuffer, normalBuffer, textureCoordinatesBuffer);
     }
 
-    public Ghost(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer) {
+    public Pacman(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer) {
         super(vertexBufferSize, vertexBuffer, normalBuffer);
     }
 
@@ -32,5 +34,4 @@ public class Ghost extends Object3D {
     public void setRotation(float x, float y, float z, float angle) {
         super.setRotation(x, y, z, angle);
     }
-
 }

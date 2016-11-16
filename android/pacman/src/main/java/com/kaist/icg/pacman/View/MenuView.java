@@ -1,7 +1,6 @@
 package com.kaist.icg.pacman.view;
 
 import android.graphics.Color;
-import android.os.SystemClock;
 
 import com.kaist.icg.pacman.graphic.Camera;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
@@ -121,9 +120,6 @@ public class MenuView extends View implements InputManager.ITouchListener{
 
     @Override
     public void onUpdate(long elapsedTime) {
-        //Compute time from last onUpdate
-        elapsedTime = SystemClock.uptimeMillis() - lastUpdate;
-
         inputManager.update(elapsedTime);
 
         backgroundAnimation.update();
