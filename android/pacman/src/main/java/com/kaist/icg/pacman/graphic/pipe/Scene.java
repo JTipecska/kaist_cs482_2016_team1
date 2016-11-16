@@ -2,6 +2,7 @@ package com.kaist.icg.pacman.graphic.pipe;
 
 import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.manager.InputManager;
+import com.kaist.icg.pacman.manager.ShaderManager;
 
 /**
  * Created by root on 16. 10. 26.
@@ -20,6 +21,7 @@ public class Scene {
         root = new SceneRoot();
         pacman = Object3DFactory.getInstance().instanciate("objects/Pacman.obj", Pacman.class);
         pacman.setTextureFile("Pacman_yellow.png");
+        pacman.setShader(ShaderManager.Shader.TOONTEX);
     }
 
     public void onUpdate(long elapsedTime) {

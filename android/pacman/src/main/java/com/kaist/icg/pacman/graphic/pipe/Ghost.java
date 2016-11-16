@@ -9,6 +9,7 @@ import java.nio.FloatBuffer;
  */
 
 public class Ghost extends Object3D {
+    public double angle;
 
     public Ghost(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer) {
         super(vertexBufferSize, vertexBuffer, normalBuffer, textureCoordinatesBuffer);
@@ -18,6 +19,9 @@ public class Ghost extends Object3D {
         super(vertexBufferSize, vertexBuffer, normalBuffer);
     }
 
+    public double getAngle() {
+        return 0.0;
+    }
     @Override
     public void draw() {
         super.draw();
