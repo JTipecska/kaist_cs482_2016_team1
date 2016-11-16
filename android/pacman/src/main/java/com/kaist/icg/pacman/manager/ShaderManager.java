@@ -110,6 +110,7 @@ public class ShaderManager {
         int shininessHandle = GLES20.glGetUniformLocation(program, "uShininess");
         int colorHandle = GLES20.glGetUniformLocation(program, "uColor");
         int textureHandle = GLES20.glGetUniformLocation(program, "uTexture");
+        int normalHandle = GLES20.glGetUniformLocation(program, "uNormalMap");
 
         GLES20.glUniform1f(opacityHandle, material.getOpacity());
         GLES20.glUniform3fv(lightHandle, 1, lightPosition, 0);
@@ -124,11 +125,17 @@ public class ShaderManager {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.getTextureDataHandler());
             GLES20.glUniform1i(textureHandle, 0);
         }
+        if(material.hasNormalMap()){
+            GLES20.glActiveTexture(material.getNormalBloc());
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.getNormalDataHandler());
+            GLES20.glUniform1i(normalHandle, 1);
+        }
     }
 
     // load shaders, link matrices, variables and buffers, draw
     public void draw(float[] modelMatrix,
                      FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer,
+                     FloatBuffer tangentBuffer, FloatBuffer bitangentBuffer,
                      int count, Material material, Shader shader) {
 
         if (shader != currentShader) {
@@ -191,6 +198,8 @@ public class ShaderManager {
         int positionHandle = GLES20.glGetAttribLocation(currentProgram, "aPosition");
         int normalHandle = GLES20.glGetAttribLocation(currentProgram, "aNormal");
         int textureCoordinatesHandle = GLES20.glGetAttribLocation(currentProgram, "aTextureCoordinate");
+        int tangentHandle = GLES20.glGetAttribLocation(currentProgram, "aTangent");
+        int bitangentHandle = GLES20.glGetAttribLocation(currentProgram, "aBitangent");
 
         //Set attributes
         GLES20.glEnableVertexAttribArray(positionHandle);
@@ -213,6 +222,20 @@ public class ShaderManager {
 
 
         }
+        if (material.hasNormalMap()) {
+            GLES20.glEnableVertexAttribArray(tangentHandle);
+            GLES20.glVertexAttribPointer(
+                    tangentHandle, 3,
+                    GLES20.GL_FLOAT, false,
+                    3 * 4, tangentBuffer);
+
+
+            GLES20.glEnableVertexAttribArray(bitangentHandle);
+            GLES20.glVertexAttribPointer(
+                    bitangentHandle, 3,
+                    GLES20.GL_FLOAT, false,
+                    3 * 4, bitangentBuffer);
+        }
 
         linkMaterialVariables(material, currentProgram);
 
@@ -225,13 +248,26 @@ public class ShaderManager {
 
         if(material.isTextured())
             GLES20.glDisableVertexAttribArray(textureCoordinatesHandle);
+        if (material.hasNormalMap()){
+            GLES20.glDisableVertexAttribArray(tangentHandle);
+            GLES20.glDisableVertexAttribArray(bitangentHandle);
+        }
     }
 
     // draw with default shader
     public void draw(float[] modelMatrix,
                      FloatBuffer vertexBuffer, FloatBuffer normalBuffer, int count,
                      Material material) {
-        draw(modelMatrix, vertexBuffer, normalBuffer, null, count,
+        draw(modelMatrix, vertexBuffer, normalBuffer, null, null, null, count,
                 material, Shader.DIFFUSE);
+    }
+
+    // draw with default shader
+    public void draw(float[] modelMatrix,
+                     FloatBuffer vertexBuffer, FloatBuffer normalBuffer,
+                     FloatBuffer textureCoordinatesBuffer, int count,
+                     Material material, Shader shader) {
+        draw(modelMatrix, vertexBuffer, normalBuffer, textureCoordinatesBuffer, null, null, count,
+                material, shader);
     }
 }

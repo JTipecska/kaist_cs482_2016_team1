@@ -21,7 +21,13 @@ public class Material {
     private Bitmap textureBitmap;
     private int textureDataHandler;
     private int textureBloc;
-    private TextureManager.TextureSlot textureSlot;
+    private TextureManager.TextureInfo textureInfo;
+
+    private boolean normalMap = false;
+    private Bitmap normalBitmap;
+    private int normalDataHandler;
+    private int normalBloc;
+    private TextureManager.TextureInfo normalSlot;
 
     public Material(float[] color) {
         this.color = color;
@@ -40,11 +46,14 @@ public class Material {
         this.textureBitmap = texture;
         this.textured = true;
 
-        if (textureSlot == null)
-            textureSlot = TextureManager.getInstance().getFreeTextureSlot();
-        GLES20.glGenTextures(1, TextureManager.getInstance().getTexturePack(textureSlot.getBloc()), textureSlot.getSlot());
+        if (textureInfo == null) {
+            textureInfo = TextureManager.getInstance().getTextureSlotFor(texture);
+        }
+
+        GLES20.glGenTextures(1, TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo),
+                textureInfo.getSlot());
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
-                TextureManager.getInstance().getTexturePack(textureSlot.getBloc())[textureSlot.getSlot()]);
+                TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo)[textureInfo.getSlot()]);
 
         // Set filtering
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
@@ -60,11 +69,42 @@ public class Material {
 
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, textureBitmap, 0);
 
-        if (TextureManager.getInstance().getTexturePack(textureSlot.getBloc())[textureSlot.getSlot()] == 0)
+        if (TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo)[textureInfo.getSlot()] == 0)
             throw new RuntimeException("Error loading textureBitmap.");
 
-        this.textureDataHandler = TextureManager.getInstance().getTexturePack(textureSlot.getBloc())[textureSlot.getSlot()];
-        this.textureBloc = textureSlot.getBloc();
+        this.textureDataHandler = TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo)[textureInfo.getSlot()];
+        this.textureBloc = textureInfo.getBloc();
+    }
+
+    private void loadNormal(Bitmap normal) {
+        /*this.normalBitmap = normal;
+        this.normalMap = true;
+
+        if (normalSlot == null)
+            normalSlot = TextureManager.getInstance().getFreeTextureSlot();
+        GLES20.glGenTextures(1, TextureManager.getInstance().getTexturePack(normalSlot.getBloc()), normalSlot.getSlot());
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
+                TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()]);
+
+        // Set filtering
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
+                GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
+                GLES20.GL_LINEAR);
+
+        // Set wrapping mode
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
+                GLES20.GL_REPEAT);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
+                GLES20.GL_REPEAT);
+
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, normalBitmap, 0);
+
+        if (TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()] == 0)
+            throw new RuntimeException("Error loading normalBitmap.");
+
+        this.normalDataHandler = TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()];
+        this.normalBloc = normalSlot.getBloc();*/
     }
 
     public Material(float[] color, float[] aLight, float[] dLight,
@@ -125,7 +165,7 @@ public class Material {
             textureBitmap.recycle();
 
         if (isTextured())
-            TextureManager.getInstance().getTexturePack(textureSlot.getBloc())[textureSlot.getSlot()] = -1;
+            TextureManager.getInstance().cleanupTexture(textureInfo);
     }
 
     public void setTexture(Bitmap bitmap) {
@@ -134,6 +174,34 @@ public class Material {
 
     public void setTexture(String textureFile) {
         loadTexture(PacManGLRenderer.loadImage(textureFile));
+    }
+
+    public boolean hasNormalMap() {
+        return normalMap;
+    }
+
+    public int getNormalDataHandler() {
+        return normalDataHandler;
+    }
+
+    public int getNormalBloc() {
+        return normalBloc;
+    }
+
+    public void disposeNormal() {
+        if (normalBitmap != null)
+            normalBitmap.recycle();
+
+        if (hasNormalMap()){}
+            //TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()] = -1;
+    }
+
+    public void setNormalMap(Bitmap bitmap) {
+        loadNormal(bitmap);
+    }
+
+    public void setNormalMap(String normalmapFile) {
+        loadNormal(PacManGLRenderer.loadImage(normalmapFile));
     }
 
     public float getOpacity() {

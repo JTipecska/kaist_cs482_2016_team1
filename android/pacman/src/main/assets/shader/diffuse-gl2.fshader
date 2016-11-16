@@ -5,7 +5,7 @@ uniform vec3 uLight, uColor;
 varying vec3 vNormal;
 varying vec3 vPosition;
 
-const float uAttConst = 1.0, uAttLin = 0.025, uAttExp = 0.025;
+const float uAttConst = 1.0, uAttLin = 0.05, uAttExp = 0.01;
 
 void main() {
   vec3 tolight = normalize(uLight - vPosition);

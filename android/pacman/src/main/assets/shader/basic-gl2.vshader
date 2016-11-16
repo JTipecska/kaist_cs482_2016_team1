@@ -7,10 +7,13 @@ uniform mat4 uNormalMatrix;
 attribute vec3 aPosition;
 attribute vec3 aNormal;
 attribute vec2 aTextureCoordinate;
+attribute vec3 aTangent;
+attribute vec3 aBitangent;
 
 varying vec3 vNormal;
 varying vec3 vPosition;
 varying vec2 vTextureCoordinate;
+varying mat3 TBN;
 
 void main() {
   vNormal = vec3(uNormalMatrix * vec4(aNormal, 0.0));
@@ -20,6 +23,15 @@ void main() {
   vPosition = vec3(tPosition);
 
   vTextureCoordinate = aTextureCoordinate;
+
+   /*vec4 vertexNormal_cameraspace = uModelViewMatrix * normalize(vec4(aNormal, 0.0));
+   vec4 vertexTangent_cameraspace = uModelViewMatrix * normalize(vec4(aTangent, 0.0));
+   vec4 vertexBitangent_cameraspace = uModelViewMatrix * normalize(vec4(aBitangent, 0.0));
+
+    TBN = transpose(mat3(
+        vertexTangent_cameraspace.rgb,
+        vertexBitangent_cameraspace.rgb,
+        vertexNormal_cameraspace.rgb));*/
 
   gl_Position = uProjMatrix * tPosition;
 }
