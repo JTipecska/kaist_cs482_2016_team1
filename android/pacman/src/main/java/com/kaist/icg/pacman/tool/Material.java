@@ -23,6 +23,12 @@ public class Material {
     private int textureBloc;
     private TextureManager.TextureInfo textureInfo;
 
+    private boolean normalMap = false;
+    private Bitmap normalBitmap;
+    private int normalDataHandler;
+    private int normalBloc;
+    private TextureManager.TextureInfo normalSlot;
+
     public Material(float[] color) {
         this.color = color;
         this.textured = false;
@@ -68,6 +74,37 @@ public class Material {
 
         this.textureDataHandler = TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo)[textureInfo.getSlot()];
         this.textureBloc = textureInfo.getBloc();
+    }
+
+    private void loadNormal(Bitmap normal) {
+        /*this.normalBitmap = normal;
+        this.normalMap = true;
+
+        if (normalSlot == null)
+            normalSlot = TextureManager.getInstance().getFreeTextureSlot();
+        GLES20.glGenTextures(1, TextureManager.getInstance().getTexturePack(normalSlot.getBloc()), normalSlot.getSlot());
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
+                TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()]);
+
+        // Set filtering
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
+                GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
+                GLES20.GL_LINEAR);
+
+        // Set wrapping mode
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
+                GLES20.GL_REPEAT);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
+                GLES20.GL_REPEAT);
+
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, normalBitmap, 0);
+
+        if (TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()] == 0)
+            throw new RuntimeException("Error loading normalBitmap.");
+
+        this.normalDataHandler = TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()];
+        this.normalBloc = normalSlot.getBloc();*/
     }
 
     public Material(float[] color, float[] aLight, float[] dLight,
@@ -137,6 +174,34 @@ public class Material {
 
     public void setTexture(String textureFile) {
         loadTexture(PacManGLRenderer.loadImage(textureFile));
+    }
+
+    public boolean hasNormalMap() {
+        return normalMap;
+    }
+
+    public int getNormalDataHandler() {
+        return normalDataHandler;
+    }
+
+    public int getNormalBloc() {
+        return normalBloc;
+    }
+
+    public void disposeNormal() {
+        if (normalBitmap != null)
+            normalBitmap.recycle();
+
+        if (hasNormalMap()){}
+            //TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()] = -1;
+    }
+
+    public void setNormalMap(Bitmap bitmap) {
+        loadNormal(bitmap);
+    }
+
+    public void setNormalMap(String normalmapFile) {
+        loadNormal(PacManGLRenderer.loadImage(normalmapFile));
     }
 
     public float getOpacity() {

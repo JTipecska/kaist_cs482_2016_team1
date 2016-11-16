@@ -1,5 +1,6 @@
 package com.kaist.icg.pacman.view;
 
+import android.opengl.GLES20;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -56,8 +57,6 @@ public class GameView extends View{
         lightPosition = new float[] {0.0f, 0.0f, 0.0f};
 
         scene = new Scene();
-        //ghost = Object3DFactory.getInstance().instanciate("objects/Ghost.obj", Object3D.class);
-        //ghost.setPosition(0,-1,2.5f);
         gameUi = new GameUI();
 
         lastUpdate = SystemClock.uptimeMillis();
@@ -83,9 +82,8 @@ public class GameView extends View{
      * Draw all the scene
      */
     public void onRender() {
+        GLES20.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         scene.render();
-
-        //ghost.draw();
         gameUi.draw();
     }
 

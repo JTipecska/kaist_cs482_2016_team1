@@ -27,7 +27,7 @@ public class Population extends Drawable {
             Ghost ghost = Object3DFactory.getInstance().instanciate("objects/Ghost.obj", Ghost.class);
 
             ghost.setTextureFile("Ghost_orange.png");
-            ghost.setShader(ShaderManager.Shader.TOONTEX);
+            ghost.setShader(ShaderManager.Shader.DIFFUSETEX);
             unusedGhosts.addChild(ghost);
         }
 
@@ -43,7 +43,7 @@ public class Population extends Drawable {
         for(int i = 0; i < 20; i++) {
             Coin coin = Object3DFactory.getInstance().instanciate("objects/Coin.obj", Coin.class);
 
-            coin.setShader(ShaderManager.Shader.TOONTEX);
+            coin.setShader(ShaderManager.Shader.TOON);
             coin.setScale(0.5f, 0.5f, 0.5f);
             unusedCoins.addChild(coin);
         }
@@ -58,7 +58,6 @@ public class Population extends Drawable {
         updateSpawn(usedGhosts, unusedGhosts, translationZ);
         updateSpawn(usedCoins, unusedCoins, translationZ);
         spawnPopulation();
-        System.out.println(usedGhosts.children.size());
     }
 
     public void updateSpawn(Drawable used, Drawable unUsed, float translation) {

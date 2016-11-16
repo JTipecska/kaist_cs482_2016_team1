@@ -11,12 +11,12 @@ public class FloatAnimation {
     private float to;
     private long startTime;
     private long animationTime;
-    private float percent;
+    private double percent;
     private boolean loop;
     private boolean reverse;
     private boolean isReversing;
     private long overflow;
-    private float current;
+    private double current;
     private boolean end;
     private IAnimationStateListener animationStateListener;
 
@@ -41,9 +41,9 @@ public class FloatAnimation {
     }
 
     public float update() {
-        if(end) return current;
+        if(end) return (float) current;
 
-        percent = ((float)SystemClock.uptimeMillis() - startTime) / animationTime;
+        percent = ((double)SystemClock.uptimeMillis() - startTime) / animationTime;
 
         if(percent >= 1) {
             if(!loop && !reverse) {
@@ -77,11 +77,11 @@ public class FloatAnimation {
         else
             current = to - (to - from) * percent;
 
-        return current;
+        return (float) current;
     }
 
     public float getValue() {
-        return current;
+        return (float) current;
     }
 
     public void setAnimationStateListener(IAnimationStateListener animationStateListener) {
