@@ -9,11 +9,11 @@ import com.kaist.icg.pacman.manager.TextureManager;
 
 // TODO: define materials like 'Ghost material' and pass it to the drawables.
 public class Material {
-    private float[] color = {1, 1, 1};
+
     //TODO: we might just set a costant ambientLight for the whole scene
-    private float[] ambientLight = {0.1f, 0.0f, 0.0f};
-    private float[] diffuseLight = {0.5f, 0.0f, 0.0f};
-    private float[] specularLight = {1.0f, 1.0f, 1.0f};
+    private float ambientIntensity = 0.1f;
+    private float[] diffuseColor = {0.5f, 0.0f, 0.0f};
+    private float[] specularColor = {0.2f, 0.2f, 0.2f};
     private float shininess = 16.0f;
     private float opacity = 1.0f;
 
@@ -23,14 +23,11 @@ public class Material {
     private int textureBloc;
     private TextureManager.TextureInfo textureInfo;
 
-    private boolean normalMap = false;
-    private Bitmap normalBitmap;
-    private int normalDataHandler;
-    private int normalBloc;
-    private TextureManager.TextureInfo normalSlot;
+    public Material() {
+    }
 
     public Material(float[] color) {
-        this.color = color;
+        this.diffuseColor = color;
         this.textured = false;
     }
 
@@ -76,68 +73,36 @@ public class Material {
         this.textureBloc = textureInfo.getBloc();
     }
 
-    private void loadNormal(Bitmap normal) {
-        /*this.normalBitmap = normal;
-        this.normalMap = true;
-
-        if (normalSlot == null)
-            normalSlot = TextureManager.getInstance().getFreeTextureSlot();
-        GLES20.glGenTextures(1, TextureManager.getInstance().getTexturePack(normalSlot.getBloc()), normalSlot.getSlot());
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
-                TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()]);
-
-        // Set filtering
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
-                GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
-                GLES20.GL_LINEAR);
-
-        // Set wrapping mode
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
-                GLES20.GL_REPEAT);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
-                GLES20.GL_REPEAT);
-
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, normalBitmap, 0);
-
-        if (TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()] == 0)
-            throw new RuntimeException("Error loading normalBitmap.");
-
-        this.normalDataHandler = TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()];
-        this.normalBloc = normalSlot.getBloc();*/
-    }
-
-    public Material(float[] color, float[] aLight, float[] dLight,
+    public Material(float[] color, float aLight,
                     float[] sLight, float shininess) {
-        this.color = color;
-        this.ambientLight = aLight;
-        this.diffuseLight = dLight;
-        this.specularLight = sLight;
+        this.diffuseColor = color;
+        this.ambientIntensity = aLight;
+        this.specularColor = sLight;
         this.shininess = shininess;
     }
 
-    public Material(float[] aLight, float[] dLight,
+    public Material(float aLight, float[] dLight,
                     float[] sLight, float shininess) {
-        this.ambientLight = aLight;
-        this.diffuseLight = dLight;
-        this.specularLight = sLight;
+        this.ambientIntensity = aLight;
+        this.diffuseColor = dLight;
+        this.specularColor = sLight;
         this.shininess = shininess;
     }
 
     public float[] getColor() {
-        return color;
+        return diffuseColor;
     }
 
-    public float[] getAmbientLight() {
-        return ambientLight;
+    public float getAmbientIntensity() {
+        return ambientIntensity;
     }
 
-    public float[] getDiffuseLight() {
-        return diffuseLight;
+    public float[] getDiffuseColor() {
+        return diffuseColor;
     }
 
-    public float[] getSpecularLight() {
-        return specularLight;
+    public float[] getSpecularColor() {
+        return specularColor;
     }
 
     public float getShininess() {
@@ -157,7 +122,7 @@ public class Material {
     }
 
     public void setColor(float[] color) {
-        this.color = color;
+        this.diffuseColor = color;
     }
 
     public void dispose() {
@@ -176,39 +141,28 @@ public class Material {
         loadTexture(PacManGLRenderer.loadImage(textureFile));
     }
 
-    public boolean hasNormalMap() {
-        return normalMap;
-    }
-
-    public int getNormalDataHandler() {
-        return normalDataHandler;
-    }
-
-    public int getNormalBloc() {
-        return normalBloc;
-    }
-
-    public void disposeNormal() {
-        if (normalBitmap != null)
-            normalBitmap.recycle();
-
-        if (hasNormalMap()){}
-            //TextureManager.getInstance().getTexturePack(normalSlot.getBloc())[normalSlot.getSlot()] = -1;
-    }
-
-    public void setNormalMap(Bitmap bitmap) {
-        loadNormal(bitmap);
-    }
-
-    public void setNormalMap(String normalmapFile) {
-        loadNormal(PacManGLRenderer.loadImage(normalmapFile));
-    }
-
     public float getOpacity() {
         return opacity;
     }
 
     public void setOpacity(float opacity) {
         this.opacity = opacity;
+    }
+
+
+    public void setAmbientIntensity(float ambientIntensity) {
+        this.ambientIntensity = ambientIntensity;
+    }
+
+    public void setDiffuseColor(float[] diffuseLight) {
+        this.diffuseColor = diffuseLight;
+    }
+
+    public void setSpecularColor(float[] specularLight) {
+        this.specularColor = specularLight;
+    }
+
+    public void setShininess(float shininess) {
+        this.shininess = shininess;
     }
 }

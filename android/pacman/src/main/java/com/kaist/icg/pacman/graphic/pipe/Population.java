@@ -3,6 +3,7 @@ package com.kaist.icg.pacman.graphic.pipe;
 import com.kaist.icg.pacman.graphic.Drawable;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.manager.ShaderManager;
+import com.kaist.icg.pacman.tool.Material;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -23,11 +24,18 @@ public class Population extends Drawable {
         unusedGhosts = new Drawable();
         usedGhosts = new Drawable();
         addChild(usedGhosts);
+        Material gold = new Material();
+        gold.setAmbientIntensity(
+                (0.212671f*0.24725f + 0.715160f*0.1995f + 0.072169f*0.0745f)/
+                        (0.212671f*0.75164f + 0.715160f*0.60648f + 0.072169f*0.22648f));
+        gold.setDiffuseColor(new float[] {0.75164f,0.60648f,0.22648f});
+        gold.setSpecularColor(new float[] {0.628281f, 0.555802f, 0.366065f});
+        gold.setShininess(0.4f*128.0f);
         for(int i = 0; i < 50; i++) {
             Ghost ghost = Object3DFactory.getInstance().instanciate("objects/Ghost.obj", Ghost.class);
-
+            //ghost.setMaterial(gold);
             ghost.setTextureFile("Ghost_orange.png");
-            ghost.setShader(ShaderManager.Shader.DIFFUSETEX);
+            ghost.setShader(ShaderManager.Shader.PHONGTEX);
             unusedGhosts.addChild(ghost);
         }
 
@@ -40,11 +48,19 @@ public class Population extends Drawable {
         unusedCoins = new Drawable();
         addChild(usedCoins);
 
+        Material gold = new Material();
+        gold.setAmbientIntensity(
+                (0.212671f*0.24725f + 0.715160f*0.1995f + 0.072169f*0.0745f)/
+                (0.212671f*0.75164f + 0.715160f*0.60648f + 0.072169f*0.22648f));
+        gold.setDiffuseColor(new float[] {0.75164f,0.60648f,0.22648f});
+        gold.setSpecularColor(new float[] {0.628281f, 0.555802f, 0.366065f});
+        gold.setShininess(0.4f*128.0f);
+
         for(int i = 0; i < 20; i++) {
             Coin coin = Object3DFactory.getInstance().instanciate("objects/Coin.obj", Coin.class);
-
-            coin.setShader(ShaderManager.Shader.TOON);
-            coin.setScale(0.5f, 0.5f, 0.5f);
+            coin.setMaterial(gold);
+            coin.setShader(ShaderManager.Shader.PHONG);
+            //coin.setScale(0.5f, 0.5f, 0.5f);
             unusedCoins.addChild(coin);
         }
         double initAngle =  Math.random() * (Math.PI * 2);
@@ -76,7 +92,7 @@ public class Population extends Drawable {
         angle = Math.random() * (Math.PI * 2);
         //Retarded spawn version, so so so retarded
         int n = rand.nextInt(100) + 1;
-        if (n < 30)
+        if (n < 15)
             addGhost(angle);
         if (n > 98) {
             Random random = new Random();

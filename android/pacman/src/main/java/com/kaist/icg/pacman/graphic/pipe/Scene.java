@@ -21,7 +21,7 @@ public class Scene {
         root = new SceneRoot();
         pacman = Object3DFactory.getInstance().instanciate("objects/Pacman.obj", Pacman.class);
         pacman.setTextureFile("Pacman_yellow.png");
-        pacman.setShader(ShaderManager.Shader.TOONTEX);
+        pacman.setShader(ShaderManager.Shader.DIFFUSETEX);
     }
 
     public void onUpdate(long elapsedTime) {
@@ -29,8 +29,8 @@ public class Scene {
         translationZ = (float)(elapsedTime/PIPE_SPEED);//(float)(elapsedTime / PIPE_SPEED);
         if(Math.abs(InputManager.getInstance().getHorizontalMovement()) >= 0.8)
             rotationZ -= ROTATION_SPEED * Math.signum(InputManager.getInstance().getHorizontalMovement());
-        pacman.setPosition(0.0f, -0.8f, 2.0f);
-        pacman.setScale(0.3f, 0.3f, 0.3f);
+        pacman.setPosition(0.0f, -0.8f, 0.0f);
+        //pacman.setScale(0.3f, 0.3f, 0.3f);
         pacman.setRotation(0, 1, 0, 180f);
         root.onUpdate(translationZ, rotationZ);
     }

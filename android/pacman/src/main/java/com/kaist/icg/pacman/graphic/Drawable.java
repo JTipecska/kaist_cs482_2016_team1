@@ -39,8 +39,7 @@ public class Drawable {
     protected Drawable parent;
     public ArrayList<Drawable> children;
 
-
-    public Material material;
+    protected Material material;
     protected ShaderManager.Shader shader = ShaderManager.Shader.TOON;
 
     public void setShader(ShaderManager.Shader shader) {this.shader = shader;}
@@ -164,5 +163,13 @@ public class Drawable {
 
         children.add(child);
         child.parent = this;
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 }
