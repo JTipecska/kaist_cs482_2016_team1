@@ -29,7 +29,7 @@ public class Scene {
         translationZ = (float)(elapsedTime/PIPE_SPEED);//(float)(elapsedTime / PIPE_SPEED);
         if(Math.abs(InputManager.getInstance().getHorizontalMovement()) >= 0.8)
             rotationZ -= ROTATION_SPEED * Math.signum(InputManager.getInstance().getHorizontalMovement());
-        pacman.setPosition(0.0f, -0.8f, 0.0f);
+        pacman.setPosition(0.0f, -1.2f, 2.5f);
         //pacman.setScale(0.3f, 0.3f, 0.3f);
         pacman.setRotation(0, 1, 0, 180f);
         root.onUpdate(translationZ, rotationZ);
