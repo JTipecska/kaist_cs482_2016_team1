@@ -14,12 +14,16 @@ public class Pipe extends Drawable {
     public Pipe() {
         for(int i = 0; i < NB_PIPE_PART; i++) {
             mesh = Object3DFactory.getInstance().instanciate("objects/pipe1.obj", Object3D.class);
-            mesh.setTextureFile("Ghost_orange.png");
-            mesh.setNormalmapFile("normal.png");
-            mesh.setShader(ShaderManager.Shader.DIFFUSE);
+            mesh.setTextureFile("normal9.png");
+            mesh.setShader(ShaderManager.Shader.DIFFUSENORMAL);
             mesh.setPosition(0, 0, 2 + -i * PIPE_SIZE);
-            float[] color = {0.4f, 0.4f, 0.4f};
-            mesh.material.setColor(color);
+            //brown:
+            float[] color = {68.0f/255.0f, 47.0f/255.0f, 41.0f/255.0f};
+            //pink:
+            //color = new float[] {255.0f/255.0f, 192.0f/255.0f, 203.0f/255.0f};
+            //blue:
+            //color = new float[] {202.0f/255.0f, 225.0f/255.0f, 255.0f/255.0f};
+            mesh.getMaterial().setColor(color);
             addChild(mesh);
         }
     }

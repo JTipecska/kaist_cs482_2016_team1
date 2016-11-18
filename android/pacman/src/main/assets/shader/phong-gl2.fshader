@@ -1,8 +1,7 @@
 precision mediump float;
 
-uniform vec3 uLight, uColor;
-uniform vec3 uAmbient, uDiffuse, uSpecular;
-uniform float uShininess;
+uniform vec3 uLight, uColor, uSpecular;
+uniform float uAmbient, uShininess;
 
 varying vec3 vNormal;
 varying vec3 vPosition;
@@ -22,15 +21,13 @@ void main() {
 
      if( dot(L,vNormal) > 0.0)
      {
-     // can be multiplied by material constant
        specular = pow( max(0.0, dot( H, vNormal)), uShininess);
      }
 
     float dist = distance(uLight, vPosition);
     float attenuation = uAttConst + uAttLin * dist + uAttExp * pow(dist, 2.0);
 
-     //not sure about the look of the specular component
-     vec3 color = (uColor*diffuse + specular*uSpecular)/attenuation;
+     vec3 color = uAmbient * diffuse * uColor + specular * uSpecular;
 
      gl_FragColor = vec4(color,1);
 }

@@ -16,7 +16,7 @@ import java.nio.FloatBuffer;
 public class ShaderManager {
 
     public enum Shader {
-        DIFFUSE, TOON, PHONG, UI, DIFFUSETEX, TOONTEX
+        DIFFUSE, TOON, PHONG, UI, DIFFUSETEX, PHONGTEX, DIFFUSENORMAL
     }
 
     //Singleton
@@ -29,7 +29,7 @@ public class ShaderManager {
         return INSTANCE;
     }
 
-    private int shaderPrograms = 6;
+    private int shaderPrograms = 7;
 
     private float[] projectionMatrix;
     private float[] viewMatrix;
@@ -40,7 +40,7 @@ public class ShaderManager {
 
     //OpenGL program
     private int[] programs;
-    private Shader currentShader = Shader.TOON;
+    private Shader currentShader = Shader.DIFFUSE;
     private int currentProgram = 0;
 
     private boolean initialized = false;
@@ -86,8 +86,12 @@ public class ShaderManager {
             GLES20.glAttachShader(programs[4], fragmentShader);
 
             fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                    GLES20.GL_FRAGMENT_SHADER, "shader/toonTex-gl2.fshader");
+                    GLES20.GL_FRAGMENT_SHADER, "shader/phongTex-gl2.fshader");
             GLES20.glAttachShader(programs[5], fragmentShader);
+
+            fragmentShader = PacManGLRenderer.loadShaderFromFile(
+                    GLES20.GL_FRAGMENT_SHADER, "shader/diffuseNormal-gl2.fshader");
+            GLES20.glAttachShader(programs[6], fragmentShader);
 
             for (int i = 0; i < shaderPrograms; ++i) {
                 GLES20.glLinkProgram(programs[i]);
@@ -105,37 +109,28 @@ public class ShaderManager {
         int opacityHandle = GLES20.glGetUniformLocation(program, "uOpacity");
         int lightHandle = GLES20.glGetUniformLocation(program, "uLight");
         int ambientHandle = GLES20.glGetUniformLocation(program, "uAmbient");
-        int diffuseHandle = GLES20.glGetUniformLocation(program, "uDiffuse");
+        int diffuseHandle = GLES20.glGetUniformLocation(program, "uColor");
         int specularHandle = GLES20.glGetUniformLocation(program, "uSpecular");
         int shininessHandle = GLES20.glGetUniformLocation(program, "uShininess");
-        int colorHandle = GLES20.glGetUniformLocation(program, "uColor");
         int textureHandle = GLES20.glGetUniformLocation(program, "uTexture");
-        int normalHandle = GLES20.glGetUniformLocation(program, "uNormalMap");
 
         GLES20.glUniform1f(opacityHandle, material.getOpacity());
         GLES20.glUniform3fv(lightHandle, 1, lightPosition, 0);
-        GLES20.glUniform3fv(ambientHandle, 1, material.getAmbientLight(), 0);
-        GLES20.glUniform3fv(diffuseHandle, 1, material.getDiffuseLight(), 0);
-        GLES20.glUniform3fv(specularHandle, 1, material.getSpecularLight(), 0);
+        GLES20.glUniform1f(ambientHandle, material.getAmbientIntensity());
+        GLES20.glUniform3fv(diffuseHandle, 1, material.getDiffuseColor(), 0);
+        GLES20.glUniform3fv(specularHandle, 1, material.getSpecularColor(), 0);
         GLES20.glUniform1f(shininessHandle, material.getShininess());
-        GLES20.glUniform3fv(colorHandle, 1, material.getColor(), 0);
 
         if(material.isTextured()) {
             GLES20.glActiveTexture(material.getTextureBloc());
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.getTextureDataHandler());
             GLES20.glUniform1i(textureHandle, 0);
         }
-        if(material.hasNormalMap()){
-            GLES20.glActiveTexture(material.getNormalBloc());
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.getNormalDataHandler());
-            GLES20.glUniform1i(normalHandle, 1);
-        }
     }
 
     // load shaders, link matrices, variables and buffers, draw
     public void draw(float[] modelMatrix,
                      FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer,
-                     FloatBuffer tangentBuffer, FloatBuffer bitangentBuffer,
                      int count, Material material, Shader shader) {
 
         if (shader != currentShader) {
@@ -160,9 +155,13 @@ public class ShaderManager {
                     GLES20.glUseProgram(programs[4]);
                     currentProgram = programs[4];
                     break;
-                case TOONTEX:
+                case PHONGTEX:
                     GLES20.glUseProgram(programs[5]);
                     currentProgram = programs[5];
+                    break;
+                case DIFFUSENORMAL:
+                    GLES20.glUseProgram(programs[6]);
+                    currentProgram = programs[6];
                     break;
                 default:
                     GLES20.glUseProgram(programs[0]);
@@ -198,8 +197,6 @@ public class ShaderManager {
         int positionHandle = GLES20.glGetAttribLocation(currentProgram, "aPosition");
         int normalHandle = GLES20.glGetAttribLocation(currentProgram, "aNormal");
         int textureCoordinatesHandle = GLES20.glGetAttribLocation(currentProgram, "aTextureCoordinate");
-        int tangentHandle = GLES20.glGetAttribLocation(currentProgram, "aTangent");
-        int bitangentHandle = GLES20.glGetAttribLocation(currentProgram, "aBitangent");
 
         //Set attributes
         GLES20.glEnableVertexAttribArray(positionHandle);
@@ -222,20 +219,6 @@ public class ShaderManager {
 
 
         }
-        if (material.hasNormalMap()) {
-            GLES20.glEnableVertexAttribArray(tangentHandle);
-            GLES20.glVertexAttribPointer(
-                    tangentHandle, 3,
-                    GLES20.GL_FLOAT, false,
-                    3 * 4, tangentBuffer);
-
-
-            GLES20.glEnableVertexAttribArray(bitangentHandle);
-            GLES20.glVertexAttribPointer(
-                    bitangentHandle, 3,
-                    GLES20.GL_FLOAT, false,
-                    3 * 4, bitangentBuffer);
-        }
 
         linkMaterialVariables(material, currentProgram);
 
@@ -248,26 +231,15 @@ public class ShaderManager {
 
         if(material.isTextured())
             GLES20.glDisableVertexAttribArray(textureCoordinatesHandle);
-        if (material.hasNormalMap()){
-            GLES20.glDisableVertexAttribArray(tangentHandle);
-            GLES20.glDisableVertexAttribArray(bitangentHandle);
-        }
+
     }
 
     // draw with default shader
     public void draw(float[] modelMatrix,
                      FloatBuffer vertexBuffer, FloatBuffer normalBuffer, int count,
                      Material material) {
-        draw(modelMatrix, vertexBuffer, normalBuffer, null, null, null, count,
+        draw(modelMatrix, vertexBuffer, normalBuffer, null, count,
                 material, Shader.DIFFUSE);
     }
 
-    // draw with default shader
-    public void draw(float[] modelMatrix,
-                     FloatBuffer vertexBuffer, FloatBuffer normalBuffer,
-                     FloatBuffer textureCoordinatesBuffer, int count,
-                     Material material, Shader shader) {
-        draw(modelMatrix, vertexBuffer, normalBuffer, textureCoordinatesBuffer, null, null, count,
-                material, shader);
-    }
 }
