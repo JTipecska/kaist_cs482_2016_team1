@@ -36,5 +36,4 @@ public class Ghost extends Object3D {
     public void setRotation(float x, float y, float z, float angle) {
         super.setRotation(x, y, z, angle);
     }
-
 }

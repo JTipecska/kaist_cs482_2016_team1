@@ -14,6 +14,7 @@ public class Scene {
     private final static float ROTATION_SPEED = 3f;
     private SceneRoot root;
     private Pacman pacman;
+    private float PACMAN_RAD = 0.2f;
     private float translationZ;
     private float rotationZ;
 
@@ -32,6 +33,7 @@ public class Scene {
         pacman.setPosition(0.0f, -1.2f, 2.5f);
         //pacman.setScale(0.3f, 0.3f, 0.3f);
         pacman.setRotation(0, 1, 0, 180f);
+        pacman.setCollisionRadius(PACMAN_RAD);
         root.onUpdate(translationZ, rotationZ);
     }
     public void render() {

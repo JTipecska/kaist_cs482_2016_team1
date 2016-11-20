@@ -21,7 +21,7 @@ public class Drawable {
     private float[] scale;
     private float[] rotationAxis;
     private float rotationAngle;
-
+    private float collisionRadius;
     //Matrix
     protected float[] modelMatrix;
     protected float[] translationMatrix;
@@ -53,6 +53,7 @@ public class Drawable {
         translationMatrix = new float[16];
         scaleMatrix = new float[16];
         rotationMatrix = new float[16];
+        collisionRadius = 0f;
 
         Matrix.setIdentityM(translationMatrix, 0);
         Matrix.translateM(translationMatrix, 0, position[0], position[1], position[2]);
@@ -171,5 +172,16 @@ public class Drawable {
 
     public void setMaterial(Material material) {
         this.material = material;
+    }
+    //AUTOMATIC DEPENDING ON OBJECT OR HARDCODE WHAT WORKS???????!!!!!!
+    public void setCollisionRadius(float rad) {
+        this.collisionRadius = rad;
+    }
+
+
+    public boolean getCollision(float x, float y, float z, float rad) {
+        if(Math.sqrt(Math.pow((x - modelMatrix[12]), 2.0) + Math.pow((y - modelMatrix[13]), 2.0) + Math.pow((z - modelMatrix[14]), 2.0)) < (rad + collisionRadius))
+            return true;
+        return false;
     }
 }

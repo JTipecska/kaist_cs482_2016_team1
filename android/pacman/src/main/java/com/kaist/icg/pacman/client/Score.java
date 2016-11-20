@@ -29,6 +29,10 @@ public class Score {
         this.score = score;
     }
 
+    public void incrementScore(int score) {
+        this.score++;
+    }
+
     public long getDate() {
         return date;
     }
