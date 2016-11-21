@@ -8,6 +8,7 @@ public class LevelManager {
 
     //Singleton
     private static LevelManager INSTANCE;
+    private int score;
 
     public static  LevelManager getInstance() {
         if(INSTANCE == null)
@@ -17,10 +18,16 @@ public class LevelManager {
     }
 
     private LevelManager() {
-
+        score = 0;
     }
 
     public void update(float timeElapsed) {
 
+    }
+
+    public void addPoint(){score++;}
+
+    public int getScore(){
+        return score;
     }
 }

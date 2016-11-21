@@ -73,8 +73,9 @@ public class GameView extends View{
 
         levelManager.update(elapsedTime);
         inputManager.update(elapsedTime);
-        gameUi.update(elapsedTime);
 
+        gameUi.update(elapsedTime);
+        gameUi.updateScore(levelManager.getScore());
         scene.onUpdate(elapsedTime);
     }
 

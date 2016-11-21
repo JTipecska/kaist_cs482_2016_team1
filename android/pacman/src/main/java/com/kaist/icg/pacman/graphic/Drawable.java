@@ -184,4 +184,14 @@ public class Drawable {
             return true;
         return false;
     }
+    public boolean getCollision(Drawable object) {
+        for(Drawable child: object.children) {
+            if (Math.sqrt(Math.pow((modelMatrix[12] - child.modelMatrix[12]), 2.0) + Math.pow((modelMatrix[13] - child.modelMatrix[13]), 2.0) +
+                    Math.pow((modelMatrix[14] - child.modelMatrix[14]), 2.0)) < (collisionRadius + child.collisionRadius))
+                return true;
+            if(child.position[2] > -19f)
+                return false;
+        }
+        return false;
+    }
 }
