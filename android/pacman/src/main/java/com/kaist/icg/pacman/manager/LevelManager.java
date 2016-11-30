@@ -12,6 +12,7 @@ public class LevelManager {
 
     //Singleton
     private static LevelManager INSTANCE;
+    private int score;
 
     public static  LevelManager getInstance() {
         if(INSTANCE == null)
@@ -21,7 +22,7 @@ public class LevelManager {
     }
 
     private LevelManager() {
-
+        score = 0;
     }
 
     public void update(long timeElapsed) {
@@ -36,5 +37,11 @@ public class LevelManager {
         ParticleEmitter particleEmitter = new ParticleEmitter(position);
         particleEmitters[last] = particleEmitter;
         last = (last + 1)%30;
+    }
+
+    public void addPoint(){score++;}
+
+    public int getScore(){
+        return score;
     }
 }

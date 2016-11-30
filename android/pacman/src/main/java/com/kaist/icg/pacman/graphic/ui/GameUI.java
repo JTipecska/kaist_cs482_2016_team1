@@ -34,7 +34,7 @@ public class GameUI extends Drawable{
         pointText.setForegroundColor(Color.BLACK);
         pointText.setTextSize(40);
         pointText.setScreenPosition(20, 90, UIElement.EAnchorPoint.TopLeft);
-        pointText.setText("Points: 42");
+        pointText.setText("Points: 0");
         pointText.setZIndex(1);
 
         this.addChild(fpsCounter);
@@ -46,4 +46,6 @@ public class GameUI extends Drawable{
     public void update(long elapsedTime) {
         fpsCounter.update(elapsedTime);
     }
+
+    public void updateScore(int score) { pointText.setText("Points: " + score);}
 }
