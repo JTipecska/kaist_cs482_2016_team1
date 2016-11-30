@@ -26,6 +26,7 @@ import com.kaist.icg.pacman.manager.InputManager;
 import com.kaist.icg.pacman.manager.TextureManager;
 import com.kaist.icg.pacman.view.GameView;
 import com.kaist.icg.pacman.view.HighScoreView;
+import com.kaist.icg.pacman.view.MenuEnd;
 import com.kaist.icg.pacman.view.MenuView;
 import com.kaist.icg.pacman.view.View;
 
@@ -57,6 +58,7 @@ public class PacManActivity extends Activity {
         glView = (PacManGLSurfaceView) findViewById(R.id.main_glSurfaceView);
 
         currentView = new MenuView(glView);
+        //currentView = new MenuEnd(glView);
     }
 
     @Override
@@ -102,7 +104,8 @@ public class PacManActivity extends Activity {
             @Override
             public void run() {
                 cleanupCurrentView();
-                currentView = new MenuView(glView, true);
+               currentView = new MenuView(glView, true);
+               //currentView = new MenuEnd(glView,true);
                 currentView.init();
             }
         });

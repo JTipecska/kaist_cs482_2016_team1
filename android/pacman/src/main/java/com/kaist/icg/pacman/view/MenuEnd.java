@@ -14,7 +14,7 @@ import com.kaist.icg.pacman.manager.InputManager;
 import com.kaist.icg.pacman.manager.ShaderManager;
 import com.kaist.icg.pacman.tool.FloatAnimation;
 
-public class MenuView extends View implements InputManager.ITouchListener{
+public class MenuEnd extends View implements InputManager.ITouchListener{
     private final ShaderManager shaderManager;
     private InputManager inputManager;
     private PacManGLSurfaceView glView;
@@ -24,12 +24,12 @@ public class MenuView extends View implements InputManager.ITouchListener{
     private ImageElement background1;
     private ImageElement background2;
     private ImageElement title;
-    private FPSCounterElement fpsCounter;
+    private ImageElement gameOver;
 
-    private TextElement btnNewGame;
+
     private TextElement btnHighscore;
     private TextElement btnQuit;
-
+    private TextElement btnRestart;
 
     private FloatAnimation backgroundAnimation;
     private FloatAnimation fadeOutAnimation;
@@ -37,11 +37,11 @@ public class MenuView extends View implements InputManager.ITouchListener{
     private FloatAnimation fadeInAnimation;
     private boolean fadeIn;
 
-    public MenuView(PacManGLSurfaceView mGLView) {
+    public MenuEnd(PacManGLSurfaceView mGLView) {
         this(mGLView, false);
     }
 
-    public MenuView(PacManGLSurfaceView mGLView, boolean fadeIn) {
+    public MenuEnd(PacManGLSurfaceView mGLView, boolean fadeIn) {
         this.glView = mGLView;
         this.glView.setView(this);
 
@@ -70,14 +70,6 @@ public class MenuView extends View implements InputManager.ITouchListener{
 
         backgroundAnimation = new FloatAnimation(0, Camera.getInstance().getScreenWidth(), 7000, true, false);
 
-        fpsCounter = Object3DFactory.getInstance().instanciate("objects/ui.obj", FPSCounterElement.class);
-        fpsCounter.setBackgroundImage("button_yellow.png");
-        fpsCounter.setBackgroundColor(Color.TRANSPARENT);
-        fpsCounter.setForegroundColor(Color.BLACK);
-        fpsCounter.setTextSize(20);
-        fpsCounter.setScreenPosition(20, 20, UIElement.EAnchorPoint.TopRight);
-        fpsCounter.setPadding(15, 30, 15, 30);
-        fpsCounter.setZIndex(1);
 
         title = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         title.setTextureFile("title.png");
@@ -85,15 +77,11 @@ public class MenuView extends View implements InputManager.ITouchListener{
         title.setScreenPosition(0, -300, UIElement.EAnchorPoint.Center);
         title.setZIndex(1);
 
-        btnNewGame = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
-        btnNewGame.setBackgroundImage("button_yellow.png");
-        btnNewGame.setBackgroundColor(Color.TRANSPARENT);
-        btnNewGame.setForegroundColor(Color.BLACK);
-        btnNewGame.setTextSize(60);
-        btnNewGame.setText("New game");
-        btnNewGame.setScreenPosition(0, 50, UIElement.EAnchorPoint.Center);
-        btnNewGame.setPadding(30, 50, 40, 50);
-        btnNewGame.setZIndex(1);
+        gameOver = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
+        gameOver.setTextureFile("GameOver.png");
+        gameOver.setScreenSize(799, 206);
+        gameOver.setScreenPosition(0, -600, UIElement.EAnchorPoint.Center);
+        gameOver.setZIndex(1);
 
         btnHighscore = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
         btnHighscore.setBackgroundImage("button_yellow.png");
@@ -116,6 +104,15 @@ public class MenuView extends View implements InputManager.ITouchListener{
         btnQuit.setZIndex(1);
 
 
+        btnRestart = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
+        btnRestart.setBackgroundImage("button_yellow.png");
+        btnRestart.setBackgroundColor(Color.TRANSPARENT);
+        btnRestart.setForegroundColor(Color.BLACK);
+        btnRestart.setTextSize(60);
+        btnRestart.setText("Restart Game");
+        btnRestart.setScreenPosition(0, 50, UIElement.EAnchorPoint.Center);
+        btnRestart.setPadding(30, 50, 40, 50);
+        btnRestart.setZIndex(1);
 
 
         shaderManager.initialize(Camera.getInstance().getProjMatrix(),
@@ -133,11 +130,10 @@ public class MenuView extends View implements InputManager.ITouchListener{
         background2.setScreenPosition((int) (Camera.getInstance().getScreenWidth() - backgroundAnimation.getValue()),
                 0, UIElement.EAnchorPoint.TopLeft);
 
-        fpsCounter.update(elapsedTime);
 
         if(fadeOut) {
             fadeOutAnimation.update();
-            btnNewGame.setOpacity(fadeOutAnimation.getValue());
+            btnRestart.setOpacity(fadeOutAnimation.getValue());
             btnHighscore.setOpacity(fadeOutAnimation.getValue());
             btnQuit.setOpacity(fadeOutAnimation.getValue());
         }
@@ -147,11 +143,11 @@ public class MenuView extends View implements InputManager.ITouchListener{
     public void onRender() {
         background1.draw();
         background2.draw();
-        fpsCounter.draw();
         title.draw();
-        btnNewGame.draw();
+        gameOver.draw();
         btnHighscore.draw();
         btnQuit.draw();
+        btnRestart.draw();
     }
 
     @Override
@@ -168,16 +164,16 @@ public class MenuView extends View implements InputManager.ITouchListener{
     public void cleanup() {
         background1.dispose();
         background2.dispose();
-        fpsCounter.dispose();
         title.dispose();
-        btnNewGame.dispose();
+        gameOver.dispose();
         btnHighscore.dispose();
         btnQuit.dispose();
+        btnRestart.dispose();
     }
 
     @Override
     public void onTouchStart(float x, float y) {
-       if(btnNewGame.getBounds().contains((int)x, (int)y)) {
+        if(btnRestart.getBounds().contains((int)x, (int)y)) {
             PacManActivity.current.startNewGame();
         }
         else if(btnHighscore.getBounds().contains((int)x, (int)y)) {
@@ -199,6 +195,5 @@ public class MenuView extends View implements InputManager.ITouchListener{
 
     @Override
     public void onTouchEnd(float x, float y) {
-
     }
 }

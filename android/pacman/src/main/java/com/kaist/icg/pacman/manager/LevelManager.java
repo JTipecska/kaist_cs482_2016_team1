@@ -19,6 +19,7 @@ public class LevelManager {
 
     //Singleton
     private static LevelManager INSTANCE;
+    private int score;
 
     public static  LevelManager getInstance() {
         if(INSTANCE == null)
@@ -28,7 +29,7 @@ public class LevelManager {
     }
 
     private LevelManager() {
-
+        score = 0;
     }
 
     public void update(long timeElapsed) {
@@ -64,5 +65,15 @@ public class LevelManager {
     public void setDoublePointsActive() {
         doublePointsEmitter.setActive(true);
         doublePoints += DOUBLEPOINTS_TIME;
+    }
+
+    public void addPoint(){
+        if (doublePointsEmitter.isActive())
+            score++;
+        score++;
+    }
+
+    public int getScore(){
+        return score;
     }
 }

@@ -105,7 +105,7 @@ public class HighScoreView extends View implements InputManager.ITouchListener {
         title = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         title.setTextureFile("title.png");
         title.setScreenSize(799, 206);
-        title.setScreenPosition(0, -500, UIElement.EAnchorPoint.Center);
+        title.setScreenPosition(0, -600, UIElement.EAnchorPoint.Center);
         title.setZIndex(1);
 
         btnBack = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
@@ -133,7 +133,7 @@ public class HighScoreView extends View implements InputManager.ITouchListener {
         shaderManager.initialize(Camera.getInstance().getProjMatrix(),
                 Camera.getInstance().getViewMatrix(), lightPosition);
 
-        titleInAnimation = new FloatAnimation(-500, -650, 300, false, false);
+        titleInAnimation = new FloatAnimation(-300, -600, 300, false, false);
         titleInAnimation.setAnimationStateListener(new FloatAnimation.IAnimationStateListener() {
             @Override
             public void onEnd() {
@@ -266,7 +266,7 @@ public class HighScoreView extends View implements InputManager.ITouchListener {
             for(TextElement txt : scoresElements)
                 txt.setOpacity(0);
 
-            titleOutAnimation = new FloatAnimation(-650, -500, 300, false, false);
+            titleOutAnimation = new FloatAnimation(-600, -300, 300, false, false);
             titleOut = true;
             titleOutAnimation.setAnimationStateListener(new FloatAnimation.IAnimationStateListener() {
                 @Override

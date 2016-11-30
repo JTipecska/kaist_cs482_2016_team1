@@ -22,7 +22,7 @@ public class Pipe extends Drawable {
             //pink:
             //color = new float[] {255.0f/255.0f, 192.0f/255.0f, 203.0f/255.0f};
             //blue:
-            //color = new float[] {202.0f/255.0f, 225.0f/255.0f, 255.0f/255.0f};
+            color = new float[] {202.0f/255.0f, 225.0f/255.0f, 255.0f/255.0f};
             mesh.getMaterial().setColor(color);
             addChild(mesh);
         }

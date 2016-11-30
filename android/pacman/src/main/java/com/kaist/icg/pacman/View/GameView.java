@@ -5,8 +5,6 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.kaist.icg.pacman.graphic.Camera;
-import com.kaist.icg.pacman.graphic.Object3D;
-import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.graphic.android.PacManGLSurfaceView;
 import com.kaist.icg.pacman.graphic.pipe.Scene;
 import com.kaist.icg.pacman.graphic.ui.GameUI;
@@ -36,6 +34,7 @@ public class GameView extends View{
 
     //GameUI
     private GameUI gameUi;
+
 
     /**
      * Load assets etc...
@@ -73,8 +72,9 @@ public class GameView extends View{
 
         levelManager.update(elapsedTime);
         inputManager.update(elapsedTime);
-        gameUi.update(elapsedTime);
 
+        gameUi.update(elapsedTime);
+        gameUi.updateScore(levelManager.getScore());
         scene.onUpdate(elapsedTime);
     }
 
@@ -85,6 +85,7 @@ public class GameView extends View{
         GLES20.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         scene.render();
         gameUi.draw();
+
     }
 
     public void onPause() {
