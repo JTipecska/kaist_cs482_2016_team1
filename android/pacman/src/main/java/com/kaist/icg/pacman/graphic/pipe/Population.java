@@ -106,16 +106,15 @@ public class Population extends Drawable {
             for (int i = 0; i < used.children.size(); i++) {
                 used.children.get(i).translate(0, 0, translation);
                 if (used.children.get(i).getCollision(0.0f, -0.9f, 2.5f, 0.5f)) {
-                    float[] position = used.children.get(i).getPosition();
-                    position[0] = 0.0f;
-                    position[1] = -1.0f;
-                    position[2] = 2.0f;
                     unUsed.addChild(used.children.get(i));
                     switch (type) {
                         case GHOST:
                             System.out.println("DEAD MOTEHRFUCKER");
+                            //levelManager.setDoublePointsActive();
+                            break;
                         case COIN:
-                            levelManager.addParticleEmitter(position);
+                            levelManager.addParticleEmitter();
+                            break;
                             // SET SCORE HERE DUNNO HOW OMGOMGOMGOMGOMGOMGOMG PRZ HERP ME
 
                     }

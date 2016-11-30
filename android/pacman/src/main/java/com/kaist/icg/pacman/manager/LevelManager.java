@@ -1,14 +1,21 @@
 package com.kaist.icg.pacman.manager;
 
+import retrofit2.http.Part;
+
 /**
  * Manage level: spawn objects depending on the difficulty,
  * allocate/deallocate ground...
  */
 public class LevelManager {
 
-    private ParticleEmitter[] particleEmitters = new ParticleEmitter[30];
-    private int first = 0;
-    private int last = 0;
+    private static final int COINPARTICLE_NUM = 5;
+    private static final float DOUBLEPOINTS_TIME = 2000.0f;
+
+    private ParticleEmitter[] particleEmitters = new ParticleEmitter[COINPARTICLE_NUM];
+    private ParticleEmitter doublePointsEmitter;
+
+    private int next = 0;
+    private float doublePoints = DOUBLEPOINTS_TIME;
 
     //Singleton
     private static LevelManager INSTANCE;
@@ -25,16 +32,37 @@ public class LevelManager {
     }
 
     public void update(long timeElapsed) {
-        for (int i = first; i != last; i = (i + 1)%30){
-            if (!particleEmitters[i].update(timeElapsed)){
-                if (i == first) first = (first + 1)%30;
-            }
+        for (int i = 0; i < COINPARTICLE_NUM; ++i){
+            particleEmitters[i].update(timeElapsed);
+        }
+        doublePointsEmitter.update(timeElapsed);
+        if (doublePointsEmitter.isActive())
+            doublePoints -= timeElapsed;
+        if (doublePoints < 0) {
+            doublePointsEmitter.setActive(false);
+            doublePoints = 0.0f;
         }
     }
 
-    public void addParticleEmitter(float[] position){
-        ParticleEmitter particleEmitter = new ParticleEmitter(position);
-        particleEmitters[last] = particleEmitter;
-        last = (last + 1)%30;
+    public void addParticleEmitter(){
+        particleEmitters[next].setActive(true);
+        next = (next + 1)%(COINPARTICLE_NUM);
+    }
+
+    public void init(){
+        float[] position = new float[] {-0.0f, -1.0f, 2.5f};
+        doublePointsEmitter = new ParticleEmitter(position,
+                ParticleEmitter.ParticleType.DOUBLEPOINTS);
+
+        position = new float[] {2.0f, -1.0f, 2.0f};
+        for (int i = 0; i < COINPARTICLE_NUM; ++i){
+            particleEmitters[i] = new ParticleEmitter(position,
+                    ParticleEmitter.ParticleType.COIN);
+        }
+    }
+
+    public void setDoublePointsActive() {
+        doublePointsEmitter.setActive(true);
+        doublePoints += DOUBLEPOINTS_TIME;
     }
 }

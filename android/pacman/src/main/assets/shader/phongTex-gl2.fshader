@@ -8,7 +8,7 @@ varying vec3 vNormal;
 varying vec3 vPosition;
 varying vec2 vTextureCoordinate;
 
-const float uAttConst = 1.0, uAttLin = 0.05, uAttExp = 0.1;
+const float uAttConst = 1.0, uAttLin = 0.05, uAttExp = 0.05;
 
 void main()
 {
@@ -35,7 +35,7 @@ float dist = distance(uLight, vPosition);
 float attenuation = uAttConst + uAttLin * dist + uAttExp * pow(dist, 2.0);
 
  vec4 color = texture2D(uTexture, vTextureCoordinate);
- color = color * diffuse/attenuation + (vec4(uSpecular, 1.0)*specular * specMask)/attenuation;
+ color = color * diffuse/attenuation + (vec4(uSpecular, 0.0)*specular * specMask)/attenuation;
 
  gl_FragColor = color;
 }

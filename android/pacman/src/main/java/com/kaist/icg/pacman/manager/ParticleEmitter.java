@@ -3,6 +3,7 @@ package com.kaist.icg.pacman.manager;
 import android.opengl.GLES20;
 
 import com.kaist.icg.pacman.graphic.Drawable;
+import com.kaist.icg.pacman.graphic.Object3D;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.graphic.android.PacManGLRenderer;
 import com.kaist.icg.pacman.graphic.pipe.Coin;
@@ -18,97 +19,124 @@ import java.util.Random;
  */
 
 
+
 public class ParticleEmitter {
     //currently only 1 Coin will pop up. but modifiable to spawn several "particles"
-    public static final int MAX_PARTICLENUM = 1;
+    public int MAX_PARTICLENUM = 30;
+
+    public enum ParticleType {
+        COIN, DOUBLEPOINTS
+    }
 
     class Particle
     {
         public float[] velocity = {0.0f, 0.0f, 0.0f};
         public float[] force = {0.0f, 0.0f, 0.0f};
         public float lifetime = 0.0f;
-        public Coin coin;
+        public Object3D mesh;
     };
 
     public static float gravity = 9.8f;
     private float maxLifetime = 200.0f; //seconds
 
     private float[] position = new float[3];
+    private ParticleType type = ParticleType.COIN;
 
     public Particle[] particles = new Particle[MAX_PARTICLENUM];
     private int currentParticleNum = 0;
-    private int activeParticles = 0;
-    private int min = 1;
-    private int max = 5;
-    private float spawnTime = 20.0f;
-    private float emitterLifeTime = maxLifetime + spawnTime*10 + 1.0f;
+    private boolean active = false;
+    private float xForceMul = 2.0f;
+    private float yForceMul = 0.0f;
+    private float xForceAdd = -1.0f;
+    private float yForceAdd = 5.0f;
 
-    public ParticleEmitter(float[] position){
+    public ParticleEmitter(float[] position, ParticleType type){
         this.position = position;
+        this.type = type;
+        initializeParticles();
+        switch (type) {
+            case COIN:
+                xForceMul = 2.0f;
+                yForceMul = 0.0f;
+                xForceAdd = -1.0f;
+                yForceAdd = 5.0f;
+                break;
+            case DOUBLEPOINTS:
+                xForceMul = 4.0f;
+                yForceMul = 5.0f;
+                xForceAdd = -2.0f;
+                yForceAdd = 1.0f;
+                break;
+        }
     }
 
-    public boolean update(long elapsedTime) {
-        if (emitterLifeTime < 0) {
-            return false;
-        } else {
-            SpawnParticles(elapsedTime);
+    public void update(long elapsedTime) {
+        if (active) {
             UpdateParticles(elapsedTime);
-
             Render();
-            return true;
         }
     }
 
-    public void SpawnParticles(long elapsedTime){
+    public void initializeParticles(){
         Random rand = new Random();
-        int spawnCount = rand.nextInt((max - min) + 1) + min;
-        spawnTime -= elapsedTime;
-        emitterLifeTime -= elapsedTime;
-        if (spawnTime < 0) {
-            spawnTime = 20.0f;
-            return;
-        }
-
-        for (int i = 0; i < spawnCount; ++i){
-            if (currentParticleNum < MAX_PARTICLENUM) {
-                Particle particle = new Particle();
-
+        Particle particle;
+        Material material;
+        Object3D mesh;
+        switch(type) {
+            case COIN:
+                particle = new Particle();
                 particle.force = new float[]{
-                        rand.nextFloat()*2-1,
-                        5.0f,
+                        rand.nextFloat() * xForceMul + xForceAdd,
+                        rand.nextFloat() * yForceMul + yForceAdd,
                         0.0f};
+                material = new Material();
 
+                mesh = Object3DFactory.getInstance().instanciate("objects/Coin.obj", Coin.class);
 
-                Material gold = new Material();
-                gold.setAmbientIntensity(
-                        (0.212671f*0.24725f + 0.715160f*0.1995f + 0.072169f*0.0745f)/
-                                (0.212671f*0.75164f + 0.715160f*0.60648f + 0.072169f*0.22648f));
-                gold.setDiffuseColor(new float[] {0.75164f,0.60648f,0.22648f});
-                gold.setSpecularColor(new float[] {0.628281f, 0.555802f, 0.366065f});
-                gold.setShininess(0.005f);
+                        material.setAmbientIntensity(
+                                (0.212671f * 0.24725f + 0.715160f * 0.1995f + 0.072169f * 0.0745f) /
+                                        (0.212671f * 0.75164f + 0.715160f * 0.60648f + 0.072169f * 0.22648f));
+                        material.setDiffuseColor(new float[]{0.75164f, 0.60648f, 0.22648f});
+                        material.setSpecularColor(new float[]{0.628281f, 0.555802f, 0.366065f});
+                        material.setShininess(0.005f);
+                        mesh.setMaterial(material);
+                        mesh.setShader(ShaderManager.Shader.PHONG);
 
-                Coin coin = Object3DFactory.getInstance().instanciate("objects/Coin.obj", Coin.class);
-                coin.setMaterial(gold);
-                coin.setShader(ShaderManager.Shader.PHONG);
-                //coin.setScale(0.5f, 0.5f, 0.5f);
+                mesh.setPosition(position[0]-2, position[1], position[2]);
+                particle.mesh = mesh;
 
-                particle.coin = coin;
-                coin.setPosition(position[0], position[1], position[2]);
+                particles[0] = particle;
+                currentParticleNum = 1;
+                break;
+            case DOUBLEPOINTS:
+                for (int i = 0; i < MAX_PARTICLENUM; ++i){
+                    particle = new Particle();
+                    particle.force = new float[]{
+                            rand.nextFloat() * xForceMul + xForceAdd,
+                            rand.nextFloat() * yForceMul + yForceAdd,
+                            0.0f};
+                    //material = new Material();
+                    //default object coin
+                    mesh = Object3DFactory.getInstance().instanciate("objects/ui.obj", Object3D.class);
+                    mesh.setScale(0.2f, 0.2f, 0.2f);
+                    mesh.setTextureFile("star4.png");
+                    mesh.setShader(ShaderManager.Shader.PHONGTEX);
 
-                particles[currentParticleNum] = particle;
-                ++currentParticleNum;
-            }
+                    mesh.setPosition(position[0]+i%5-2, position[1], position[2]);
+                    particle.mesh = mesh;
+
+                    particles[i] = particle;
+                    currentParticleNum = i+1;
+                }
+                break;
         }
 
     }
 
     public void UpdateParticles(long elapsedTime){
-        activeParticles = 0;
         for (int i = 0; i < currentParticleNum; ++i){
+            particles[i].lifetime = particles[i].lifetime + elapsedTime;
             if (particles[i].lifetime < maxLifetime){
-                particles[i].lifetime = particles[i].lifetime + elapsedTime;
-                ++activeParticles;
-
                 particles[i].force = new float[] {particles[i].force[0],
                         particles[i].force[1] - gravity*elapsedTime/200.0f,
                         particles[i].force[2]};
@@ -116,59 +144,60 @@ public class ParticleEmitter {
                         particles[i].velocity[0] + particles[i].force[0]*elapsedTime/200.0f,
                         particles[i].velocity[1] + particles[i].force[1]*elapsedTime/200.0f,
                         particles[i].velocity[2] + particles[i].force[2]*elapsedTime/200.0f};
-                particles[i].coin.translate(
+                particles[i].mesh.translate(
                         particles[i].velocity[0]*elapsedTime/200.0f,
                         particles[i].velocity[1]*elapsedTime/200.0f,
                         particles[i].velocity[2]*elapsedTime/200.0f);
+            } else if (type == ParticleType.DOUBLEPOINTS) {
+               reset(i);
+
             }
         }
     }
 
     public void Render(){
+        if (type == ParticleType.DOUBLEPOINTS) {
+            GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+            GLES20.glEnable(GLES20.GL_BLEND);
+
+        }
+
+        boolean active = false;
         for (int i = 0; i < currentParticleNum; ++i){
             if (particles[i].lifetime < maxLifetime){
-                particles[i].coin.draw();
+                particles[i].mesh.draw();
+                active = true;
             }
         }
 
-        // create vertexbuffer out of particles
-        /*FloatBuffer particleBuffer;
-        ByteBuffer byteBuf = ByteBuffer.allocateDirect(activeParticles * 3 * 3 * 4);
-        byteBuf.order(ByteOrder.nativeOrder());
-        particleBuffer = byteBuf.asFloatBuffer();
-        for (int i = 0; i < currentParticleNum; ++i){
-            if (particles[i].lifetime < maxLifetime){
-                particleBuffer.put(particles[i].position[0]);
-                particleBuffer.put(particles[i].position[1]);
-                particleBuffer.put(particles[i].position[2]);
-            }
+            this.active = active;
+
+        if (type == ParticleType.DOUBLEPOINTS) {
+            GLES20.glDisable(GLES20.GL_BLEND);
         }
+    }
 
-        // attach shaders for particles
-        int vertexShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_VERTEX_SHADER, "shader/particle.vshader");
-        int fragmentShader = PacManGLRenderer.loadShaderFromFile(
-                GLES20.GL_FRAGMENT_SHADER, "shader/particle.fshader");
+    public boolean isActive() {
+        return active;
+    }
 
-        int program = GLES20.glCreateProgram();
-        GLES20.glAttachShader(program, vertexShader);
-        GLES20.glAttachShader(program, fragmentShader);
+    public void setActive(boolean active) {
+        for (int i = 0; i < currentParticleNum; ++i) {
+            reset(i);
+        }
+        this.active = active;
 
-        GLES20.glLinkProgram(program);
-        GLES20.glUseProgram(program);
+    }
 
-        //Retrieve attributes handlers
-        int positionHandle = GLES20.glGetAttribLocation(program, "aPosition");
-        //Set attributes
-        GLES20.glEnableVertexAttribArray(positionHandle);
-        GLES20.glVertexAttribPointer(
-                positionHandle, 3,
-                GLES20.GL_FLOAT, false,
-                3*4, particleBuffer);
-        // draw GL_POINT
-        GLES20.glDrawArrays(GLES20.GL_POINTS, 0, activeParticles);
+    private void reset(int i){
+        Random rand = new Random();
+        particles[i].mesh.setPosition(position[0]+i%5-2, position[1], position[2]);
+        particles[i].force = new float[]{
+                rand.nextFloat() * xForceMul + xForceAdd,
+                rand.nextFloat() * yForceMul + yForceAdd,
+                0.0f};
+        particles[i].velocity = new float[]{0.0f, 0.0f, 0.0f};
+        particles[i].lifetime = 0;
 
-        // end draw
-        GLES20.glDisableVertexAttribArray(positionHandle);*/
     }
 }
