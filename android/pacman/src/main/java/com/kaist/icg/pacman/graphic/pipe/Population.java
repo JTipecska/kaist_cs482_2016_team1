@@ -7,12 +7,14 @@ import com.kaist.icg.pacman.graphic.Drawable;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.graphic.ui.TextElement;
 import com.kaist.icg.pacman.manager.LevelManager;
+import com.kaist.icg.pacman.manager.ParticleEmitter;
 import com.kaist.icg.pacman.manager.ShaderManager;
 import com.kaist.icg.pacman.tool.Material;
 
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
 
 import static com.kaist.icg.pacman.graphic.pipe.Population.Type.BONUS_DOUBLE;
 import static com.kaist.icg.pacman.graphic.pipe.Population.Type.COIN;
@@ -107,24 +109,33 @@ public class Population extends Drawable {
             for (int i = 0; i < used.children.size(); i++) {
                 used.children.get(i).translate(0, 0, translation);
                 if (used.children.get(i).getCollision(0.0f, -0.9f, 2.5f, 0.5f)) {
+                    float[] position = used.children.get(i).getPosition();
+                    position[0] = 0.0f;
+                    position[1] = -1.0f;
+                    position[2] = 2.0f;
                     unUsed.addChild(used.children.get(i));
                     switch (type) {
                         case GHOST: {
-                            System.out.println(type);
                             break;
                         }
                         case COIN: {
+
+                            levelManager.addParticleEmitter(position);
                             // SET SCORE HERE DUNNO HOW OMGOMGOMGOMGOMGOMGOMG PRZ HERP ME
                             levelManager.addPoint();
                             break;
                         }
                         case BONUS_DOUBLE:
+                            break;
 
                         case BONUS_INVINCIBLE:
+                            break;
 
                         case MALUS_DARK:
+                            break;
 
                         case MALUS_INVERSE:
+                            break;
 
                         default:
                             System.out.println(type);

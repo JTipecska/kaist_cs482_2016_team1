@@ -25,7 +25,13 @@ public class TextureManager {
             TextureBloc textureBloc = textureBlocs.get(j);
             for(int i = 0; i<32; i++) {
                 boolean isFree = textureBloc.getTextureHandlers()[i] == -1;
-                boolean isSameTexture = (textureBloc.getTextures()[i] != null && textureBloc.getTextures()[i].sameAs(texture));
+                boolean isRecycled = textureBloc.getTextures()[i] != null && textureBloc.getTextures()[i].isRecycled();
+                boolean isSameTexture = !isRecycled && (textureBloc.getTextures()[i] != null && textureBloc.getTextures()[i].sameAs(texture));
+                if(isRecycled && !isFree) {
+                    textureBloc.getTextureHandlers()[i] = -1;
+                    textureBloc.getTextures()[i] = null;
+                    isFree = true;
+                }
                 if(isFree || isSameTexture) {
                     textureBloc.getTextures()[i] = texture;
                     return new TextureInfo(j, i, textureBloc.getTextures()[i]);
