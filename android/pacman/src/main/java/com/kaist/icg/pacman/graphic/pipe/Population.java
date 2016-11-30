@@ -16,14 +16,10 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
-import static com.kaist.icg.pacman.graphic.pipe.Population.Type.BONUS_DOUBLE;
-import static com.kaist.icg.pacman.graphic.pipe.Population.Type.COIN;
-import static com.kaist.icg.pacman.graphic.pipe.Population.Type.GHOST;
-
 public class Population extends Drawable {
 
 
-    private Drawable unusedGhosts, usedGhosts, unusedCoins, usedCoins;
+    private Drawable unusedGhosts, usedGhosts, unusedCoins, usedCoins, usedBonus, unusedBonus;
     private static final float radToDeg = (float) (360 / (Math.PI * 2));
     private final float GHOST_RAD = 0.1f, COIN_RAD = 0.1f;
     private double angle;
@@ -31,12 +27,10 @@ public class Population extends Drawable {
     private LevelManager levelManager;
     private CopyOnWriteArrayList<TextElement> scoresElements;
 
-    public enum Type {
-        GHOST, COIN, BONUS_DOUBLE, BONUS_INVINCIBLE, MALUS_DARK, MALUS_INVERSE
-    }
     public Population() {
         initGhosts();
         initCoins();
+        usedBonus = new Drawable();
         angle = Math.random() * (Math.PI * 2);
         addGhost(angle);
 
@@ -49,8 +43,8 @@ public class Population extends Drawable {
     }
 
     public void onUpdate(float translationZ) {
-        updateSpawn(usedGhosts, unusedGhosts, translationZ, GHOST);
-        updateSpawn(usedCoins, unusedCoins, translationZ, COIN);
+        updateSpawn(usedGhosts, unusedGhosts, translationZ);
+        updateSpawn(usedCoins, unusedCoins, translationZ);
         spawnPopulation();
     }
 
@@ -68,6 +62,7 @@ public class Population extends Drawable {
         gold.setShininess(0.4f*128.0f);
         for(int i = 0; i < 30; i++) {
             Ghost ghost = Object3DFactory.getInstance().instanciate("objects/Ghost.obj", Ghost.class);
+            ghost.setType(Type.GHOST);
             //ghost.setMaterial(gold);
             ghost.setTextureFile("Ghost_orange.png");
             ghost.setShader(ShaderManager.Shader.PHONGTEX);
@@ -91,6 +86,7 @@ public class Population extends Drawable {
 
         for(int i = 0; i < 20; i++) {
             Coin coin = Object3DFactory.getInstance().instanciate("objects/Coin.obj", Coin.class);
+            coin.setType(Type.COIN);
             coin.setMaterial(gold);
             coin.setShader(ShaderManager.Shader.PHONG);
 
@@ -101,7 +97,30 @@ public class Population extends Drawable {
 
     }
 
-    public void updateSpawn(Drawable used, Drawable unUsed, float translation, Type type) {
+    public void initBonus() {
+
+        unusedBonus = new Drawable();
+        usedBonus = new Drawable();
+        addChild(usedBonus);
+        Material gold = new Material();
+        gold.setAmbientIntensity(
+                (0.212671f*0.24725f + 0.715160f*0.1995f + 0.072169f*0.0745f)/
+                        (0.212671f*0.75164f + 0.715160f*0.60648f + 0.072169f*0.22648f));
+        gold.setDiffuseColor(new float[] {0.75164f,0.60648f,0.22648f});
+        gold.setSpecularColor(new float[] {0.628281f, 0.555802f, 0.366065f});
+        gold.setShininess(0.4f*128.0f);
+        for(int i = 0; i < 4; i++) {
+            Bonus_Double bonus = Object3DFactory.getInstance().instanciate("objects/Bonus_double.obj", Bonus_Double.class);
+            bonus.setType(Type.BONUS_DOUBLE);
+            //ghost.setMaterial(gold);
+            bonus.setTextureFile("Bonus_double.png");
+            bonus.setShader(ShaderManager.Shader.PHONGTEX);
+            bonus.setCollisionRadius(GHOST_RAD);
+            unusedBonus.addChild(bonus);
+        }
+    }
+
+    public void updateSpawn(Drawable used, Drawable unUsed, float translation) {
         if(used.children.size() > 0) {
             if (used.children.get(0).getPosition()[2] > 2 + 1f) {
                 unUsed.addChild(used.children.get(0));
@@ -114,7 +133,7 @@ public class Population extends Drawable {
                     position[1] = -1.0f;
                     position[2] = 2.0f;
                     unUsed.addChild(used.children.get(i));
-                    switch (type) {
+                    switch (used.children.get(i).type) {
                         case GHOST: {
                             break;
                         }
@@ -150,13 +169,16 @@ public class Population extends Drawable {
         Random rand = new Random();
         angle = Math.random() * (Math.PI * 2);
         //Retarded spawn version, so so so retarded
-        int n = rand.nextInt(100) + 1;
-        if (n < 15)
+        int n = rand.nextInt(1000) + 1;
+        if (n < 150)
             addGhost(angle);
-        if (n > 98) {
+        if (n > 980) {
             Random random = new Random();
             int noOfCoins = random.nextInt(7) + 5;
             addCoins(angle, Math.random() * (Math.PI / 10), noOfCoins);
+        }
+        if (n > 500 && n < 508) {
+            addBonus(angle);
         }
     }
 
@@ -178,6 +200,24 @@ public class Population extends Drawable {
                     usedCoins.addChild(unusedCoins.children.get(0));
                 initAngle += angle;
             }
+        }
+    }
+
+    public void addBonus(double angle) {
+
+        Random rand = new Random();
+        int n = rand.nextInt(4) + 1;
+        switch (n) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            default:
+                break;
         }
     }
 }

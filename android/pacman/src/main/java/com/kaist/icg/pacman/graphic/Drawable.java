@@ -34,7 +34,11 @@ public class Drawable {
     protected FloatBuffer normalBuffer;
     protected FloatBuffer textureCoordinatesBuffer;
 
+    public enum Type {
+        GHOST, COIN, BONUS_DOUBLE, BONUS_INVINCIBLE, MALUS_DARK, MALUS_INVERSE
+    }
 
+    public Type type;
     //Test
     protected Drawable parent;
     public ArrayList<Drawable> children;
@@ -43,6 +47,7 @@ public class Drawable {
     protected ShaderManager.Shader shader = ShaderManager.Shader.TOON;
 
     public void setShader(ShaderManager.Shader shader) {this.shader = shader;}
+    public void setType(Type type) {this.type = type;}
 
     public Drawable() {
         position = new float[3];
