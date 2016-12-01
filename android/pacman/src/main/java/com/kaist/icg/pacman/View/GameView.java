@@ -57,6 +57,7 @@ public class GameView extends View{
 
         scene = new Scene();
         gameUi = new GameUI();
+        levelManager.init();
 
         lastUpdate = SystemClock.uptimeMillis();
         shaderManager.initialize(Camera.getInstance().getProjMatrix(),
@@ -75,6 +76,7 @@ public class GameView extends View{
 
         gameUi.update(elapsedTime);
         gameUi.updateScore(levelManager.getScore());
+        gameUi.updateLives(levelManager.getLife());
         scene.onUpdate(elapsedTime);
     }
 
@@ -82,7 +84,6 @@ public class GameView extends View{
      * Draw all the scene
      */
     public void onRender() {
-        GLES20.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         scene.render();
         gameUi.draw();
 

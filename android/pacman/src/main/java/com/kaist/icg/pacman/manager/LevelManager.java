@@ -20,6 +20,7 @@ public class LevelManager {
     //Singleton
     private static LevelManager INSTANCE;
     private int score;
+    private int life;
 
     public static  LevelManager getInstance() {
         if(INSTANCE == null)
@@ -30,6 +31,7 @@ public class LevelManager {
 
     private LevelManager() {
         score = 0;
+        life = 3;
     }
 
     public void update(long timeElapsed) {
@@ -71,6 +73,14 @@ public class LevelManager {
         if (doublePointsEmitter.isActive())
             score++;
         score++;
+    }
+
+    public void reduceLife () {
+        life--;
+    }
+
+    public int getLife() {
+        return life;
     }
 
     public int getScore(){

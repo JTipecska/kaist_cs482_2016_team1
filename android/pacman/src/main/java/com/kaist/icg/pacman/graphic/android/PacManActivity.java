@@ -57,8 +57,8 @@ public class PacManActivity extends Activity {
         PacManActivity.current = this;
         glView = (PacManGLSurfaceView) findViewById(R.id.main_glSurfaceView);
 
-        currentView = new MenuView(glView);
-        //currentView = new MenuEnd(glView);
+        //currentView = new MenuView(glView);
+        currentView = new MenuEnd(glView);
     }
 
     @Override
@@ -104,8 +104,8 @@ public class PacManActivity extends Activity {
             @Override
             public void run() {
                 cleanupCurrentView();
-               currentView = new MenuView(glView, true);
-               //currentView = new MenuEnd(glView,true);
+               //currentView = new MenuView(glView, true);
+               currentView = new MenuEnd(glView,true);
                 currentView.init();
             }
         });

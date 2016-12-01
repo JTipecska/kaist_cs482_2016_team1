@@ -113,6 +113,7 @@ public class Population extends Drawable {
                     switch (type) {
                         case GHOST:
                             System.out.println("DEAD MOTEHRFUCKER");
+                            levelManager.reduceLife();
                             break;
 
                         case COIN:
