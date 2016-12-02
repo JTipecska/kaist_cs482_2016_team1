@@ -37,7 +37,7 @@ public class ParticleEmitter {
     };
 
     public static float gravity = 9.8f;
-    private float maxLifetime = 200.0f; //seconds
+    private float maxLifetime = 300.0f; //seconds
 
     private float[] position = new float[3];
     private ParticleType type = ParticleType.COIN;
@@ -62,9 +62,9 @@ public class ParticleEmitter {
                 yForceAdd = 5.0f;
                 break;
             case DOUBLEPOINTS:
-                xForceMul = 4.0f;
-                yForceMul = 5.0f;
-                xForceAdd = -2.0f;
+                xForceMul = 2.0f;
+                yForceMul = 4.0f;
+                xForceAdd = -1.0f;
                 yForceAdd = 1.0f;
                 break;
         }
@@ -115,10 +115,11 @@ public class ParticleEmitter {
                             rand.nextFloat() * xForceMul + xForceAdd,
                             rand.nextFloat() * yForceMul + yForceAdd,
                             0.0f};
-                    //material = new Material();
-                    //default object coin
-                    mesh = Object3DFactory.getInstance().instanciate("objects/ui.obj", Object3D.class);
-                    mesh.setScale(0.2f, 0.2f, 0.2f);
+                    material = new Material();
+                    mesh = Object3DFactory.getInstance().instanciate("objects/doubleScoreSprite.obj", Object3D.class);
+                    material.setSpecularColor(new float[]{0.628281f, 0.555802f, 0.366065f});
+                    material.setShininess(0.0005f);
+                    mesh.setMaterial(material);
                     mesh.setTextureFile("star4.png");
                     mesh.setShader(ShaderManager.Shader.PHONGTEX);
 
