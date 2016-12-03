@@ -116,14 +116,15 @@ public class Population extends Drawable {
                             break;
 
                         case BONUS_DOUBLE:
-                            levelManager.setDoublePointsActive();
+                            levelManager.activateDoublePoints();
                             break;
 
                         case BONUS_INVINCIBLE:
+                            levelManager.activateInvincible();
                             break;
 
                         case MALUS_DARK:
-                            levelManager.setDarkMalus();
+                            levelManager.activateDarkMalus();
                             break;
 
                         case MALUS_INVERSE:

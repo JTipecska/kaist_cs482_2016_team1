@@ -1,5 +1,9 @@
 package com.kaist.icg.pacman.manager;
 
+import android.opengl.GLES20;
+
+import com.kaist.icg.pacman.graphic.Object3D;
+import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.graphic.pipe.Pipe;
 import com.kaist.icg.pacman.graphic.pipe.Scene;
 
@@ -12,7 +16,7 @@ import retrofit2.http.Part;
 public class LevelManager {
 
     private static final int COINPARTICLE_NUM = 5;
-    private static final float DOUBLEPOINTS_TIME = 2000.0f;
+    private static final float BONUS_TIME = 2000.0f;
     private static final float DARKMALUS_TIME = 1000.0f;
 
     private ParticleEmitter[] particleEmitters = new ParticleEmitter[COINPARTICLE_NUM];
@@ -21,7 +25,8 @@ public class LevelManager {
     private Scene scene;
 
     private int next = 0;
-    private float doublePoints = DOUBLEPOINTS_TIME;
+    private float doublePointsTimer = 0.0f;
+    private float invincibleTimer = 0.0f;
 
     //Singleton
     private static LevelManager INSTANCE;
@@ -29,6 +34,9 @@ public class LevelManager {
     private int life;
     private float darkMalus = 0.0f;
     private boolean bDarkMalus = false;
+
+    private Object3D shield;
+    private boolean invincible = false;
 
     public static  LevelManager getInstance() {
         if(INSTANCE == null)
@@ -48,10 +56,17 @@ public class LevelManager {
         }
         doublePointsEmitter.update(timeElapsed);
         if (doublePointsEmitter.isActive())
-            doublePoints -= timeElapsed;
-        if (doublePoints < 0) {
+            doublePointsTimer -= timeElapsed;
+        if (doublePointsTimer < 0) {
             doublePointsEmitter.setActive(false);
-            doublePoints = 0.0f;
+            doublePointsTimer = 0.0f;
+        }
+
+        if (invincible)
+            invincibleTimer -= timeElapsed;
+        if (invincibleTimer < 0) {
+            invincible = false;
+            invincibleTimer = 0.0f;
         }
 
         if (bDarkMalus){
@@ -87,6 +102,15 @@ public class LevelManager {
         }
     }
 
+    public void onRender() {
+        if (invincible) {
+            GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+            GLES20.glEnable(GLES20.GL_BLEND);
+            shield.draw();
+            GLES20.glDisable(GLES20.GL_BLEND);
+        }
+    }
+
     public void addParticleEmitter(){
         particleEmitters[next].setActive(true);
         next = (next + 1)%(COINPARTICLE_NUM);
@@ -102,11 +126,16 @@ public class LevelManager {
             particleEmitters[i] = new ParticleEmitter(position,
                     ParticleEmitter.ParticleType.COIN);
         }
+
+        shield = Object3DFactory.getInstance().instanciate("objects/ui.obj", Object3D.class);
+        shield.setShader(ShaderManager.Shader.DIFFUSETEX);
+        shield.setTextureFile("bubble.png");
+        shield.setPosition(-0.5f, -0.2f, 2.8f);
     }
 
-    public void setDoublePointsActive() {
+    public void activateDoublePoints() {
         doublePointsEmitter.setActive(true);
-        doublePoints += DOUBLEPOINTS_TIME;
+        doublePointsTimer += BONUS_TIME;
     }
 
     public void addPoint(){
@@ -116,7 +145,7 @@ public class LevelManager {
     }
 
     public void reduceLife () {
-        life--;
+        if (!invincible) life--;
     }
 
     public int getLife() {
@@ -131,7 +160,12 @@ public class LevelManager {
         this.scene = scene;
     }
 
-    public void setDarkMalus(){
+    public void activateInvincible() {
+        this.invincible = true;
+        invincibleTimer += BONUS_TIME;
+    }
+
+    public void activateDarkMalus(){
         bDarkMalus = true;
 
     }
