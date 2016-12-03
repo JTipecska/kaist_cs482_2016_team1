@@ -73,7 +73,6 @@ public class ParticleEmitter {
     public void update(long elapsedTime) {
         if (active) {
             UpdateParticles(elapsedTime);
-            Render();
         }
     }
 
@@ -157,24 +156,26 @@ public class ParticleEmitter {
     }
 
     public void Render(){
-        if (type == ParticleType.DOUBLEPOINTS) {
-            GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-            GLES20.glEnable(GLES20.GL_BLEND);
+        if (active) {
+            if (type == ParticleType.DOUBLEPOINTS) {
+                GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+                GLES20.glEnable(GLES20.GL_BLEND);
 
-        }
-
-        boolean active = false;
-        for (int i = 0; i < currentParticleNum; ++i){
-            if (particles[i].lifetime < maxLifetime){
-                particles[i].mesh.draw();
-                active = true;
             }
-        }
+
+            boolean active = false;
+            for (int i = 0; i < currentParticleNum; ++i) {
+                if (particles[i].lifetime < maxLifetime) {
+                    particles[i].mesh.draw();
+                    active = true;
+                }
+            }
 
             this.active = active;
 
-        if (type == ParticleType.DOUBLEPOINTS) {
-            GLES20.glDisable(GLES20.GL_BLEND);
+            if (type == ParticleType.DOUBLEPOINTS) {
+                GLES20.glDisable(GLES20.GL_BLEND);
+            }
         }
     }
 
