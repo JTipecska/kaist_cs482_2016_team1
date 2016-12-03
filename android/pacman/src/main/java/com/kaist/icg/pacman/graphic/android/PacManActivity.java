@@ -104,7 +104,7 @@ public class PacManActivity extends Activity {
             @Override
             public void run() {
                 cleanupCurrentView();
-               currentView = new MenuView(glView, true);
+               currentView = new MenuView(glView);
                 currentView.init();
             }
         });
@@ -115,7 +115,7 @@ public class PacManActivity extends Activity {
             @Override
             public void run() {
                 cleanupCurrentView();
-                currentView = new MenuEnd(glView,true);
+                currentView = new MenuEnd(glView);
                 currentView.init();
             }
         });

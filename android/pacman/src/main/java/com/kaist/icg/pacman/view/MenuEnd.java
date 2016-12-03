@@ -34,14 +34,8 @@ public class MenuEnd extends View implements InputManager.ITouchListener{
     private FloatAnimation backgroundAnimation;
     private FloatAnimation fadeOutAnimation;
     private boolean fadeOut;
-    private FloatAnimation fadeInAnimation;
-    private boolean fadeIn;
 
     public MenuEnd(PacManGLSurfaceView mGLView) {
-        this(mGLView, false);
-    }
-
-    public MenuEnd(PacManGLSurfaceView mGLView, boolean fadeIn) {
         this.glView = mGLView;
         this.glView.setView(this);
 
@@ -51,7 +45,6 @@ public class MenuEnd extends View implements InputManager.ITouchListener{
         shaderManager = ShaderManager.getInstance();
 
         inputManager.setTouchListener(this);
-        this.fadeIn = fadeIn;
     }
 
     @Override
@@ -63,7 +56,7 @@ public class MenuEnd extends View implements InputManager.ITouchListener{
 
         background2 = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         background2.setTextureFile("menuBg.png");
-        background2.setScreenSize(1080, 1794);
+        background2.setScreenSize(Camera.getInstance().getScreenWidth(), Camera.getInstance().getScreenHeight());
         background2.setScreenPosition(Camera.getInstance().getScreenWidth(), 0, UIElement.EAnchorPoint.TopLeft);
 
 

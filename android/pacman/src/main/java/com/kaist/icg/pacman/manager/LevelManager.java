@@ -154,10 +154,10 @@ public class LevelManager {
     }
 
     public void reduceLife () {
-        if (life <= 0) {
-            PacManActivity.current.startMenuEnd();
-        }
         if (!invincible && !deadInvincible) {
+            if (life <= 0) {
+                PacManActivity.current.startMenuEnd();
+            }
             life--;
             deadInvincible = true;
             deadInvincibleTimer = BONUS_TIME;

@@ -87,6 +87,7 @@ public class GameView extends View{
         scene.render();
         gameUi.draw();
 
+        levelManager.onRender();
     }
 
     public void onPause() {

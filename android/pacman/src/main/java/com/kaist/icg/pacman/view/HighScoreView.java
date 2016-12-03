@@ -81,12 +81,12 @@ public class HighScoreView extends View implements InputManager.ITouchListener {
 
         background2 = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         background2.setTextureFile("menuBg.png");
-        background2.setScreenSize(1080, 1794);
+        background2.setScreenSize(Camera.getInstance().getScreenWidth(), Camera.getInstance().getScreenHeight());
         background2.setScreenPosition(Camera.getInstance().getScreenWidth(), 0, UIElement.EAnchorPoint.TopLeft);
 
         highScoreBg = Object3DFactory.getInstance().instanciate("objects/ui.obj", ImageElement.class);
         highScoreBg.setTextureFile("highScoreBg.png");
-        highScoreBg.setScreenSize(956, 1192);
+        highScoreBg.setScreenSize(Camera.getInstance().getScreenWidth()/5*3, Camera.getInstance().getScreenHeight()/2);
         highScoreBg.setScreenPosition(0, 170, UIElement.EAnchorPoint.Center);
         highScoreBg.setZIndex(1);
         highScoreBg.setOpacity(0);
