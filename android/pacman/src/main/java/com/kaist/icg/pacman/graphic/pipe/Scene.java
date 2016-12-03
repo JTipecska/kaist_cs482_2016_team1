@@ -2,6 +2,7 @@ package com.kaist.icg.pacman.graphic.pipe;
 
 import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.manager.InputManager;
+import com.kaist.icg.pacman.manager.LevelManager;
 import com.kaist.icg.pacman.manager.ShaderManager;
 
 /**
@@ -17,12 +18,15 @@ public class Scene {
     private float PACMAN_RAD = 0.2f;
     private float translationZ;
     private float rotationZ;
+    private LevelManager levelManager;
 
     public Scene() {
         root = new SceneRoot();
         pacman = Object3DFactory.getInstance().instanciate("objects/Pacman.obj", Pacman.class);
         pacman.setTextureFile("Pacman_yellow.png");
         pacman.setShader(ShaderManager.Shader.DIFFUSETEX);
+        levelManager = LevelManager.getInstance();
+        levelManager.setScene(this);
     }
 
     public void onUpdate(long elapsedTime) {
@@ -39,6 +43,10 @@ public class Scene {
     public void render() {
         root.draw();
         pacman.draw();
+    }
+
+    public SceneRoot getRoot() {
+        return root;
     }
 }
 

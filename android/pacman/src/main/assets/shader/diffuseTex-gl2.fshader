@@ -16,7 +16,7 @@ void main() {
 
   float diffuse = max(0.0, dot(normal, tolight));
   vec4 color = texture2D(uTexture, vTextureCoordinate);
-  color.w = 1.0;
+  //color.w = 1.0;
 
   float dist = distance(uLight, vPosition);
   float attenuation = uAttConst + uAttLin * dist + uAttExp * pow(dist, 2.0);

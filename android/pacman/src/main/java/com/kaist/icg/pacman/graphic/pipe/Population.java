@@ -59,16 +59,8 @@ public class Population extends Drawable {
         unusedGhosts = new Drawable();
         usedGhosts = new Drawable();
         addChild(usedGhosts);
-        Material gold = new Material();
-        gold.setAmbientIntensity(
-                (0.212671f*0.24725f + 0.715160f*0.1995f + 0.072169f*0.0745f)/
-                        (0.212671f*0.75164f + 0.715160f*0.60648f + 0.072169f*0.22648f));
-        gold.setDiffuseColor(new float[] {0.75164f,0.60648f,0.22648f});
-        gold.setSpecularColor(new float[] {0.628281f, 0.555802f, 0.366065f});
-        gold.setShininess(0.4f*128.0f);
         for(int i = 0; i < 30; i++) {
             Ghost ghost = Object3DFactory.getInstance().instanciate("objects/Ghost.obj", Ghost.class);
-            //ghost.setMaterial(gold);
             ghost.setTextureFile("Ghost_orange.png");
             ghost.setShader(ShaderManager.Shader.PHONGTEX);
             ghost.setCollisionRadius(GHOST_RAD);
@@ -87,7 +79,8 @@ public class Population extends Drawable {
                 (0.212671f*0.75164f + 0.715160f*0.60648f + 0.072169f*0.22648f));
         gold.setDiffuseColor(new float[] {0.75164f,0.60648f,0.22648f});
         gold.setSpecularColor(new float[] {0.628281f, 0.555802f, 0.366065f});
-        gold.setShininess(0.4f*128.0f);
+        //gold.setShininess(0.4f*128.0f);
+        gold.setShininess(8.0f);
 
         for(int i = 0; i < 20; i++) {
             Coin coin = Object3DFactory.getInstance().instanciate("objects/Coin.obj", Coin.class);
@@ -130,6 +123,7 @@ public class Population extends Drawable {
                             break;
 
                         case MALUS_DARK:
+                            levelManager.setDarkMalus();
                             break;
 
                         case MALUS_INVERSE:

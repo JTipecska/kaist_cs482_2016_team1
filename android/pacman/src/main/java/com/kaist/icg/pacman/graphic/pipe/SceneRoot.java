@@ -29,4 +29,8 @@ public class SceneRoot extends Drawable{
         population.onUpdate(translationZ);
         pipe.onUpdate(translationZ);
     }
+
+    public Pipe getPipe() {
+        return pipe;
+    }
 }

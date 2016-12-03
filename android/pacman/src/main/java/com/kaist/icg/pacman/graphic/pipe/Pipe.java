@@ -39,4 +39,8 @@ public class Pipe extends Drawable {
             addChild(children.get(0));
         }
     }
+
+    public static int getNbPipePart() {
+        return NB_PIPE_PART;
+    }
 }

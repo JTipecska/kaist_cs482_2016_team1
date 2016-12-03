@@ -98,7 +98,7 @@ public class ParticleEmitter {
                                         (0.212671f * 0.75164f + 0.715160f * 0.60648f + 0.072169f * 0.22648f));
                         material.setDiffuseColor(new float[]{0.75164f, 0.60648f, 0.22648f});
                         material.setSpecularColor(new float[]{0.628281f, 0.555802f, 0.366065f});
-                        material.setShininess(0.005f);
+                        material.setShininess(8.0f);
                         mesh.setMaterial(material);
                         mesh.setShader(ShaderManager.Shader.PHONG);
 
@@ -118,7 +118,7 @@ public class ParticleEmitter {
                     material = new Material();
                     mesh = Object3DFactory.getInstance().instanciate("objects/doubleScoreSprite.obj", Object3D.class);
                     material.setSpecularColor(new float[]{0.628281f, 0.555802f, 0.366065f});
-                    material.setShininess(0.0005f);
+                    material.setShininess(2.0f);
                     mesh.setMaterial(material);
                     mesh.setTextureFile("star4.png");
                     mesh.setShader(ShaderManager.Shader.PHONGTEX);
