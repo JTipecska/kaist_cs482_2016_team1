@@ -78,6 +78,7 @@ public class PacManActivity extends Activity {
     }
 
     public void startNewGame() {
+        this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
             @Override
             public void run() {
@@ -89,6 +90,7 @@ public class PacManActivity extends Activity {
     }
 
     public void startHighScoreView() {
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
             @Override
             public void run() {
@@ -100,6 +102,7 @@ public class PacManActivity extends Activity {
     }
 
     public void startMenuView() {
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
             @Override
             public void run() {
