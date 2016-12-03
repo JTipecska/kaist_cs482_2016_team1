@@ -22,22 +22,21 @@ public class LevelManager {
     private static final float BONUS_TIME = 2000.0f;
     private static final float DARKMALUS_FADETIME = 1000.0f;
 
+    //Singleton
+    private static LevelManager INSTANCE;
+
+    private int score;
+    private int life;
+
+    // variables for bonus and malus effects
+    private Scene scene;
     private ParticleEmitter[] particleEmitters = new ParticleEmitter[COINPARTICLE_NUM];
     private ParticleEmitter doublePointsEmitter;
-
-    private Scene scene;
-
     private int next = 0;
     private float doublePointsTimer = 0.0f;
     private float invincibleTimer = 0.0f;
-
-    //Singleton
-    private static LevelManager INSTANCE;
-    private int score;
-    private int life;
     private float darkMalus = 0.0f;
     private boolean bDarkMalus = false;
-
     private Object3D shield;
     private boolean invincible = false;
     private boolean deadInvincible = false;
@@ -59,65 +58,42 @@ public class LevelManager {
         for (int i = 0; i < COINPARTICLE_NUM; ++i){
             particleEmitters[i].update(timeElapsed);
         }
-        doublePointsEmitter.update(timeElapsed);
-        if (doublePointsEmitter.isActive())
+
+
+        if (doublePointsEmitter.isActive()) {
+            doublePointsEmitter.update(timeElapsed);
             doublePointsTimer -= timeElapsed;
-        if (doublePointsTimer < 0) {
-            doublePointsEmitter.setActive(false);
-            doublePointsTimer = 0.0f;
+            if (doublePointsTimer < 0) {
+                doublePointsEmitter.setActive(false);
+                doublePointsTimer = 0.0f;
+            }
         }
 
-        if (invincible)
+        if (invincible) {
             invincibleTimer -= timeElapsed;
-        if (invincibleTimer < 0) {
-            invincible = false;
-            invincibleTimer = 0.0f;
+            if (invincibleTimer < 0) {
+                invincible = false;
+                invincibleTimer = 0.0f;
+            }
         }
 
         if (deadInvincible) {
             deadInvincibleTimer -= timeElapsed;
+            // blink Pacman to indicate invincible due to recent life loss
             if ((floor(deadInvincibleTimer/BONUS_TIME * 12)) % 2 == 1){
                 scene.getPacman().setDraw(false);
             } else {
                 scene.getPacman().setDraw(true);
             }
-        }
-        if (deadInvincibleTimer < 0) {
-            deadInvincible = false;
-            invincibleTimer = 0.0f;
-            scene.getPacman().setDraw(true);
+            if (deadInvincibleTimer < 0) {
+                deadInvincible = false;
+                invincibleTimer = 0.0f;
+                scene.getPacman().setDraw(true);
+            }
         }
 
         if (bDarkMalus){
-            darkMalus += timeElapsed;
-            float darkMalusPerc = darkMalus/DARKMALUS_FADETIME;
-            float[] colorLight = new float[] {202.0f/255.0f, 225.0f/255.0f, 255.0f/255.0f};
-            float[] colorDark = new float[] {50.0f/255.0f, 50.0f/255.0f, 70.0f/255.0f};
-
-            if (darkMalusPerc <= 1.0f) {
-                for (int j = 0; j < Pipe.getNbPipePart(); ++j) {
-                    scene.getRoot().getPipe().children.get(j).
-                            getMaterial().setColor(new float[]{
-                            colorLight[0] * (1 - darkMalusPerc) + colorDark[0] * (darkMalusPerc),
-                            colorLight[1] * (1 - darkMalusPerc) + colorDark[1] * (darkMalusPerc),
-                            colorLight[2] * (1 - darkMalusPerc) + colorDark[2] * (darkMalusPerc)});
-                }
-            } else if (darkMalusPerc >= 3.0f && darkMalusPerc <= 4.0f) {
-                for (int j = 0; j < Pipe.getNbPipePart(); ++j) {
-                    scene.getRoot().getPipe().children.get(j).
-                            getMaterial().setColor(new float[]{
-                            colorDark[0] * (1 - darkMalusPerc + 3.0f) + colorLight[0] * (darkMalusPerc - 3.0f),
-                            colorDark[1] * (1 - darkMalusPerc + 3.0f) + colorLight[1] * (darkMalusPerc - 3.0f),
-                            colorDark[2] * (1 - darkMalusPerc + 3.0f) + colorLight[2] * (darkMalusPerc - 3.0f)});
-                }
-            } else if (darkMalusPerc > 5.0f){
-                for (int j = 0; j < Pipe.getNbPipePart(); ++j) {
-                    scene.getRoot().getPipe().children.get(j).
-                            getMaterial().setColor(colorLight);
-                }
-                darkMalus = 0.0f;
-                bDarkMalus = false;
-            }
+            fadeDarkness(timeElapsed);
         }
     }
 
@@ -208,5 +184,37 @@ public class LevelManager {
     public void activateDarkMalus(){
         bDarkMalus = true;
 
+    }
+
+    private void fadeDarkness(long timeElapsed){
+        darkMalus += timeElapsed;
+        float darkMalusPerc = darkMalus/DARKMALUS_FADETIME;
+        float[] colorLight = new float[] {202.0f/255.0f, 225.0f/255.0f, 255.0f/255.0f};
+        float[] colorDark = new float[] {50.0f/255.0f, 50.0f/255.0f, 70.0f/255.0f};
+
+        if (darkMalusPerc <= 1.0f) {
+            for (int j = 0; j < Pipe.getNbPipePart(); ++j) {
+                scene.getRoot().getPipe().children.get(j).
+                        getMaterial().setColor(new float[]{
+                        colorLight[0] * (1 - darkMalusPerc) + colorDark[0] * (darkMalusPerc),
+                        colorLight[1] * (1 - darkMalusPerc) + colorDark[1] * (darkMalusPerc),
+                        colorLight[2] * (1 - darkMalusPerc) + colorDark[2] * (darkMalusPerc)});
+            }
+        } else if (darkMalusPerc >= 3.0f && darkMalusPerc <= 4.0f) {
+            for (int j = 0; j < Pipe.getNbPipePart(); ++j) {
+                scene.getRoot().getPipe().children.get(j).
+                        getMaterial().setColor(new float[]{
+                        colorDark[0] * (1 - darkMalusPerc + 3.0f) + colorLight[0] * (darkMalusPerc - 3.0f),
+                        colorDark[1] * (1 - darkMalusPerc + 3.0f) + colorLight[1] * (darkMalusPerc - 3.0f),
+                        colorDark[2] * (1 - darkMalusPerc + 3.0f) + colorLight[2] * (darkMalusPerc - 3.0f)});
+            }
+        } else if (darkMalusPerc > 5.0f){
+            for (int j = 0; j < Pipe.getNbPipePart(); ++j) {
+                scene.getRoot().getPipe().children.get(j).
+                        getMaterial().setColor(colorLight);
+            }
+            darkMalus = 0.0f;
+            bDarkMalus = false;
+        }
     }
 }
