@@ -107,6 +107,10 @@ public class Population extends Drawable {
                         case GHOST:
                             System.out.println("DEAD MOTEHRFUCKER");
                             levelManager.reduceLife();
+                            levelManager.activateDoublePoints();
+                            levelManager.activateInvincible();
+                            levelManager.activateDarkMalus();
+
                             break;
 
                         case COIN:

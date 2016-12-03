@@ -16,7 +16,7 @@ public class Pipe extends Drawable {
             mesh = Object3DFactory.getInstance().instanciate("objects/pipe1.obj", Object3D.class);
             mesh.setTextureFile("normal9.png");
             mesh.setShader(ShaderManager.Shader.DIFFUSENORMAL);
-            mesh.setPosition(0, 0, 2 + -i * PIPE_SIZE);
+            mesh.setPosition(0, 0, 3 + -i * PIPE_SIZE);
             //brown:
             float[] color = {68.0f/255.0f, 47.0f/255.0f, 41.0f/255.0f};
             //pink:
@@ -34,7 +34,7 @@ public class Pipe extends Drawable {
             children.get(i).translate(0, 0, translationZ);
         }
 
-        if(children.get(0).getPosition()[2] > 2 + PIPE_SIZE) {
+        if(children.get(0).getPosition()[2] > 3 + PIPE_SIZE) {
             children.get(0).setPosition(0, 0, children.get(19).getPosition()[2] - PIPE_SIZE);
             addChild(children.get(0));
         }

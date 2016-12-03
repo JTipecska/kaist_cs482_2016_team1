@@ -8,8 +8,6 @@ import com.kaist.icg.pacman.graphic.android.PacManActivity;
 import com.kaist.icg.pacman.graphic.pipe.Pipe;
 import com.kaist.icg.pacman.graphic.pipe.Scene;
 
-import retrofit2.http.Part;
-
 import static java.lang.Math.floor;
 
 /**
@@ -116,7 +114,7 @@ public class LevelManager {
     }
 
     public void init(){
-        float[] position = new float[] {-0.0f, -1.0f, 2.5f};
+        float[] position = new float[] {-0.0f, -1.0f, 2.9f};
         doublePointsEmitter = new ParticleEmitter(position,
                 ParticleEmitter.ParticleType.DOUBLEPOINTS);
 
