@@ -49,7 +49,7 @@ public class PacManActivity extends Activity {
         //Remove status and title bar (fullscreen)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //Create view from res/layout/main.xml layout
         setContentView(R.layout.main);
 
@@ -57,8 +57,8 @@ public class PacManActivity extends Activity {
         PacManActivity.current = this;
         glView = (PacManGLSurfaceView) findViewById(R.id.main_glSurfaceView);
 
-        //currentView = new MenuView(glView);
-        currentView = new MenuEnd(glView);
+        currentView = new MenuView(glView);
+        //currentView = new MenuEnd(glView);
     }
 
     @Override
@@ -78,7 +78,6 @@ public class PacManActivity extends Activity {
     }
 
     public void startNewGame() {
-        this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
             @Override
             public void run() {
@@ -90,7 +89,6 @@ public class PacManActivity extends Activity {
     }
 
     public void startHighScoreView() {
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
             @Override
             public void run() {
@@ -102,13 +100,22 @@ public class PacManActivity extends Activity {
     }
 
     public void startMenuView() {
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
             @Override
             public void run() {
                 cleanupCurrentView();
-               //currentView = new MenuView(glView, true);
-               currentView = new MenuEnd(glView,true);
+               currentView = new MenuView(glView, true);
+                currentView.init();
+            }
+        });
+    }
+
+    public void startMenuEnd() {
+        glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
+            @Override
+            public void run() {
+                cleanupCurrentView();
+                currentView = new MenuEnd(glView,true);
                 currentView.init();
             }
         });

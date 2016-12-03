@@ -4,10 +4,13 @@ import android.opengl.GLES20;
 
 import com.kaist.icg.pacman.graphic.Object3D;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
+import com.kaist.icg.pacman.graphic.android.PacManActivity;
 import com.kaist.icg.pacman.graphic.pipe.Pipe;
 import com.kaist.icg.pacman.graphic.pipe.Scene;
 
 import retrofit2.http.Part;
+
+import static java.lang.Math.floor;
 
 /**
  * Manage level: spawn objects depending on the difficulty,
@@ -17,7 +20,7 @@ public class LevelManager {
 
     private static final int COINPARTICLE_NUM = 5;
     private static final float BONUS_TIME = 2000.0f;
-    private static final float DARKMALUS_TIME = 1000.0f;
+    private static final float DARKMALUS_FADETIME = 1000.0f;
 
     private ParticleEmitter[] particleEmitters = new ParticleEmitter[COINPARTICLE_NUM];
     private ParticleEmitter doublePointsEmitter;
@@ -37,6 +40,8 @@ public class LevelManager {
 
     private Object3D shield;
     private boolean invincible = false;
+    private boolean deadInvincible = false;
+    private float deadInvincibleTimer = 0.0f;
 
     public static  LevelManager getInstance() {
         if(INSTANCE == null)
@@ -69,9 +74,23 @@ public class LevelManager {
             invincibleTimer = 0.0f;
         }
 
+        if (deadInvincible) {
+            deadInvincibleTimer -= timeElapsed;
+            if ((floor(deadInvincibleTimer/BONUS_TIME * 12)) % 2 == 1){
+                scene.getPacman().setDraw(false);
+            } else {
+                scene.getPacman().setDraw(true);
+            }
+        }
+        if (deadInvincibleTimer < 0) {
+            deadInvincible = false;
+            invincibleTimer = 0.0f;
+            scene.getPacman().setDraw(true);
+        }
+
         if (bDarkMalus){
             darkMalus += timeElapsed;
-            float darkMalusPerc = darkMalus/DARKMALUS_TIME;
+            float darkMalusPerc = darkMalus/DARKMALUS_FADETIME;
             float[] colorLight = new float[] {202.0f/255.0f, 225.0f/255.0f, 255.0f/255.0f};
             float[] colorDark = new float[] {50.0f/255.0f, 50.0f/255.0f, 70.0f/255.0f};
 
@@ -135,6 +154,16 @@ public class LevelManager {
         shield.setShader(ShaderManager.Shader.DIFFUSETEX);
         shield.setTextureFile("bubble.png");
         shield.setPosition(-0.5f, -0.2f, 2.8f);
+
+        doublePointsTimer = 0.0f;
+        invincibleTimer = 0.0f;
+        score = 0;
+        life = 3;
+        darkMalus = 0.0f;
+        bDarkMalus = false;
+        invincible = false;
+        deadInvincible = false;
+        deadInvincibleTimer = 0.0f;
     }
 
     public void activateDoublePoints() {
@@ -149,7 +178,14 @@ public class LevelManager {
     }
 
     public void reduceLife () {
-        if (!invincible) life--;
+        if (life <= 0) {
+            PacManActivity.current.startMenuEnd();
+        }
+        if (!invincible && !deadInvincible) {
+            life--;
+            deadInvincible = true;
+            deadInvincibleTimer = BONUS_TIME;
+        }
     }
 
     public int getLife() {

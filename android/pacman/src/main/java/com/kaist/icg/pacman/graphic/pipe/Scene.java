@@ -48,5 +48,9 @@ public class Scene {
     public SceneRoot getRoot() {
         return root;
     }
+
+    public Pacman getPacman() {
+        return pacman;
+    }
 }
 

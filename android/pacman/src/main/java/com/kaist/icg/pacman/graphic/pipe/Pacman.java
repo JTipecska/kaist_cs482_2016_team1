@@ -11,6 +11,7 @@ import java.nio.FloatBuffer;
 public class Pacman extends Object3D {
 
     private Object3D mesh;
+    private boolean draw = true;
 
     public Pacman(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer) {
         super(vertexBufferSize, vertexBuffer, normalBuffer, textureCoordinatesBuffer);
@@ -22,7 +23,7 @@ public class Pacman extends Object3D {
 
     @Override
     public void draw() {
-        super.draw();
+        if (draw) super.draw();
     }
 
     @Override
@@ -33,5 +34,13 @@ public class Pacman extends Object3D {
     @Override
     public void setRotation(float x, float y, float z, float angle) {
         super.setRotation(x, y, z, angle);
+    }
+
+    public void setDraw(boolean draw) {
+        this.draw = draw;
+    }
+
+    public boolean isDraw() {
+        return draw;
     }
 }
