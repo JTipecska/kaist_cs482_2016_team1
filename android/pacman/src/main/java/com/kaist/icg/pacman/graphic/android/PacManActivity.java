@@ -18,7 +18,6 @@ package com.kaist.icg.pacman.graphic.android;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -26,7 +25,6 @@ import com.kaist.icg.pacman.manager.InputManager;
 import com.kaist.icg.pacman.manager.TextureManager;
 import com.kaist.icg.pacman.view.GameView;
 import com.kaist.icg.pacman.view.HighScoreView;
-import com.kaist.icg.pacman.view.MenuEnd;
 import com.kaist.icg.pacman.view.MenuView;
 import com.kaist.icg.pacman.view.View;
 
@@ -105,17 +103,6 @@ public class PacManActivity extends Activity {
             public void run() {
                 cleanupCurrentView();
                currentView = new MenuView(glView);
-                currentView.init();
-            }
-        });
-    }
-
-    public void startMenuEnd() {
-        glView.getRenderer().setGlRunnable(new PacManGLRenderer.IGLRunnable() {
-            @Override
-            public void run() {
-                cleanupCurrentView();
-                currentView = new MenuEnd(glView);
                 currentView.init();
             }
         });

@@ -43,12 +43,14 @@ import javax.microedition.khronos.opengles.GL10;
  * </ul>
  */
 public class PacManGLRenderer implements GLSurfaceView.Renderer {
-
+    public static PacManGLRenderer current;
     private static final String TAG = "PacManGLRenderer";
     private View view;
     private IGLRunnable glRunnable;
 
-    public PacManGLRenderer() {}
+    public PacManGLRenderer() {
+        current = this;
+    }
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {

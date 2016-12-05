@@ -47,27 +47,44 @@ public class Material {
             textureInfo = TextureManager.getInstance().getTextureSlotFor(texture);
         }
 
-        GLES20.glGenTextures(1, TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo),
-                textureInfo.getSlot());
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
-                TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo)[textureInfo.getSlot()]);
+        endLoadTexture();
+    }
 
-        // Set filtering
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
-                GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
-                GLES20.GL_LINEAR);
+    private void loadTexture(String textureFile) {
+        this.textured = true;
 
-        // Set wrapping mode
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
-                GLES20.GL_REPEAT);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
-                GLES20.GL_REPEAT);
+        if (textureInfo == null) {
+            textureInfo = TextureManager.getInstance().getTextureSlotFor(textureFile);
+            this.textureBitmap = textureInfo.getTexture();
+        }
 
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, textureBitmap, 0);
+        endLoadTexture();
+    }
 
-        if (TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo)[textureInfo.getSlot()] == 0)
-            throw new RuntimeException("Error loading textureBitmap.");
+    private void endLoadTexture() {
+        if(!textureInfo.isInitialized()) {
+            GLES20.glGenTextures(1, TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo),
+                    textureInfo.getSlot());
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,
+                    TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo)[textureInfo.getSlot()]);
+
+            // Set filtering
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER,
+                    GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER,
+                    GLES20.GL_LINEAR);
+
+            // Set wrapping mode
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
+                    GLES20.GL_REPEAT);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
+                    GLES20.GL_REPEAT);
+
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, textureBitmap, 0);
+
+            if (TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo)[textureInfo.getSlot()] == 0)
+                throw new RuntimeException("Error loading textureBitmap.");
+        }
 
         this.textureDataHandler = TextureManager.getInstance().getTextureHandlerArrayFromTextureInfo(textureInfo)[textureInfo.getSlot()];
         this.textureBloc = textureInfo.getBloc();
@@ -138,7 +155,7 @@ public class Material {
     }
 
     public void setTexture(String textureFile) {
-        loadTexture(PacManGLRenderer.loadImage(textureFile));
+        loadTexture(textureFile);
     }
 
     public float getOpacity() {

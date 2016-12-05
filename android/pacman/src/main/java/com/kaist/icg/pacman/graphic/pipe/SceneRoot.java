@@ -33,4 +33,11 @@ public class SceneRoot extends Drawable{
     public Pipe getPipe() {
         return pipe;
     }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        pipe.dispose();
+        population.dispose();
+    }
 }

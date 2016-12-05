@@ -11,5 +11,5 @@ public interface IScoreService {
     Call<List<Score>> getAllScores();
 
     @GET("score/{name}/{score}")
-    Call<Boolean> addNewScore(@Path("name") String name, @Path("score") int score);
+    Call<AddScoreResponse> addNewScore(@Path("name") String name, @Path("score") int score);
 }

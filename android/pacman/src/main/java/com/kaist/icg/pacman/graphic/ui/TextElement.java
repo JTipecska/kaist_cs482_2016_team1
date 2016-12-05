@@ -90,7 +90,7 @@ public class TextElement extends UIElement {
         this.isDirty = true;
     }
 
-    private void renderTexture() {
+    public void renderTexture() {
         if(bitmap != null)
             bitmap.recycle();
 
@@ -138,5 +138,9 @@ public class TextElement extends UIElement {
 
         if(backgroundImage != null)
             backgroundImage.recycle();
+    }
+
+    public String getText() {
+        return text;
     }
 }

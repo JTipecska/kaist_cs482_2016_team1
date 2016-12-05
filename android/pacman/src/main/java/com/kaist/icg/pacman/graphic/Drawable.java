@@ -7,6 +7,7 @@ import com.kaist.icg.pacman.tool.Material;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Drawable object class.
@@ -37,7 +38,7 @@ public class Drawable {
 
     //Test
     protected Drawable parent;
-    public ArrayList<Drawable> children;
+    public CopyOnWriteArrayList<Drawable> children;
 
     protected Material material;
     protected ShaderManager.Shader shader = ShaderManager.Shader.TOON;
@@ -63,7 +64,7 @@ public class Drawable {
         Matrix.rotateM(rotationMatrix, 0, rotationAngle, rotationAxis[0], rotationAxis[1], rotationAxis[2]);
         computeModelMatrix();
 
-        children = new ArrayList<>();
+        children = new CopyOnWriteArrayList<>();
         material = new Material(new float[]{0.5f, 0.5f, 0.0f});
 
         shaderManager = ShaderManager.getInstance();
@@ -193,5 +194,11 @@ public class Drawable {
                 return false;
         }
         return false;
+    }
+
+    public void dispose() {
+        this.material.dispose();
+        for(Drawable child : children)
+            child.dispose();
     }
 }

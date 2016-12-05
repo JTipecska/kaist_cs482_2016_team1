@@ -12,7 +12,7 @@ import com.kaist.icg.pacman.manager.ShaderManager;
 public class Scene {
     private final static double PIPE_SPEED = 200.0;
 
-    private final static float ROTATION_SPEED = 3f;
+    private final static float MAX_ROTATION_SPEED = 3f;
     private SceneRoot root;
     private Pacman pacman;
     private float PACMAN_RAD = 0.2f;
@@ -32,8 +32,10 @@ public class Scene {
     public void onUpdate(long elapsedTime) {
 
         translationZ = (float)(elapsedTime/PIPE_SPEED);//(float)(elapsedTime / PIPE_SPEED);
-        if(Math.abs(InputManager.getInstance().getHorizontalMovement()) >= 0.8)
-            rotationZ -= ROTATION_SPEED * Math.signum(InputManager.getInstance().getHorizontalMovement());
+
+        if(Math.abs(InputManager.getInstance().getHorizontalMovement()) >= 0.1)
+            rotationZ -= MAX_ROTATION_SPEED *
+                    (InputManager.getInstance().getHorizontalMovement());
         pacman.setPosition(0.0f, -1.2f, 2.5f);
         //pacman.setScale(0.3f, 0.3f, 0.3f);
         pacman.setRotation(0, 1, 0, 180f);
@@ -51,6 +53,11 @@ public class Scene {
 
     public Pacman getPacman() {
         return pacman;
+    }
+
+    public void cleanup() {
+        pacman.dispose();
+        root.dispose();
     }
 }
 

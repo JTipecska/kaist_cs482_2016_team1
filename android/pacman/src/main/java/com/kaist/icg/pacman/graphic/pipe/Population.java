@@ -1,22 +1,15 @@
 package com.kaist.icg.pacman.graphic.pipe;
 
-import android.renderscript.ScriptIntrinsicYuvToRGB;
-
-import com.kaist.icg.pacman.client.Score;
 import com.kaist.icg.pacman.graphic.Drawable;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.graphic.ui.TextElement;
 import com.kaist.icg.pacman.manager.LevelManager;
-import com.kaist.icg.pacman.manager.ParticleEmitter;
 import com.kaist.icg.pacman.manager.ShaderManager;
 import com.kaist.icg.pacman.tool.Material;
 
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
 
-import static com.kaist.icg.pacman.graphic.pipe.Population.Type.BONUS_DOUBLE;
 import static com.kaist.icg.pacman.graphic.pipe.Population.Type.COIN;
 import static com.kaist.icg.pacman.graphic.pipe.Population.Type.GHOST;
 
@@ -105,7 +98,6 @@ public class Population extends Drawable {
                     unUsed.addChild(used.children.get(i));
                     switch (type) {
                         case GHOST:
-                            System.out.println("DEAD MOTEHRFUCKER");
                             levelManager.reduceLife();
                             levelManager.activateDoublePoints();
                             levelManager.activateInvincible();
@@ -115,7 +107,6 @@ public class Population extends Drawable {
 
                         case COIN:
                             levelManager.addParticleEmitter();
-                            // SET SCORE HERE DUNNO HOW OMGOMGOMGOMGOMGOMGOMG PRZ HERP ME
                             levelManager.addPoint();
                             break;
 
@@ -132,6 +123,7 @@ public class Population extends Drawable {
                             break;
 
                         case MALUS_INVERSE:
+                            levelManager.activateReverseMalus();
                             break;
 
                         default:

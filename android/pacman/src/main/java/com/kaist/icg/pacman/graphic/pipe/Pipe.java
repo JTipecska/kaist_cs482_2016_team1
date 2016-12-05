@@ -43,4 +43,11 @@ public class Pipe extends Drawable {
     public static int getNbPipePart() {
         return NB_PIPE_PART;
     }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        for(Drawable child : children)
+            child.dispose();
+    }
 }

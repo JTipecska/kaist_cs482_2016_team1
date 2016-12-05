@@ -138,8 +138,4 @@ public class UIElement extends Object3D {
     public Rect getBounds() {
         return bounds;
     }
-
-    public void dispose() {
-        this.material.dispose();
-    }
 }

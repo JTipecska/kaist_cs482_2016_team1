@@ -16,7 +16,7 @@ app.get('/score', function(req, res) {
 
 app.get('/score/:name/:score', function(req, res) {
     var obj = {
-        score: req.params.score,
+        score: parseInt(req.params.score),
         name: req.params.name,
         date: new Date().getTime()
     }
@@ -45,7 +45,7 @@ app.get('/score/:name/:score', function(req, res) {
             isNewScore = true;
     }
 
-    res.json(isNewScore);
+    res.json({"isNew": isNewScore});
 })
 
 app.listen(port, function() {

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import com.kaist.icg.pacman.graphic.Drawable;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.graphic.ui.custom.FPSCounterElement;
+import com.kaist.icg.pacman.manager.LevelManager;
 
 public class GameUI extends Drawable{
 

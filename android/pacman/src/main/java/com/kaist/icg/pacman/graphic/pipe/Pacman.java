@@ -10,7 +10,6 @@ import java.nio.FloatBuffer;
 
 public class Pacman extends Object3D {
 
-    private Object3D mesh;
     private boolean draw = true;
 
     public Pacman(int vertexBufferSize, FloatBuffer vertexBuffer, FloatBuffer normalBuffer, FloatBuffer textureCoordinatesBuffer) {

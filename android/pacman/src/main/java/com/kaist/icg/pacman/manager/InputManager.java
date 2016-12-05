@@ -36,8 +36,9 @@ public class InputManager implements SensorEventListener{
     private boolean mLastMagnetometerSet = false;
     private float[] mR = new float[9];
     private float[] mOrientation = new float[3];
-    private double roll = 0;
+    private double orientation = 0;
     private ITouchListener touchListener;
+    private boolean reverse = false;
 
     private InputManager() {
         sensorManager = (SensorManager) PacManActivity.context.getSystemService(Context.SENSOR_SERVICE);
@@ -85,11 +86,10 @@ public class InputManager implements SensorEventListener{
         if (mLastAccelerometerSet && mLastMagnetometerSet) {
             SensorManager.getRotationMatrix(mR, null, mLastAccelerometer, mLastMagnetometer);
             SensorManager.getOrientation(mR, mOrientation);
-            //mOrientation: [azimuth, pitch, roll]
-            roll = mOrientation[2];
+            //mOrientation: [azimuth, pitch, orientation]
+            orientation = mOrientation[2];
 
-            //TODO: smooth movement speed
-            horizontalMovement = (float) (roll * 5);
+            horizontalMovement = (float) (reverse ? orientation * -1 : orientation);
         }
     }
 
@@ -127,5 +127,13 @@ public class InputManager implements SensorEventListener{
     public interface ITouchListener {
         void onTouchStart(float x, float y);
         void onTouchEnd(float x, float y);
+    }
+
+    public boolean isReverse() {
+        return reverse;
+    }
+
+    public void setReverse(boolean reverse) {
+        this.reverse = reverse;
     }
 }
