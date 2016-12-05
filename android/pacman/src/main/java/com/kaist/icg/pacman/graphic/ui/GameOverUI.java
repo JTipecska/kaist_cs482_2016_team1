@@ -16,7 +16,6 @@ import com.kaist.icg.pacman.graphic.Camera;
 import com.kaist.icg.pacman.graphic.Drawable;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
 import com.kaist.icg.pacman.graphic.android.PacManActivity;
-import com.kaist.icg.pacman.graphic.android.PacManGLRenderer;
 import com.kaist.icg.pacman.manager.InputManager;
 import com.kaist.icg.pacman.manager.LevelManager;
 
@@ -96,7 +95,7 @@ public class GameOverUI extends Drawable implements InputManager.ITouchListener 
                         if(LevelManager.getInstance().getScore() >= scores.get(i).getScore()) {
                             TextElement newHighScore = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
                             newHighScore.setBackgroundColor(Color.TRANSPARENT);
-                            newHighScore.setForegroundColor(Color.BLACK);
+                            newHighScore.setForegroundColor(Color.RED);
                             newHighScore.setTextSize(30);
                             newHighScore.setText("New high score !");
                             newHighScore.setScreenPosition(0, 130, UIElement.EAnchorPoint.Center);
@@ -106,7 +105,7 @@ public class GameOverUI extends Drawable implements InputManager.ITouchListener 
 
                             TextElement name = Object3DFactory.getInstance().instanciate("objects/ui.obj", TextElement.class);
                             name.setBackgroundColor(Color.TRANSPARENT);
-                            name.setForegroundColor(Color.RED);
+                            name.setForegroundColor(Color.BLACK);
                             name.setTextSize(25);
                             name.setText("Your name: (touch to edit)");
                             name.setScreenPosition(0, 180, UIElement.EAnchorPoint.Center);
