@@ -6,10 +6,8 @@ import android.os.Looper;
 
 import com.kaist.icg.pacman.graphic.Object3D;
 import com.kaist.icg.pacman.graphic.Object3DFactory;
-import com.kaist.icg.pacman.graphic.android.PacManActivity;
 import com.kaist.icg.pacman.graphic.pipe.Pipe;
 import com.kaist.icg.pacman.graphic.pipe.Scene;
-import com.kaist.icg.pacman.graphic.ui.GameUI;
 import com.kaist.icg.pacman.view.GameView;
 
 import static java.lang.Math.floor;
@@ -146,7 +144,7 @@ public class LevelManager {
         doublePointsTimer = 0.0f;
         invincibleTimer = 0.0f;
         score = 0;
-        life = 0;
+        life = 3;
         darkMalus = 0.0f;
         bDarkMalus = false;
         invincible = false;
