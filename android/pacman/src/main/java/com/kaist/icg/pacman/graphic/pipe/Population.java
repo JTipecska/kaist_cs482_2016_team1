@@ -10,26 +10,20 @@ import com.kaist.icg.pacman.tool.Material;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.kaist.icg.pacman.graphic.pipe.Population.Type.COIN;
-import static com.kaist.icg.pacman.graphic.pipe.Population.Type.GHOST;
-
 public class Population extends Drawable {
 
 
-    private Drawable unusedGhosts, usedGhosts, unusedCoins, usedCoins;
+    private Drawable unusedGhosts, usedGhosts, unusedCoins, usedCoins, usedBonus, unusedBonus;
     private static final float radToDeg = (float) (360 / (Math.PI * 2));
     private final float GHOST_RAD = 0.1f, COIN_RAD = 0.1f;
     private double angle;
-    private Random rand;
     private LevelManager levelManager;
     private CopyOnWriteArrayList<TextElement> scoresElements;
 
-    public enum Type {
-        GHOST, COIN, BONUS_DOUBLE, BONUS_INVINCIBLE, MALUS_DARK, MALUS_INVERSE
-    }
     public Population() {
         initGhosts();
         initCoins();
+        initBonus();
         angle = Math.random() * (Math.PI * 2);
         addGhost(angle);
 
@@ -42,9 +36,11 @@ public class Population extends Drawable {
     }
 
     public void onUpdate(float translationZ) {
-        updateSpawn(usedGhosts, unusedGhosts, translationZ, GHOST);
-        updateSpawn(usedCoins, unusedCoins, translationZ, COIN);
+        updateSpawn(usedGhosts, unusedGhosts, translationZ);
+        updateSpawn(usedCoins, unusedCoins, translationZ);
+        updateSpawn(usedBonus, unusedBonus, translationZ);
         spawnPopulation();
+        System.out.println(unusedBonus.children.size() + "     " + usedBonus.children.size());
     }
 
     public void initGhosts() {
@@ -54,7 +50,23 @@ public class Population extends Drawable {
         addChild(usedGhosts);
         for(int i = 0; i < 30; i++) {
             Ghost ghost = Object3DFactory.getInstance().instanciate("objects/Ghost.obj", Ghost.class);
-            ghost.setTextureFile("Ghost_orange.png");
+            Random rand = new Random();
+            int n = rand.nextInt(4);
+            switch (n) {
+                case 1:
+                    ghost.setTextureFile("Ghost_orange.png");
+                    break;
+                case 2:
+                    ghost.setTextureFile("Ghost_blue.png");
+                    break;
+                case 3:
+                    ghost.setTextureFile("Ghost_pink.png");
+                    break;
+                case 4:
+                    ghost.setTextureFile("Ghost_red.png");
+                    break;
+            }
+            ghost.setType(Type.GHOST);
             ghost.setShader(ShaderManager.Shader.PHONGTEX);
             ghost.setCollisionRadius(GHOST_RAD);
             unusedGhosts.addChild(ghost);
@@ -78,6 +90,7 @@ public class Population extends Drawable {
         for(int i = 0; i < 20; i++) {
             Coin coin = Object3DFactory.getInstance().instanciate("objects/Coin.obj", Coin.class);
             coin.setMaterial(gold);
+            coin.setType(Type.COIN);
             coin.setShader(ShaderManager.Shader.PHONG);
 
             coin.setCollisionRadius(GHOST_RAD);
@@ -87,7 +100,42 @@ public class Population extends Drawable {
 
     }
 
-    public void updateSpawn(Drawable used, Drawable unUsed, float translation, Type type) {
+    public void initBonus() {
+
+        unusedBonus = new Drawable();
+        usedBonus = new Drawable();
+        addChild(usedBonus);
+        Bonus_Double bonus = Object3DFactory.getInstance().instanciate("objects/Bonus_double.obj", Bonus_Double.class);
+        bonus.setType(Type.BONUS_DOUBLE);
+        bonus.setTextureFile("Bonus_double.png");
+        bonus.setShader(ShaderManager.Shader.PHONGTEX);
+        bonus.setCollisionRadius(GHOST_RAD);
+        unusedBonus.addChild(bonus);
+
+        Bonus_Double bonus1 = Object3DFactory.getInstance().instanciate("objects/Bonus_invincible.obj", Bonus_Double.class);
+        bonus1.setType(Type.BONUS_INVINCIBLE);
+        //bonus1.setTextureFile("Bonus_double.png");
+        bonus1.setShader(ShaderManager.Shader.PHONGTEX);
+        bonus1.setCollisionRadius(GHOST_RAD);
+        unusedBonus.addChild(bonus1);
+
+        Bonus_Double bonus2 = Object3DFactory.getInstance().instanciate("objects/Malus_dark.obj", Bonus_Double.class);
+        bonus2.setType(Type.MALUS_DARK);
+        bonus2.setTextureFile("Dark.png");
+        bonus2.setShader(ShaderManager.Shader.PHONGTEX);
+        bonus2.setCollisionRadius(GHOST_RAD);
+        unusedBonus.addChild(bonus2);
+
+        Bonus_Double bonus3 = Object3DFactory.getInstance().instanciate("objects/Malus_inverse.obj", Bonus_Double.class);
+        bonus3.setType(Type.MALUS_INVERSE);
+        bonus3.setTextureFile("Bonus_double.png");
+        bonus3.setShader(ShaderManager.Shader.PHONGTEX);
+        bonus3.setCollisionRadius(GHOST_RAD);
+        unusedBonus.addChild(bonus3);
+
+    }
+
+    public void updateSpawn(Drawable used, Drawable unUsed, float translation) {
         if(used.children.size() > 0) {
             if (used.children.get(0).getPosition()[2] > 2 + 1f) {
                 unUsed.addChild(used.children.get(0));
@@ -95,14 +143,12 @@ public class Population extends Drawable {
             for (int i = 0; i < used.children.size(); i++) {
                 used.children.get(i).translate(0, 0, translation);
                 if (used.children.get(i).getCollision(0.0f, -0.9f, 2.5f, 0.5f)) {
-                    unUsed.addChild(used.children.get(i));
-                    switch (type) {
+                    switch (used.children.get(i).getType()) {
                         case GHOST:
                             levelManager.reduceLife();
                             levelManager.activateDoublePoints();
                             levelManager.activateInvincible();
                             levelManager.activateDarkMalus();
-
                             break;
 
                         case COIN:
@@ -127,9 +173,9 @@ public class Population extends Drawable {
                             break;
 
                         default:
-                            System.out.println(type);
                             break;
                     }
+                    unUsed.addChild(used.children.get(i));
                 }
             }
         }
@@ -139,14 +185,16 @@ public class Population extends Drawable {
         Random rand = new Random();
         angle = Math.random() * (Math.PI * 2);
         //Retarded spawn version, so so so retarded
-        int n = rand.nextInt(100) + 1;
-        if (n < 15)
+        int n = rand.nextInt(1000) + 1;
+        if (n < 150)
             addGhost(angle);
-        if (n > 98) {
+        if (n > 980) {
             Random random = new Random();
             int noOfCoins = random.nextInt(7) + 5;
             addCoins(angle, Math.random() * (Math.PI / 10), noOfCoins);
         }
+        if(500 < n && n < 503)
+            addBonus(angle);
     }
 
     public void addGhost(double angle) {
@@ -167,6 +215,18 @@ public class Population extends Drawable {
                     usedCoins.addChild(unusedCoins.children.get(0));
                 initAngle += angle;
             }
+        }
+    }
+
+    public void addBonus(double angle) {
+        if (unusedBonus.children.size() > 0) {
+            System.out.println("spawna kukar");
+            Random rand = new Random();
+            int n = rand.nextInt(unusedBonus.children.size());
+            unusedBonus.children.get(n).setRotation(0, 0, 1, (float) angle * radToDeg + 90);
+            unusedBonus.children.get(n).setPosition((float) (Math.cos(angle) * 1.8), (float) (Math.sin(angle) * 1.8), -20f);
+            if (!unusedBonus.children.get(n).getCollision(children.get(0)) && !unusedBonus.children.get(n).getCollision(children.get(1)))
+                usedBonus.addChild(unusedBonus.children.get(n));
         }
     }
 }

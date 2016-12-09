@@ -16,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Drawable {
     // shader Manager instance for drawing the object
     protected ShaderManager shaderManager;
-
+    private Type type;
     // Raw transformation data
     private float[] position;
     private float[] scale;
@@ -43,7 +43,13 @@ public class Drawable {
     protected Material material;
     protected ShaderManager.Shader shader = ShaderManager.Shader.TOON;
 
+    public enum Type {
+        GHOST, COIN, BONUS_DOUBLE, BONUS_INVINCIBLE, MALUS_DARK, MALUS_INVERSE
+    }
+
     public void setShader(ShaderManager.Shader shader) {this.shader = shader;}
+    public void setType(Type type){this.type = type;}
+    public Type getType(){return this.type;}
 
     public Drawable() {
         position = new float[3];
