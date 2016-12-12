@@ -190,7 +190,7 @@ public class Population extends Drawable {
             int noOfCoins = random.nextInt(7) + 5;
             addCoins(angle, Math.random() * (Math.PI / 10), noOfCoins);
         }
-        if(500 < n && n < 503)
+        if(500 < n && n < 506)
             addBonus(angle);
     }
 
