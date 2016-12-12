@@ -115,7 +115,7 @@ public class ParticleEmitter {
                             rand.nextFloat() * yForceMul + yForceAdd,
                             0.0f};
                     material = new Material();
-                    mesh = Object3DFactory.getInstance().instanciate("objects/doubleScoreSprite.obj", Object3D.class);
+                    mesh = Object3DFactory.getInstance().instanciate("objects/Star.obj", Object3D.class);
                     material.setSpecularColor(new float[]{0.628281f, 0.555802f, 0.366065f});
                     material.setShininess(2.0f);
                     mesh.setMaterial(material);

@@ -146,9 +146,6 @@ public class Population extends Drawable {
                     switch (used.children.get(i).getType()) {
                         case GHOST:
                             levelManager.reduceLife();
-                            levelManager.activateDoublePoints();
-                            levelManager.activateInvincible();
-                            levelManager.activateDarkMalus();
                             break;
 
                         case COIN:
