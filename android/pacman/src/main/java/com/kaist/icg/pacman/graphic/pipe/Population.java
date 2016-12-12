@@ -53,16 +53,16 @@ public class Population extends Drawable {
             Random rand = new Random();
             int n = rand.nextInt(4);
             switch (n) {
-                case 1:
+                case 0:
                     ghost.setTextureFile("Ghost_orange.png");
                     break;
-                case 2:
+                case 1:
                     ghost.setTextureFile("Ghost_blue.png");
                     break;
-                case 3:
+                case 2:
                     ghost.setTextureFile("Ghost_pink.png");
                     break;
-                case 4:
+                case 3:
                     ghost.setTextureFile("Ghost_red.png");
                     break;
             }
