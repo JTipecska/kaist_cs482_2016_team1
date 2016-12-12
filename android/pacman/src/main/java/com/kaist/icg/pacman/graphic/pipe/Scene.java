@@ -35,7 +35,7 @@ public class Scene {
 
         if(Math.abs(InputManager.getInstance().getHorizontalMovement()) >= 0.1)
             rotationZ -= MAX_ROTATION_SPEED *
-                    (InputManager.getInstance().getHorizontalMovement());
+                    (InputManager.getInstance().getHorizontalMovement() * 1.1);
         pacman.setPosition(0.0f, -1.2f, 2.5f);
         //pacman.setScale(0.3f, 0.3f, 0.3f);
         pacman.setRotation(0, 1, 0, 180f);
