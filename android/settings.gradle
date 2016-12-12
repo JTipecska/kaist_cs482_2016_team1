@@ -1,3 +1,2 @@
 include ':pacman'
-include ':app'
 include ':..:server'
