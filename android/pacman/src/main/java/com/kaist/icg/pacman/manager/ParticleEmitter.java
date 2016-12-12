@@ -117,12 +117,12 @@ public class ParticleEmitter {
                     material = new Material();
                     mesh = Object3DFactory.getInstance().instanciate("objects/Star.obj", Object3D.class);
                     material.setSpecularColor(new float[]{0.628281f, 0.555802f, 0.366065f});
-                    material.setShininess(2.0f);
+                    material.setShininess(0.001f);
                     mesh.setMaterial(material);
                     mesh.setTextureFile("star4.png");
                     mesh.setShader(ShaderManager.Shader.PHONGTEX);
 
-                    mesh.setPosition(position[0]+i%5-2, position[1], position[2]);
+                    mesh.setPosition(position[0]+(rand.nextInt(2)-rand.nextFloat())*i%2, position[1], position[2]);
                     particle.mesh = mesh;
 
                     particles[i] = particle;
@@ -193,7 +193,7 @@ public class ParticleEmitter {
 
     private void reset(int i){
         Random rand = new Random();
-        particles[i].mesh.setPosition(position[0]+i%5-2, position[1], position[2]);
+        particles[i].mesh.setPosition(position[0]+(rand.nextInt(2)-rand.nextFloat())*i%2, position[1], position[2]);
         particles[i].force = new float[]{
                 rand.nextFloat() * xForceMul + xForceAdd,
                 rand.nextFloat() * yForceMul + yForceAdd,

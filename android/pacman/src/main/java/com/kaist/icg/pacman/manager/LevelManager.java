@@ -19,9 +19,10 @@ import static java.lang.Math.floor;
 public class LevelManager {
 
     private static final int COINPARTICLE_NUM = 5;
-    private static final float BONUS_TIME = 2000.0f;
-    private static final float DARKMALUS_FADETIME = 1000.0f;
+    private static final int BONUS_TIME = 8000;
+    private static final int DARKMALUS_FADETIME = 1000;
     private static final int REVERSE_TIME = 5000;
+    private static final int DEAD_INVINCIBLE_TIME = 2000;
 
     //Singleton
     private static LevelManager INSTANCE;
@@ -42,6 +43,7 @@ public class LevelManager {
     private boolean invincible = false;
     private boolean deadInvincible = false;
     private float deadInvincibleTimer = 0.0f;
+    private float reverseTimer = 0.0f;
     private Handler handler;
     private Runnable stopReverseInput;
     private GameView currentGameView;
@@ -69,6 +71,13 @@ public class LevelManager {
             particleEmitters[i].update(timeElapsed);
         }
 
+        if (InputManager.getInstance().isReverse()) {
+            reverseTimer -= timeElapsed;
+            if (reverseTimer < 0){
+                InputManager.getInstance().setReverse(false);
+                reverseTimer = 0.0f;
+            }
+        }
 
         if (doublePointsEmitter.isActive()) {
             doublePointsEmitter.update(timeElapsed);
@@ -90,7 +99,7 @@ public class LevelManager {
         if (deadInvincible) {
             deadInvincibleTimer -= timeElapsed;
             // blink Pacman to indicate invincible due to recent life loss
-            if ((floor(deadInvincibleTimer/BONUS_TIME * 12)) % 2 == 1){
+            if ((floor(deadInvincibleTimer/DEAD_INVINCIBLE_TIME * 12)) % 2 == 1){
                 scene.getPacman().setDraw(false);
             } else {
                 scene.getPacman().setDraw(true);
@@ -130,7 +139,7 @@ public class LevelManager {
         doublePointsEmitter = new ParticleEmitter(position,
                 ParticleEmitter.ParticleType.DOUBLEPOINTS);
 
-        position = new float[] {2.0f, -1.0f, 2.0f};
+        position = new float[] {0.0f, -1.0f, 2.0f};
         for (int i = 0; i < COINPARTICLE_NUM; ++i){
             particleEmitters[i] = new ParticleEmitter(position,
                     ParticleEmitter.ParticleType.COIN);
@@ -170,7 +179,7 @@ public class LevelManager {
             }
             life--;
             deadInvincible = true;
-            deadInvincibleTimer = BONUS_TIME;
+            deadInvincibleTimer = DEAD_INVINCIBLE_TIME;
         }
     }
 
@@ -210,15 +219,15 @@ public class LevelManager {
                         colorLight[1] * (1 - darkMalusPerc) + colorDark[1] * (darkMalusPerc),
                         colorLight[2] * (1 - darkMalusPerc) + colorDark[2] * (darkMalusPerc)});
             }
-        } else if (darkMalusPerc >= 3.0f && darkMalusPerc <= 4.0f) {
+        } else if (darkMalusPerc >= 8.0f && darkMalusPerc <= 9.0f) {
             for (int j = 0; j < Pipe.getNbPipePart(); ++j) {
                 scene.getRoot().getPipe().children.get(j).
                         getMaterial().setColor(new float[]{
-                        colorDark[0] * (1 - darkMalusPerc + 3.0f) + colorLight[0] * (darkMalusPerc - 3.0f),
-                        colorDark[1] * (1 - darkMalusPerc + 3.0f) + colorLight[1] * (darkMalusPerc - 3.0f),
-                        colorDark[2] * (1 - darkMalusPerc + 3.0f) + colorLight[2] * (darkMalusPerc - 3.0f)});
+                        colorDark[0] * (1 - darkMalusPerc + 8.0f) + colorLight[0] * (darkMalusPerc - 8.0f),
+                        colorDark[1] * (1 - darkMalusPerc + 8.0f) + colorLight[1] * (darkMalusPerc - 8.0f),
+                        colorDark[2] * (1 - darkMalusPerc + 8.0f) + colorLight[2] * (darkMalusPerc - 8.0f)});
             }
-        } else if (darkMalusPerc > 5.0f){
+        } else if (darkMalusPerc > 9.0f){
             for (int j = 0; j < Pipe.getNbPipePart(); ++j) {
                 scene.getRoot().getPipe().children.get(j).
                         getMaterial().setColor(colorLight);
@@ -235,6 +244,7 @@ public class LevelManager {
             handler.removeCallbacks(stopReverseInput);
 
         handler.postDelayed(stopReverseInput, REVERSE_TIME);
+        reverseTimer += REVERSE_TIME;
     }
 
     public void setCurrentGameView(GameView currentGameView) {

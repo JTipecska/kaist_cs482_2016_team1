@@ -92,9 +92,7 @@ public class Population extends Drawable {
             coin.setMaterial(gold);
             coin.setType(Type.COIN);
             coin.setShader(ShaderManager.Shader.PHONG);
-
             coin.setCollisionRadius(GHOST_RAD);
-            //coin.setScale(0.5f, 0.5f, 0.5f);
             unusedCoins.addChild(coin);
         }
 
@@ -114,7 +112,7 @@ public class Population extends Drawable {
 
         Bonus_Double bonus1 = Object3DFactory.getInstance().instanciate("objects/Bonus_invincible.obj", Bonus_Double.class);
         bonus1.setType(Type.BONUS_INVINCIBLE);
-        //bonus1.setTextureFile("Bonus_double.png");
+        bonus1.setTextureFile("Shield.png");
         bonus1.setShader(ShaderManager.Shader.PHONGTEX);
         bonus1.setCollisionRadius(GHOST_RAD);
         unusedBonus.addChild(bonus1);
@@ -217,7 +215,7 @@ public class Population extends Drawable {
 
     public void addBonus(double angle) {
         if (unusedBonus.children.size() > 0) {
-            System.out.println("spawna kukar");
+            //System.out.println("spawna kukar");
             Random rand = new Random();
             int n = rand.nextInt(unusedBonus.children.size());
             unusedBonus.children.get(n).setRotation(0, 0, 1, (float) angle * radToDeg + 90);
