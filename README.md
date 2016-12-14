@@ -12,6 +12,10 @@ TODO
 ## Contributors
 
 * Jennifer Tipecska
+  * 3D Modeling
+  * Texturing
+  * User Study
+  * Dying and Loosing Life 
 * Lou Kramer
 * Cristoffer Sarevall
 * Bastien Baret
