@@ -19,6 +19,8 @@ TODO
 * Lou Kramer
 	* Shaders
 	* Visual effects of bonus and malus
+	* Invincibility
+	* Effect when Pacman looses life
 	* Materials
 * Cristoffer Sarevall
 * Bastien Baret
