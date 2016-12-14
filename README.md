@@ -13,6 +13,9 @@ TODO
 
 * Jennifer Tipecska
 * Lou Kramer
+	* Shaders
+	* Visual effects of bonus and malus
+	* Materials
 * Cristoffer Sarevall
 * Bastien Baret
   * Game skeleton
